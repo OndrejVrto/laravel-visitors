@@ -1,0 +1,17 @@
+{
+    "preset": "psr12",
+    "rules": {
+        "ordered_imports": {
+            "imports_order": [
+                "class",
+                "function",
+                "const"
+            ],
+            "sort_algorithm": "length"
+        },
+        "blank_line_after_opening_tag": true,
+        "braces": {
+            "position_after_functions_and_oop_constructs": "next"
+        }
+    }
+}

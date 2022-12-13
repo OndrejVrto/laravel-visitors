@@ -1,0 +1,87 @@
+{
+    "name": "ondrej-vrto/laravel-visitors",
+    "description": "Laravel package that allows you to associate views with Eloquent models and create statistics.",
+    "keywords": [
+        "Laravel",
+        "Visits",
+        "Counter",
+        "Package",
+        "Eloquent",
+        "Php"
+    ],
+    "homepage": "https://github.com/OndrejVrto/laravel-visits",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ing. Ondrej VRŤO",
+            "email": "ondrej.vrto@gmail.com",
+            "homepage": "https://ondrejvrto.eu",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "spatie/laravel-package-tools": "^1.13.0",
+        "illuminate/contracts": "^9.0",
+        "illuminate/support": "^9.0",
+        "jaybizzle/crawler-detect": "^1.2",
+        "torann/geoip": "^1.0|^3.0"
+    },
+    "require-dev": {
+        "driftingly/rector-laravel": "^0.14.1",
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-faker": "^1.0",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "pestphp/pest-plugin-mock": "^1.0",
+        "pestphp/pest-plugin-parallel": "^1.2",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.5",
+        "rector/rector": "^0.14.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "OndrejVrto\\Visitors\\": "src",
+            "OndrejVrto\\Visitors\\Database\\Factories\\": "database/factories"
+        },
+        "files": [
+			"src/Utilities/Helpers.php"
+		]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OndrejVrto\\Visitors\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "format": "vendor/bin/pint",
+        "rector": "vendor/bin/rector --dry-run --memory-limit=4G",
+        "test"  : "vendor/bin/pest --parallel --processes=8 --no-coverage",
+        "stan"  : "vendor/bin/phpstan analyze --configuration phpstan.neon --memory-limit=4G --debug"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OndrejVrto\\Visitors\\VisitorsServiceProvider"
+            ],
+            "aliases": {
+                "Visitors": "OndrejVrto\\Visitors\\Facades\\Visitors"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
