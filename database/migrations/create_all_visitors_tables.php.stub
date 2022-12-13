@@ -1,0 +1,96 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+    /** @var \Illuminate\Database\Schema\Builder */
+    protected $schemaBuilder;
+
+    /** @var array<string,string>  */
+    protected $tableNames;
+
+    /** @var string  */
+    protected $morphsName;
+
+    public function __construct() {
+        $this->schemaBuilder = Schema::connection(config('visitors.models.connection'));
+        $this->tableNames = config('visitors.models.table_names');
+        $this->morphsName = config('visitors.models.model_morph_key', 'viewable');
+    }
+
+    public function up(): void {
+        if (empty($this->tableNames)) {
+            throw new \Exception('Error: config/visitors.php not loaded. Run [php artisan config:clear] or publish the package configuration and try again.');
+        }
+
+        $morph = $this->morphsName;
+
+        $this->schemaBuilder->create($this->tableNames['expires'], function (Blueprint $table) use ($morph) {
+            $table->mediumIncrements('id');
+
+            $table->string("{$morph}_type", 60);
+            $table->unsignedInteger("{$morph}_id");
+            $table->ipAddress('ip_address');
+            $table->string('tag', 60);
+            $table->unique(["{$morph}_type", "{$morph}_id", "ip_address", 'tag']);
+
+            $table->timestamp('expires_at');
+        });
+
+        $this->schemaBuilder->create($this->tableNames['data'], function (Blueprint $table) use ($morph) {
+            $table->integerIncrements('id');
+
+            $table->string("{$morph}_type", 60);
+            $table->unsignedInteger("{$morph}_id");
+            $table->string('tag', 60);
+            $table->index(["{$morph}_type", "{$morph}_id", 'tag']);
+
+            $table->boolean('is_crawler')->default(false);
+
+            $table->string('country', 5)->nullable();
+            $table->string('language', 5)->nullable();
+            $table->unsignedTinyInteger('operating_system')->default(0);  // ENUM
+
+            $table->timestamp('visited_at')->useCurrent();
+        });
+
+        $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) use ($morph) {
+            $table->mediumIncrements('id');
+
+            $table->string("{$morph}_type", 60);
+            $table->unsignedInteger("{$morph}_id");
+            $table->string('tag', 60);
+            $table->index(["{$morph}_type", "{$morph}_id", 'tag']);
+
+            $table->json('daily_numbers')->nullable();
+            $table->json('weekly_numbers')->nullable();
+            $table->json('monthly_numbers')->nullable();
+            $table->json('annual_numbers')->nullable();
+
+            $table->unsignedSmallInteger('total_today')->default(0);
+            $table->unsignedSmallInteger('total_this_week')->default(0);
+            $table->unsignedMediumInteger('total_this_month')->default(0);
+            $table->unsignedMediumInteger('total_last_year')->default(0);
+
+            $table->json('countries')->nullable();
+            $table->json('languages')->nullable();
+            $table->json('operating_systems')->nullable();
+
+            $table->timestamp('updated_at')->useCurrent();
+            $table->softDeletes();
+        });
+    }
+
+    public function down(): void {
+        if (empty($this->tableNames)) {
+            throw new \Exception('Error: config/visitors.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
+        }
+
+        $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['data']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['visitors_statistics']);
+    }
+};
