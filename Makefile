@@ -12,6 +12,9 @@ test-help:
 
 
 stan:
+	vendor\bin\phpstan analyze --configuration phpstan.neon --memory-limit=4G
+
+stan-debug:
 	vendor\bin\phpstan analyze --configuration phpstan.neon --memory-limit=4G --debug
 
 stan-base:

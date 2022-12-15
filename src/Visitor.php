@@ -139,48 +139,47 @@ class Visitor {
     private function handleProperties(): void {
         $this->handleRequest();
 
-        if (! isset($this->category))
-        {
+        if (! isset($this->category)) {
             $this->category = null;
         }
 
-        if (! isset($this->crawlerStorage))
-        {
-            $this->crawlerStorage = (bool) config('visitors.storage_request_from_crawlers_and_bots', false);
+        if (! isset($this->crawlerStorage)) {
+            $crawlerStorage = config('visitors.storage_request_from_crawlers_and_bots');
+            $this->crawlerStorage = is_bool($crawlerStorage) ? $crawlerStorage : false;
         }
 
-        if (! isset($this->expiresAt))
-        {
-            (bool) config('visitors.with_remember_expiration_for_all_ip', true)
-                ? $this->expiresAt(config('visitors.expires_time', 15))
-                : $this->expiresAt(0);
+        if (! isset($this->expiresAt)) {
+            $remember = config('vvisitors.with_remember_expiration_for_all_ip');
+            $remember = is_bool($remember) ? $remember : true;
+
+            $expireTime = $remember ? config('visitors.expires_time') : 0;
+            $expireTime = is_integer($expireTime) ? $expireTime : 15;
+
+            $this->expiresAt($expireTime);
         }
 
-        if (! isset($this->isCrawler))
-        {
+        if (! isset($this->isCrawler)) {
             $this->isCrawler = (new CrawlerDetect())->isCrawler($this->userAgent);
         }
 
-        if (! isset($this->country))
-        {
-            $countryCode = geoip($this->ipAddress)->iso_code;
-            $this->country = is_null($countryCode) ? null : strtolower($countryCode);
+        if (! isset($this->country)) {
+            $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');
+            $this->country = is_null($countryCode)
+                ? null
+                : ( is_string($countryCode) ? strtolower($countryCode) : null);
         }
 
-        if (! isset($this->language))
-        {
+        if (! isset($this->language)) {
             $language = $this->request->getLanguages();
 
             $this->language = $language === [] ? null : $language[0];
         }
 
-        if (! isset($this->operatingSystem))
-        {
+        if (! isset($this->operatingSystem)) {
             $this->operatingSystem = $this->getVisitorOperatingSystem($this->userAgent);
         }
 
-        if (! isset($this->visitedAt))
-        {
+        if (! isset($this->visitedAt)) {
             $this->visitedAt = Carbon::now();
         }
     }

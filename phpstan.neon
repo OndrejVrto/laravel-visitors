@@ -1,0 +1,20 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: max
+
+    paths:
+        - src
+
+    tmpDir: build/phpstan
+
+    checkMissingIterableValueType: false
+
+    checkGenericClassInNonGenericObjectType: false
+
+    scanDirectories:
+        # - vendor-for-stan
+
+    ignoreErrors:
+        - '#Call to an undefined method Torann\\GeoIP\\GeoIP|Torann\\GeoIP\\Location::getAttribute\(\).#'

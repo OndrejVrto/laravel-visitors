@@ -47,11 +47,17 @@ class VisitorsStatistics extends Model {
     }
 
     public function getConnectionName(): ?string {
-        return config('visitors.models.eloquent_connection', parent::getConnectionName());
+        $nameConnection = config('visitors.models.eloquent_connection');
+        return is_string($nameConnection)
+            ? $nameConnection
+            : parent::getConnectionName();
     }
 
     public function getTable(): string {
-        return config('visitors.models.table_names.statistics', parent::getTable());
+        $nameTable = config('vvisitors.models.table_names.statistics');
+        return is_string($nameTable)
+            ? $nameTable
+            : parent::getTable();
     }
 
     protected static function newFactory(): Factory {
