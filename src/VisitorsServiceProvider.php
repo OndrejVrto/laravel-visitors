@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors;
 
 use Spatie\LaravelPackageTools\Package;
-use OndrejVrto\Visitors\Commands\VisitorsPruneCommand;
+use OndrejVrto\Visitors\Commands\VisitorsCleanCommand;
+use OndrejVrto\Visitors\Commands\VisitorsFreshCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use OndrejVrto\Visitors\Commands\VisitorsUpdateCommand;
 
-class VisitorsServiceProvider extends PackageServiceProvider
-{
-    public function configurePackage(Package $package): void
-    {
+class VisitorsServiceProvider extends PackageServiceProvider {
+    public function configurePackage(Package $package): void {
         /**
          * This class is a Package Service Provider
          *
@@ -25,7 +24,8 @@ class VisitorsServiceProvider extends PackageServiceProvider
                 'create_all_visitors_tables',
             ])
             ->hasCommands([
-                VisitorsPruneCommand::class,
+                VisitorsFreshCommand::class,
+                VisitorsCleanCommand::class,
                 VisitorsUpdateCommand::class,
             ]);
     }

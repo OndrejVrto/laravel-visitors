@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Enums;
 
-enum OperatingSystemsEnum: int
-{
+enum OperatingSystem: int {
     case UNKNOWN       = 0;
     case WINDOWS       = 1;
     case IPHONE        = 2;
@@ -17,8 +16,9 @@ enum OperatingSystemsEnum: int
     case BLACKBERRY    = 8;
     case LINUX         = 9;
 
-    public function type(): ?string {
-        return match ($this) {
+    public function label(): string {
+        return match ($this)
+        {
             self::UNKNOWN       => 'Unknown',
             self::WINDOWS       => 'Windows',
             self::IPHONE        => 'iPhone',
@@ -29,12 +29,13 @@ enum OperatingSystemsEnum: int
             self::ANDROID       => 'Android',
             self::BLACKBERRY    => 'BlackBerry',
             self::LINUX         => 'Linux',
-            default             => null,
+            default             => 'Unknown',
         };
     }
 
     public function regexString(): ?string {
-        return match ($this) {
+        return match ($this)
+        {
             self::UNKNOWN       => null,
             self::WINDOWS       => '/windows|win32|win16|win95|win64/i',
             self::IPHONE        => '/iphone/i',
@@ -45,7 +46,7 @@ enum OperatingSystemsEnum: int
             self::ANDROID       => '/android/i',
             self::BLACKBERRY    => '/blackberry/i',
             self::LINUX         => '/linux/i',
-            default             => null,
+            default             => '',
         };
     }
 }

@@ -1,18 +1,27 @@
 <?php
 
-// config for ondrej-vrto/laravel-visitors
+/**
+ * for packages: ondrej-vrto/laravel-visitors
+ * @see https://github.com/artesaos/seotools
+ */
+
+
 return [
 
     /**
     * --------------------------------------------------------------------------
     * Eloquent Models
     * --------------------------------------------------------------------------
+    *
+    * TODO this texts
+    *
     */
+
     'models' => [
         /**
         * Here you can configure connection to database.
         */
-        'connection' => env('DB_CONNECTION', 'mysql'),
+        'eloquent_connection' => env('DB_CONNECTION', 'mysql'),
 
         /**
          * Here you can configure the table names.
@@ -22,31 +31,40 @@ return [
             'data'       => 'visitors_data',
             'statistics' => 'visitors_statistics',
         ],
-
-        /**
-         * Here you can configure the name of coloumns for model morphs.
-         */
-        'model_morph_key' => 'viewable',
     ],
+
 
     /**
     * --------------------------------------------------------------------------
-    * Tags
+    * Categories
     * --------------------------------------------------------------------------
+    *
+    * Defining different categories for the records
+    * TODO this texts
+    *
     */
-    'tags' => [
-        'default_tag' => 'web',
 
-        /**
-        *  Remember x seconds of time for all tags for all ip address
-        *  Will count only one visit of an IP during this specified time.
-        */
-        'tags_remember' => [
-            'web'   => 15 * 60, // 15 minutes
-            'api'   =>  5 * 60, // 5 minutes
-            'admin' => 60 * 60, // 60 minutes
-        ],
-    ],
+    'categories_list' => OndrejVrto\Visitors\Enums\Category::class,
+
+    'default_category' => null,
+    // 'default_category' => OndrejVrto\Visitors\Enums\Category::WEB,
+
+
+    /**
+    * --------------------------------------------------------------------------
+    * Default expires time
+    * --------------------------------------------------------------------------
+    *
+    * If you want set expiration time for ip adress and models in minutes.
+    * Ignore this setting apply forceIncrement() method
+    *
+    * I recommend leaving this enabled
+    */
+
+    'with_remember_expiration_for_all_ip' => true,
+
+    'expires_time' => 15,  // in minutes
+
 
     /**
     * --------------------------------------------------------------------------
@@ -58,7 +76,9 @@ return [
     * by JayBizzle called CrawlerDetect.
     *
     */
-    'ignore_bots' => true,
+
+    'storage_request_from_crawlers_and_bots' => false,
+
 
     /**
     * --------------------------------------------------------------------------
