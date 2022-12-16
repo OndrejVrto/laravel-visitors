@@ -35,7 +35,7 @@ class Visitor {
     /** @var string[] */
     private array $ignoredIpAddresses = [];
 
-    private ?VisitorCategory $category = null;
+    private VisitorCategory $category;
 
     private DateTimeInterface $expiresAt;
 
@@ -105,12 +105,7 @@ class Visitor {
     }
 
     private function handleInitialProperties(): void {
-        /** @var \Illuminate\Http\Request $tempRequest */
-        $request = request();
-        if (! $request instanceof Request) {
-            throw new \Exception("Bad request type.");
-        }
-        $this->request = $request;
+        $this->request = request();
 
         if (! isset($this->userAgent)) {
             $this->userAgent = $this->request->userAgent();
@@ -138,8 +133,8 @@ class Visitor {
 
         if (! isset($this->category)) {
             $defaultCategory = config('visitors.default_category');
-            $this->category = (enum_exists($defaultCategory) && $defaultCategory instanceof \UnitEnum)
-                ? $defaultCategory
+            $this->category = (is_string($defaultCategory) && VisitorCategory::isValidCase($defaultCategory))
+                ? VisitorCategory::fromName($defaultCategory)
                 : VisitorCategory::UNDEFINED;
         }
 

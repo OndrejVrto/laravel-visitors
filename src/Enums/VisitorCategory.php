@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Enums;
 
+use EnumHelper\EnumValidatableCase;
+use EnumHelper\EnumRestorableFromName;
+
 enum VisitorCategory: int {
+
+    use EnumRestorableFromName;
+    use EnumValidatableCase;
+
     case UNDEFINED     = 0;
     case WEB           = 1;
     case API           = 2;
