@@ -2,15 +2,15 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use OndrejVrto\Visitors\Enums\Category;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
 
 class VisitorsData extends BaseVisitors {
     public function __construct(array $attributes = []) {
         $this->mergeCasts([
-            'category'         => Category::class,
+            'category'         => VisitorCategory::class,
             'is_crawler'       => 'boolean',
             'country'          => 'string',
             'language'         => 'string',

@@ -2,8 +2,8 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use OndrejVrto\Visitors\Enums\Category;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use OndrejVrto\Visitors\Database\Factories\VisitorsStatisticsFactory;
@@ -13,7 +13,7 @@ class VisitorsStatistics extends BaseVisitors {
 
     public function __construct(array $attributes = []) {
         $this->mergeCasts([
-            'category'          => Category::class,
+            'category'          => VisitorCategory::class,
             'visit_yesterday'   => 'integer',
             'visit_this_week'   => 'integer',
             'visit_this_month'  => 'integer',

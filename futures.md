@@ -15,11 +15,11 @@ public function show(Post $post)
 visit($post)->increment();
 
 // With defining different categories for the record from Backed Enums
-visit($post)->inCategory(Category::WEB)->increment();
-visit($post)->inCategory(Category::API)->increment();
+visit($post)->inCategory(VisitorCategory::WEB)->increment();
+visit($post)->inCategory(VisitorCategory::API)->increment();
 
-visit($post)->inCategory(Category::AUTHENTICATED)->increment();
-visit($post)->inCategory(Category::GUEST)->increment();
+visit($post)->inCategory(VisitorCategory::AUTHENTICATED)->increment();
+visit($post)->inCategory(VisitorCategory::GUEST)->increment();
 
 
 // Crawlers detection enabled/disabled. Rewrite config settings
@@ -86,9 +86,9 @@ Post::orderByVisitsAsc()->get(); // ascending
 // Sum visits from all catagories
 visit_statistisc($post)->visitsPerson();
 // Or only one category
-visit_statistisc($post, Category::WEB)->visitsPerson();
+visit_statistisc($post, VisitorCategory::WEB)->visitsPerson();
 // Or sum visits from list of categories
-visit_statistisc($post, [Category::WEB, Category::API])->visitsPerson();
+visit_statistisc($post, [VisitorCategory::WEB, VisitorCategory::API])->visitsPerson();
 
 // another type counters
 visit_statistisc($post)->visitsCrawler();
@@ -100,13 +100,13 @@ visit_statistisc($post)->visitsLastYear();
 
 
 // lists of data
-visit_lists($post, Category::WEB)->dailyNumbers();
-visit_lists($post, Category::WEB)->weeklyNumbers();
-visit_lists($post, Category::WEB)->monthlyNumbers();
-visit_lists($post, Category::WEB)->annualNumbers();
-visit_lists($post, Category::WEB)->countries();
-visit_lists($post, Category::WEB)->languages();
-visit_lists($post, Category::WEB)->operatingSystems();
+visit_lists($post, VisitorCategory::WEB)->dailyNumbers();
+visit_lists($post, VisitorCategory::WEB)->weeklyNumbers();
+visit_lists($post, VisitorCategory::WEB)->monthlyNumbers();
+visit_lists($post, VisitorCategory::WEB)->annualNumbers();
+visit_lists($post, VisitorCategory::WEB)->countries();
+visit_lists($post, VisitorCategory::WEB)->languages();
+visit_lists($post, VisitorCategory::WEB)->operatingSystems();
 
 
 // GET RESULTING STATISTICS FOR MODEL TYPE

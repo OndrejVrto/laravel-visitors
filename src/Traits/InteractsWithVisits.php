@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
-use OndrejVrto\Visitors\Enums\Category;
 use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -33,7 +33,7 @@ trait InteractsWithVisits {
             );
     }
 
-    public function scopeWhereCategory(Builder $query, ?Category $category = null): Builder {
+    public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
         return $query
             ->when(
                 $category === null,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Enums;
 
-enum Category: int {
+enum VisitorCategory: int {
     case WEB           = 1;
     case API           = 2;
     case AUTHENTICATED = 3;

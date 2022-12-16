@@ -8,10 +8,10 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use OndrejVrto\Visitors\Enums\Category;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {
@@ -29,7 +29,7 @@ class Visitor {
 
     private ?string $ipAddress = null;
 
-    private ?Category $category = null;
+    private ?VisitorCategory $category = null;
 
     private DateTimeInterface $expiresAt;
 
@@ -60,14 +60,14 @@ class Visitor {
                 ->whereCategory($this->category)
                 ->first();
 
-            if ($visitorExpire) {
+            if ($visitorExpire !== null) {
                 // dump($visitorExpire, $visitorExpire->expires_at, Carbon::now()->lessThan($visitorExpire->expires_at));
 
                 if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
                     return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
-                } else {
-                    $visitorExpire->update(['expires_at' => $this->expiresAt]);
                 }
+
+                $visitorExpire->update(['expires_at' => $this->expiresAt]);
             } else {
                 $this->subject->visitExpires()->create([
                     'ip_address' => $this->ipAddress,
@@ -93,7 +93,7 @@ class Visitor {
         return $this->increment(false);
     }
 
-    public function inCategory(Category $category): self {
+    public function inCategory(VisitorCategory $category): self {
         $this->category = $category;
 
         return $this;
@@ -167,7 +167,7 @@ class Visitor {
             $remember = is_bool($remember) ? $remember : true;
 
             $expireTime = $remember ? config('visitors.expires_time') : 0;
-            $expireTime = is_integer($expireTime) ? $expireTime : 15;
+            $expireTime = is_int($expireTime) ? $expireTime : 15;
 
             $this->expiresAt($expireTime);
         }
@@ -199,6 +199,7 @@ class Visitor {
     }
 
     private function handleRequest(): void {
+        /** @var \Illuminate\Http\Request $tempRequest */
         $tempRequest = request();
 
         if (! $tempRequest instanceof Request) {
