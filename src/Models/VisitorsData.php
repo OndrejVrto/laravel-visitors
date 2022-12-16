@@ -2,23 +2,16 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Enums\Category;
+use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use OndrejVrto\Visitors\Contracts\CategoryContract;
 use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
 
-class VisitorsData extends Model {
-    public $timestamps = false;
-
-    public $guarded = [];
-
+class VisitorsData extends BaseVisitors {
     public function __construct(array $attributes = []) {
         $this->mergeCasts([
-            'id'               => 'integer',
-            "viewable_type"    => 'string',
-            "viewable_id"      => 'integer',
-            'category'         => CategoryContract::class,
+            'category'         => Category::class,
             'is_crawler'       => 'boolean',
             'country'          => 'string',
             'language'         => 'string',
@@ -26,21 +19,9 @@ class VisitorsData extends Model {
             'visited_at'       => 'datetime',
         ]);
 
+        $this->configTableName = "data";
+
         parent::__construct($attributes);
-    }
-
-    public function getConnectionName(): ?string {
-        $nameConnection = config('visitors.models.eloquent_connection');
-        return is_string($nameConnection)
-            ? $nameConnection
-            : parent::getConnectionName();
-    }
-
-    public function getTable(): string {
-        $nameTable = config('vvisitors.models.table_names.data');
-        return is_string($nameTable)
-            ? $nameTable
-            : parent::getTable();
     }
 
     protected static function newFactory(): Factory {

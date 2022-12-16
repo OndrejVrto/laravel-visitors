@@ -30,11 +30,14 @@ return new class extends Migration
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
-            $table->ipAddress('ip_address');
+            $table->ipAddress('ip_address')->nullable();
             $table->unsignedTinyInteger('category')->nullable();  // ENUM
-            $table->unique(["viewable_type", "viewable_id", "ip_address", 'category']);
+            $table->unique(
+                ["viewable_type", "viewable_id", "ip_address", 'category'],
+                'visitors_expires_viewable_ip_address_category_unique'
+            );
 
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->useCurrent();
         });
 
         $this->schemaBuilder->create($this->tableNames['data'], function (Blueprint $table) {
@@ -45,10 +48,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('category')->nullable();  // ENUM
             $table->index(["viewable_type", "viewable_id", 'category']);
 
-            $table->boolean('is_crawler')->nullable();
+            $table->boolean('is_crawler');
             $table->string('country')->nullable();
             $table->string('language')->nullable();
-            $table->unsignedTinyInteger('operating_system')->nullable();  // ENUM
+            $table->unsignedTinyInteger('operating_system');  // ENUM
 
             $table->timestamp('visited_at')->useCurrent();
         });
@@ -91,6 +94,6 @@ return new class extends Migration
 
         $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
         $this->schemaBuilder->dropIfExists($this->tableNames['data']);
-        $this->schemaBuilder->dropIfExists($this->tableNames['visitors_statistics']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['statistics']);
     }
 };
