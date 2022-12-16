@@ -71,13 +71,18 @@ class Post extends Model implements Visitable
 }
 
 // Get all statistic data from eager loading
-Post::with('visit_statistics')->get();
-Post::find($id)->with('visit_statistics')->get();
-$posts = Post::with('visit_statistics')->orderByVisits()->limit(50)->paginate(10);
+Post::query()->with('visitStatistics')->get();
+Post::find($id)->with('visitStatistics')->get();
+$posts = Post::with('visitStatistics')->limit(50)->paginate(10);
+// Get raw visit data from eager loading
+Post::find($id)->with('visitData')->get();
 
+
+// TODO: preveriť či sa toto dá
 // Scope order by column "visit_total_without_crawlers"
 Post::orderByVisits()->get(); // descending
 Post::orderByVisitsAsc()->get(); // ascending
+$posts = Post::with('visitStatistics')->orderByVisits()->limit(50)->paginate(10);
 
 
 // GET RESULTING STATISTICS FOR ONE MODEL
@@ -133,7 +138,7 @@ class Post extends Model implements Visitable
 {
     use InteractsWithVisits;
 
-	protected $removeVisitsOnDelete = true;
+	protected $removeStatisticsOnDelete = true;
 
 	// ...
 }
