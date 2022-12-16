@@ -17,19 +17,21 @@ enum OperatingSystem: int {
     case LINUX         = 9;
 
     public function label(): string {
-        return match ($this) {
-            self::UNKNOWN       => 'Unknown',
-            self::WINDOWS       => 'Windows',
-            self::IPHONE        => 'iPhone',
-            self::IPAD          => 'iPad',
-            self::MACOS         => 'MacOS',
-            self::ANDROIDMOBILE => 'AndroidMobile',
-            self::ANDROIDTABLET => 'AndroidTablet',
-            self::ANDROID       => 'Android',
-            self::BLACKBERRY    => 'BlackBerry',
-            self::LINUX         => 'Linux',
-            default             => 'Unknown',
+        $label = match ($this) {
+            self::UNKNOWN       => __('laravel-visitors.operating_system.UNKNOWN'),
+            self::WINDOWS       => __('laravel-visitors.operating_system.WINDOWS'),
+            self::IPHONE        => __('laravel-visitors.operating_system.IPHONE'),
+            self::IPAD          => __('laravel-visitors.operating_system.IPAD'),
+            self::MACOS         => __('laravel-visitors.operating_system.MACOS'),
+            self::ANDROIDMOBILE => __('laravel-visitors.operating_system.ANDROIDMOBILE'),
+            self::ANDROIDTABLET => __('laravel-visitors.operating_system.ANDROIDTABLET'),
+            self::ANDROID       => __('laravel-visitors.operating_system.ANDROID'),
+            self::BLACKBERRY    => __('laravel-visitors.operating_system.BLACKBERRY'),
+            self::LINUX         => __('laravel-visitors.operating_system.LINUX'),
+            default             => __('laravel-visitors.operating_system.DEFAULT'),
         };
+
+        return is_string($label) ? $label : '';
     }
 
     public function regexString(): ?string {

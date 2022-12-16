@@ -21,6 +21,7 @@ class VisitorsServiceProvider extends PackageServiceProvider {
             ->name('laravel-visitors')
             ->hasConfigFile()
             ->hasMigration('create_all_visitors_tables')
+            ->hasTranslations()
             ->hasCommands([
                 VisitorsFreshCommand::class,
                 VisitorsCleanCommand::class,
