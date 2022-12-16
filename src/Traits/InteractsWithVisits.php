@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
-// use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
@@ -12,7 +11,7 @@ use OndrejVrto\Visitors\Observers\VisitableObserver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait InteractsWithVisits {
-    protected $removeViewsOnDelete = true;
+    protected $removeStatisticsOnDelete = true;
 
     public static function bootInteractsWithVisits(): void {
         static::observe(VisitableObserver::class);

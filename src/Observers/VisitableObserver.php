@@ -11,7 +11,7 @@ class VisitableObserver {
      * Handle the deleted event for the visitable model.
      */
     public function deleted(Visitable $visitable): void {
-        if ($this->removeViewsOnDelete($visitable)) {
+        if ($this->removeStatisticsOnDelete($visitable)) {
             $visitable->visitStatistics()->delete();
         }
     }
@@ -19,7 +19,7 @@ class VisitableObserver {
     /**
      * Determine if should remove views on model delete (defaults to true).
      */
-    private function removeViewsOnDelete(Visitable $visitable): bool {
-        return $visitable->removeViewsOnDelete ?? true;
+    private function removeStatisticsOnDelete(Visitable $visitable): bool {
+        return $visitable->removeStatisticsOnDelete ?? true;
     }
 }
