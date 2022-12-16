@@ -24,8 +24,8 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::TYPE_DECLARATION_STRICT,
         LevelSetList::UP_TO_PHP_82,
 
-        LaravelSetList::LARAVEL_90,
-        LaravelSetList::LARAVEL_CODE_QUALITY,
+        // LaravelSetList::LARAVEL_90,
+        // LaravelSetList::LARAVEL_CODE_QUALITY,
         // LaravelSetList::LARAVEL_STATIC_TO_INJECTION,
         // LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
         // LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,

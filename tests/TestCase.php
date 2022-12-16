@@ -6,10 +6,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 use OndrejVrto\Visitors\VisitorsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TestCase extends Orchestra
-{
-    protected function setUp(): void
-    {
+class TestCase extends Orchestra {
+    protected function setUp(): void {
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
@@ -17,15 +15,13 @@ class TestCase extends Orchestra
         );
     }
 
-    protected function getPackageProviders($app)
-    {
+    protected function getPackageProviders($app) {
         return [
             VisitorsServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
-    {
+    public function getEnvironmentSetUp($app) {
         config()->set('database.default', 'testing');
 
         /*
