@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Traits\Setters;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
+use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
@@ -68,38 +69,16 @@ class Visitor {
         $this->handleRestProperties();
 
         if ($checkExpire) {
-            $visitorExpire = VisitorsExpires::query()
-                ->select(['id', 'expires_at'])
-                ->whereMorphedTo('viewable', $this->subject)
-                ->whereIpAddress($this->ipAddress)
-                ->whereCategory($this->category)
-                ->first();
-
-            if ($visitorExpire !== null) {
-                // dump($visitorExpire, $visitorExpire->expires_at, Carbon::now()->lessThan($visitorExpire->expires_at));
-
-                if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
-                    return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
-                }
-
-                $visitorExpire->update(['expires_at' => $this->expiresAt]);
-            } else {
-                $this->subject->visitExpires()->create([
-                    'ip_address' => $this->ipAddress,
-                    'category'   => $this->category,
-                    'expires_at' => $this->expiresAt,
-                ]);
+            $statusExpire = $this->saveExpire();
+            if ($statusExpire !== StatusVisitor::INCREMENT_EXPIRATION_OK) {
+                return $statusExpire;
             }
         }
 
-        $this->subject->visitData()->create([
-            'category'         => $this->category,
-            'is_crawler'       => $this->isCrawler,
-            'country'          => $this->country,
-            'language'         => $this->language,
-            'operating_system' => $this->operatingSystem,
-            'visited_at'       => $this->visitedAt,
-        ]);
+        $statusData = $this->sevaData();
+        if ($statusData !== StatusVisitor::INCREMENT_DATA_OK) {
+            return $statusData;
+        }
 
         return StatusVisitor::INCREMENT_OK;
     }
@@ -184,5 +163,50 @@ class Visitor {
         }
 
         return OperatingSystem::UNKNOWN;
+    }
+
+    private function saveExpire(): StatusVisitor {
+        $visitorExpire = VisitorsExpires::query()
+            ->select(['id', 'expires_at'])
+            ->whereMorphedTo('viewable', $this->subject)
+            ->whereIpAddress($this->ipAddress)
+            ->whereCategory($this->category)
+            ->first();
+        // dump($visitorExpire);
+
+        if ($visitorExpire instanceof Model) {
+            if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
+                return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
+            }
+
+            $status = $visitorExpire->update(['expires_at' => $this->expiresAt]);
+        } else {
+            $model = $this->subject->visitExpires()->create([
+                'ip_address' => $this->ipAddress,
+                'category'   => $this->category,
+                'expires_at' => $this->expiresAt,
+            ]);
+
+            $status = $model instanceof VisitorsExpires;
+        }
+
+        return $status
+            ? StatusVisitor::INCREMENT_EXPIRATION_OK
+            : StatusVisitor::INCREMENT_EXPIRATION_FAILED;
+    }
+
+    private function sevaData(): StatusVisitor {
+        $status = $this->subject->visitData()->create([
+            'category'         => $this->category,
+            'is_crawler'       => $this->isCrawler,
+            'country'          => $this->country,
+            'language'         => $this->language,
+            'operating_system' => $this->operatingSystem,
+            'visited_at'       => $this->visitedAt,
+        ]);
+
+        return $status instanceof VisitorsData
+            ? StatusVisitor::INCREMENT_DATA_OK
+            : StatusVisitor::INCREMENT_DATA_FAILED;
     }
 }
