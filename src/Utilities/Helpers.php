@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Utilities;
 
 use OndrejVrto\Visitors\Visitor;
-use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Contracts\Visitable;
 
 if (! function_exists('vrtoVisits')) {
-    function vrtoVisit(Model $subject): Visitor {
-        return new Visitor($subject);
+    function vrtoVisit(Visitable $model): Visitor {
+        return new Visitor($model);
     }
 }

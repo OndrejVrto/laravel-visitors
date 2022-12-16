@@ -7,10 +7,11 @@ namespace OndrejVrto\Visitors;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Traits\Setters;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
+use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
@@ -45,7 +46,7 @@ class Visitor {
     private OperatingSystem $operatingSystem;
 
     public function __construct(
-        protected readonly Model $subject
+        protected readonly Visitable $model
     ) {
     }
 
@@ -168,20 +169,20 @@ class Visitor {
     private function saveExpire(): StatusVisitor {
         $visitorExpire = VisitorsExpires::query()
             ->select(['id', 'expires_at'])
-            ->whereMorphedTo('viewable', $this->subject)
+            ->whereMorphedTo('viewable', $this->model->getMorphClass())
             ->whereIpAddress($this->ipAddress)
             ->whereCategory($this->category)
             ->first();
         // dump($visitorExpire);
 
-        if ($visitorExpire instanceof Model) {
+        if ($visitorExpire instanceof BaseVisitors) {
             if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
                 return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
             }
 
             $status = $visitorExpire->update(['expires_at' => $this->expiresAt]);
         } else {
-            $model = $this->subject->visitExpires()->create([
+            $model = $this->model->visitExpires()->create([
                 'ip_address' => $this->ipAddress,
                 'category'   => $this->category,
                 'expires_at' => $this->expiresAt,
@@ -196,7 +197,7 @@ class Visitor {
     }
 
     private function sevaData(): StatusVisitor {
-        $status = $this->subject->visitData()->create([
+        $status = $this->model->visitData()->create([
             'category'         => $this->category,
             'is_crawler'       => $this->isCrawler,
             'country'          => $this->country,
