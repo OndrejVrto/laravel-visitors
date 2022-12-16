@@ -18,3 +18,5 @@ parameters:
 
     ignoreErrors:
         - '#Call to an undefined method Torann\\GeoIP\\GeoIP|Torann\\GeoIP\\Location::getAttribute\(\).#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::.*#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::.*#'
