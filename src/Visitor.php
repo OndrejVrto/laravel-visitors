@@ -8,21 +8,22 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Enums\Category;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
-use OndrejVrto\Visitors\Contracts\CategoryContract;
+use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {
     protected readonly Model $subject;
 
     private Request $request;
 
-    private ?string $ipAddress;
+    private ?string $ipAddress = null;
 
-    private ?string $userAgent;
+    private ?string $userAgent = null;
 
-    private ?CategoryContract $category;
+    private ?Category $category = null;
 
     private bool $crawlerStorage;
 
@@ -30,9 +31,9 @@ class Visitor {
 
     private bool $isCrawler;
 
-    private ?string $country;
+    private ?string $country = null;
 
-    private ?string $language;
+    private ?string $language = null;
 
     private OperatingSystem $operatingSystem;
 
@@ -42,45 +43,58 @@ class Visitor {
         $this->subject = $subject;
     }
 
-
-    public function increment(): StatusVisitor {
+    public function increment(bool $checkExpire = true): StatusVisitor {
         $this->handleProperties();
 
-        dump($this);
+// dump($this);
 
-        if ($this->isCrawler && ! $this->crawlerStorage)
-        {
+        if ($this->isCrawler && ! $this->crawlerStorage) {
             return StatusVisitor::NOT_INCREMENT;
         }
 
-        // check tabulku expire
-        // ak expire je starsi ako now()
-        if (true)
-        {
-            return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
+        if ($checkExpire) {
+            $visitor = VisitorsExpires::query()
+                ->select('expires_at')
+                ->whereMorphedTo(
+                    'viewable',
+                    $this->subject)
+                ->where('ip_address', $this->ipAddress)
+                ->first();
+
+// dump($checkExpire, $visitor);
+
+            if ($visitor) {
+                if ($visitor->expires_at > now()) {
+                    return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
+                } else {
+                    $visitor->update(['expires_at' => $this->expiresAt]);
+                }
+            } else {
+                $this->subject->visitExpire()->create([
+                    'ip_address' => $this->ipAddress,
+                    'category'   => $this->category,
+                    'expires_at' => $this->expiresAt,
+                ]);
+            }
         }
 
-        // uloz zaznam
+        $this->subject->visitData()->create([
+            'category'         => $this->category,
+            'is_crawler'       => $this->isCrawler,
+            'country'          => $this->country,
+            'language'         => $this->language,
+            'operating_system' => $this->operatingSystem,
+            'visited_at'       => $this->visitedAt,
+        ]);
+
         return StatusVisitor::INCREMENT_OK;
     }
 
     public function forceIncrement(): StatusVisitor {
-        $this->handleProperties();
-
-        dump($this);
-
-        if ($this->isCrawler && ! $this->crawlerStorage)
-        {
-            return StatusVisitor::NOT_INCREMENT;
-        }
-
-        // uloz zaznam priamo do tabulky DATA
-        return StatusVisitor::INCREMENT_OK;
+        return $this->increment(false);
     }
 
-
-
-    public function inCategory(CategoryContract $category): self {
+    public function inCategory(Category $category): self {
         $this->category = $category;
 
         return $this;
@@ -145,7 +159,7 @@ class Visitor {
 
         if (! isset($this->crawlerStorage)) {
             $crawlerStorage = config('visitors.storage_request_from_crawlers_and_bots');
-            $this->crawlerStorage = is_bool($crawlerStorage) ? $crawlerStorage : false;
+            $this->crawlerStorage = is_bool($crawlerStorage) && $crawlerStorage;
         }
 
         if (! isset($this->expiresAt)) {
