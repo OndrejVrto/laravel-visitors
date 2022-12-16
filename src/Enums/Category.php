@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Enums;
 
-use OndrejVrto\Visitors\Contracts\CategoryContract;
-
-enum Category: int implements CategoryContract {
+enum Category: int {
     case WEB           = 1;
     case API           = 2;
     case AUTHENTICATED = 3;
