@@ -16,7 +16,6 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {
-
     use Setters;
 
     private bool $isCrawler;
@@ -32,6 +31,9 @@ class Visitor {
     private ?string $userAgent = null;
 
     private ?string $ipAddress = null;
+
+    /** @var string[] */
+    private array $ignoredIpAddresses = [];
 
     private ?VisitorCategory $category = null;
 
@@ -59,9 +61,11 @@ class Visitor {
             return StatusVisitor::NOT_INCREMENT_CRAWLERS;
         }
 
-        $this->handleRestProperties();
+        if ($this->ipAddress !== null && collect($this->ignoredIpAddresses)->contains($this->ipAddress)) {
+            return StatusVisitor::NOT_INCREMENT_IP_ADDRESS;
+        }
 
-        // TODO: dorobit kontrolu vylucenych ip adries a rozsirit status kody
+        $this->handleRestProperties();
 
         if ($checkExpire) {
             $visitorExpire = VisitorsExpires::query()
@@ -119,6 +123,11 @@ class Visitor {
         if (! isset($this->crawlerStorage)) {
             $crawlerStorage = config('visitors.storage_request_from_crawlers_and_bots');
             $this->crawlerStorage = is_bool($crawlerStorage) && $crawlerStorage;
+        }
+
+        $defaultIgnoreIP = config('visitors.ignored_ip_addresses');
+        if (is_array($defaultIgnoreIP) || is_string($defaultIgnoreIP)) {
+            $this->addIpAddressToIgnoreList($defaultIgnoreIP);
         }
     }
 

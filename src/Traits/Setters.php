@@ -22,13 +22,25 @@ trait Setters {
         return $this;
     }
 
-    public function fromIP(?string $ipAddress = null): self {
+    public function fromIP(string $ipAddress): self {
         $this->ipAddress = $ipAddress;
 
         return $this;
     }
 
-    public function fromBrowserAgent(?string $userAgent): self {
+    /** @param string|string[] $ipAddress */
+    public function addIpAddressToIgnoreList(string|array $ipAddress): self {
+        if (is_array($ipAddress)) {
+            $this->ignoredIpAddresses = array_merge($this->ignoredIpAddresses, $ipAddress);
+        } elseif (is_string($ipAddress)) {
+            $this->ignoredIpAddresses[] = $ipAddress;
+        }
+        $this->ignoredIpAddresses = array_unique($this->ignoredIpAddresses);
+
+        return $this;
+    }
+
+    public function fromBrowserAgent(string $userAgent): self {
         $this->userAgent = $userAgent;
 
         return $this;
