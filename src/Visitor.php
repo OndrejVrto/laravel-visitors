@@ -46,7 +46,7 @@ class Visitor {
     public function increment(bool $checkExpire = true): StatusVisitor {
         $this->handleProperties();
 
-// dump($this);
+        // dump($this);
 
         if ($this->isCrawler && ! $this->crawlerStorage) {
             return StatusVisitor::NOT_INCREMENT;
@@ -57,11 +57,12 @@ class Visitor {
                 ->select('expires_at')
                 ->whereMorphedTo(
                     'viewable',
-                    $this->subject)
+                    $this->subject
+                )
                 ->where('ip_address', $this->ipAddress)
                 ->first();
 
-// dump($checkExpire, $visitor);
+            // dump($checkExpire, $visitor);
 
             if ($visitor) {
                 if ($visitor->expires_at > now()) {
@@ -180,7 +181,7 @@ class Visitor {
             $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');
             $this->country = is_null($countryCode)
                 ? null
-                : ( is_string($countryCode) ? strtolower($countryCode) : null);
+                : (is_string($countryCode) ? strtolower($countryCode) : null);
         }
 
         if (! isset($this->language)) {
@@ -201,8 +202,7 @@ class Visitor {
     private function handleRequest(): void {
         $tempRequest = request();
 
-        if (! $tempRequest instanceof Request)
-        {
+        if (! $tempRequest instanceof Request) {
             throw new \Exception("Bad request type.");
         }
 
@@ -214,22 +214,18 @@ class Visitor {
     }
 
     private function getVisitorOperatingSystem(?string $agent): OperatingSystem {
-        if (is_null($agent))
-        {
+        if (is_null($agent)) {
             return OperatingSystem::UNKNOWN;
         }
 
-        foreach (OperatingSystem::cases() as $os)
-        {
+        foreach (OperatingSystem::cases() as $os) {
             $regex = $os->regexString();
 
-            if ($regex === null)
-            {
+            if ($regex === null) {
                 continue;
             }
 
-            if (preg_match($regex, $agent))
-            {
+            if (preg_match($regex, $agent)) {
                 return $os;
             }
         }

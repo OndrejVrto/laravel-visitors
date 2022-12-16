@@ -17,8 +17,7 @@ enum OperatingSystem: int {
     case LINUX         = 9;
 
     public function label(): string {
-        return match ($this)
-        {
+        return match ($this) {
             self::UNKNOWN       => 'Unknown',
             self::WINDOWS       => 'Windows',
             self::IPHONE        => 'iPhone',
@@ -34,8 +33,7 @@ enum OperatingSystem: int {
     }
 
     public function regexString(): ?string {
-        return match ($this)
-        {
+        return match ($this) {
             self::UNKNOWN       => null,
             self::WINDOWS       => '/windows|win32|win16|win95|win64/i',
             self::IPHONE        => '/iphone/i',

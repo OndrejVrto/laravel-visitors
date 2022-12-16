@@ -14,8 +14,7 @@ enum Category: int implements CategoryContract {
     case MANUAL        = 5;
 
     public function label(): string {
-        return match ($this)
-        {
+        return match ($this) {
             self::WEB           => 'From WEB requests',
             self::API           => 'From API requests',
             self::AUTHENTICATED => 'Authenticated users',

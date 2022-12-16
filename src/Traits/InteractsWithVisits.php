@@ -11,8 +11,7 @@ use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-trait InteractsWithVisits
-{
+trait InteractsWithVisits {
     public function visitExpire(?string $ipAddress = null): MorphMany {
         return $this
             ->morphMany(VisitorsExpires::class, 'viewable')

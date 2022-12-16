@@ -3,7 +3,6 @@
 namespace OndrejVrto\Visitors\Models;
 
 use OndrejVrto\Visitors\Enums\Category;
-use OndrejVrto\Visitors\Models\BaseVisitors;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;

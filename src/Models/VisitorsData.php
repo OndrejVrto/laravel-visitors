@@ -3,7 +3,6 @@
 namespace OndrejVrto\Visitors\Models;
 
 use OndrejVrto\Visitors\Enums\Category;
-use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
