@@ -52,10 +52,7 @@ return [
     * If you want set expiration time for ip adress and models in minutes.
     * Ignore this setting apply forceIncrement() method
     *
-    * I recommend leaving this enabled
     */
-
-    'with_remember_expiration_for_all_ip' => true,
 
     'expires_time' => 15,  // in minutes
 

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Traits\Setters;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
@@ -15,6 +16,9 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {
+
+    use Setters;
+
     private bool $isCrawler;
 
     private Request $request;
@@ -42,15 +46,22 @@ class Visitor {
     ) {
     }
 
+    public function forceIncrement(): StatusVisitor {
+        return $this->increment(false);
+    }
+
     public function increment(bool $checkExpire = true): StatusVisitor {
-        $this->handleProperties();
+        $this->handleInitialProperties();
 
         // dump($this);
 
-        // TODO: dorobit kontrolu vylucenych ip adries a rozsirit status kody
         if ($this->isCrawler && ! $this->crawlerStorage) {
-            return StatusVisitor::NOT_INCREMENT;
+            return StatusVisitor::NOT_INCREMENT_CRAWLERS;
         }
+
+        $this->handleRestProperties();
+
+        // TODO: dorobit kontrolu vylucenych ip adries a rozsirit status kody
 
         if ($checkExpire) {
             $visitorExpire = VisitorsExpires::query()
@@ -89,93 +100,38 @@ class Visitor {
         return StatusVisitor::INCREMENT_OK;
     }
 
-    public function forceIncrement(): StatusVisitor {
-        return $this->increment(false);
-    }
+    private function handleInitialProperties(): void {
+        /** @var \Illuminate\Http\Request $tempRequest */
+        $request = request();
+        if (! $request instanceof Request) {
+            throw new \Exception("Bad request type.");
+        }
+        $this->request = $request;
 
-    public function inCategory(VisitorCategory $category): self {
-        $this->category = $category;
+        if (! isset($this->userAgent)) {
+            $this->userAgent = $this->request->userAgent();
+        }
 
-        return $this;
-    }
-
-    public function withCrawlers(): self {
-        $this->crawlerStorage = true;
-
-        return $this;
-    }
-
-    public function withoutCrawlers(): self {
-        $this->crawlerStorage = false;
-
-        return $this;
-    }
-
-    public function expiresAt(DateTimeInterface|int $expiresAt): self {
-        $this->expiresAt = $expiresAt instanceof DateTimeInterface
-            ? $expiresAt
-            : Carbon::now()->addMinutes($expiresAt);
-
-        return $this;
-    }
-
-    public function isCrawler(bool $status = false): self {
-        $this->isCrawler = $status;
-
-        return $this;
-    }
-
-    public function fromCountry(string $country): self {
-        $this->country = $country;
-
-        return $this;
-    }
-
-    public function inLanguage(string $language): self {
-        $this->language = $language;
-
-        return $this;
-    }
-
-    public function fromOperatingSystem(OperatingSystem $operatingSystem): self {
-        $this->operatingSystem = $operatingSystem;
-
-        return $this;
-    }
-
-    public function visitedAt(DateTimeInterface $visitedAt = null): self {
-        $this->visitedAt = $visitedAt ?? Carbon::now();
-
-        return $this;
-    }
-
-    private function handleProperties(): void {
-        $this->handleRequest();
-
-        if (! isset($this->category)) {
-            $defaultCategory = config('visitors.default_category');
-            $this->category = (enum_exists($defaultCategory) && $defaultCategory instanceof \UnitEnum)
-                ? $defaultCategory
-                : VisitorCategory::UNDEFINED;
+        if (! isset($this->isCrawler)) {
+            $this->isCrawler = (new CrawlerDetect())->isCrawler($this->userAgent);
         }
 
         if (! isset($this->crawlerStorage)) {
             $crawlerStorage = config('visitors.storage_request_from_crawlers_and_bots');
             $this->crawlerStorage = is_bool($crawlerStorage) && $crawlerStorage;
         }
+    }
 
-        if (! isset($this->expiresAt)) {
-            $remember = config('vvisitors.with_remember_expiration_for_all_ip');
-            $remember = is_bool($remember) ? $remember : true;
-
-            $expireTime = $remember ? config('visitors.expires_time') : 0;
-            $expireTime = is_int($expireTime) ? $expireTime : 15;
-
-            $this->expiresAt($expireTime);
+    private function handleRestProperties(): void {
+        if (! isset($this->ipAddress)) {
+            $this->ipAddress = $this->request->ip();
         }
 
-        if (! isset($this->isCrawler)) {
-            $this->isCrawler = (new CrawlerDetect())->isCrawler($this->userAgent);
+        if (! isset($this->category)) {
+            $defaultCategory = config('visitors.default_category');
+            $this->category = (enum_exists($defaultCategory) && $defaultCategory instanceof \UnitEnum)
+                ? $defaultCategory
+                : VisitorCategory::UNDEFINED;
         }
 
         if (! isset($this->country)) {
@@ -198,21 +154,12 @@ class Visitor {
         if (! isset($this->visitedAt)) {
             $this->visitedAt = Carbon::now();
         }
-    }
 
-    private function handleRequest(): void {
-        /** @var \Illuminate\Http\Request $tempRequest */
-        $tempRequest = request();
-
-        if (! $tempRequest instanceof Request) {
-            throw new \Exception("Bad request type.");
+        if (! isset($this->expiresAt)) {
+            $expireTime = config('visitors.expires_time');
+            $expireTime = is_int($expireTime) ? $expireTime : 15;
+            $this->expiresAt($expireTime);
         }
-
-        $this->request = $tempRequest;
-
-        $this->ipAddress = $tempRequest->ip();
-
-        $this->userAgent = $tempRequest->userAgent();
     }
 
     private function getVisitorOperatingSystem(?string $agent): OperatingSystem {
