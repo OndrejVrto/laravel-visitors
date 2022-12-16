@@ -47,6 +47,7 @@ class Visitor {
 
         // dump($this);
 
+        // TODO: dorobit kontrolu vylucenych ip adries a rozsirit status kody
         if ($this->isCrawler && ! $this->crawlerStorage) {
             return StatusVisitor::NOT_INCREMENT;
         }
@@ -163,6 +164,7 @@ class Visitor {
         $this->handleRequest();
 
         if (! isset($this->category)) {
+            // TODO: default category from config
             $this->category = null;
         }
 

@@ -38,16 +38,10 @@ return [
     * --------------------------------------------------------------------------
     * Categories
     * --------------------------------------------------------------------------
-    *
-    * Defining different categories for the records
-    * TODO this texts
-    *
     */
 
-    'categories_list' => OndrejVrto\Visitors\Enums\Category::class,
-
-    'default_category' => null,
-    // 'default_category' => OndrejVrto\Visitors\Enums\Category::WEB,
+    // 'default_category' => null,
+    'default_category' => OndrejVrto\Visitors\Enums\Category::WEB,
 
 
     /**
