@@ -16,8 +16,8 @@ return new class extends Migration
     protected $morphsName;
 
     public function __construct() {
-        $this->schemaBuilder = Schema::connection(config('visitors.models.eloquent_connection'));
-        $this->tableNames = config('visitors.models.table_names');
+        $this->schemaBuilder = Schema::connection(config('visitors.eloquent_connection'));
+        $this->tableNames = config('visitors.table_names');
     }
 
     public function up(): void {

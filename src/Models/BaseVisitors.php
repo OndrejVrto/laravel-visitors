@@ -25,14 +25,14 @@ abstract class BaseVisitors extends Model {
     }
 
     public function getConnectionName(): ?string {
-        $nameConnection = config('visitors.models.eloquent_connection');
+        $nameConnection = config('visitors.eloquent_connection');
         return is_string($nameConnection)
             ? $nameConnection
             : parent::getConnectionName();
     }
 
     public function getTable(): string {
-        $nameTable = config("visitors.models.table_names.$this->configTableName");
+        $nameTable = config("visitors.table_names.$this->configTableName");
         return is_string($nameTable)
             ? $nameTable
             : parent::getTable();
