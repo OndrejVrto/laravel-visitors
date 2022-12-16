@@ -53,31 +53,20 @@ class Visitor {
         }
 
         if ($checkExpire) {
-            $visitorExpires = VisitorsExpires::query()
+            $visitorExpire = VisitorsExpires::query()
                 ->select(['id', 'expires_at'])
-                ->whereMorphedTo(
-                    'viewable',
-                    $this->subject
-                )
-                ->when(
-                    $this->ipAddress === null,
-                    fn ($q) => $q->whereNull('ip_address'),
-                    fn ($q) => $q->where('ip_address', $this->ipAddress),
-                )
-                ->when(
-                    $this->category === null,
-                    fn ($q) => $q->whereNull('category'),
-                    fn ($q) => $q->where('category', $this->category),
-                )
+                ->whereMorphedTo('viewable', $this->subject)
+                ->whereIpAddress($this->ipAddress)
+                ->whereCategory($this->category)
                 ->first();
 
-            // dd($checkExpire, $visitorExpires);
+            if ($visitorExpire) {
+                // dump($visitorExpire, $visitorExpire->expires_at, Carbon::now()->lessThan($visitorExpire->expires_at));
 
-            if ($visitorExpires) {
-                if ($visitorExpires->expires_at > now()) {
+                if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
                     return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
                 } else {
-                    $visitorExpires->update(['expires_at' => $this->expiresAt]);
+                    $visitorExpire->update(['expires_at' => $this->expiresAt]);
                 }
             } else {
                 $this->subject->visitExpires()->create([
