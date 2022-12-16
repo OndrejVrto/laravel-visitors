@@ -153,8 +153,10 @@ class Visitor {
         $this->handleRequest();
 
         if (! isset($this->category)) {
-            // TODO: default category from config
-            $this->category = null;
+            $defaultCategory = config('visitors.default_category');
+            $this->category = (enum_exists($defaultCategory) && $defaultCategory instanceof \UnitEnum)
+                ? $defaultCategory
+                : VisitorCategory::UNDEFINED;
         }
 
         if (! isset($this->crawlerStorage)) {

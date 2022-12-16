@@ -41,7 +41,7 @@ return [
     */
 
     // 'default_category' => null,
-    'default_category' => OndrejVrto\Visitors\Enums\VisitorCategory::WEB,
+    'default_category' => OndrejVrto\Visitors\Enums\VisitorCategory::UNDEFINED,
 
 
     /**
