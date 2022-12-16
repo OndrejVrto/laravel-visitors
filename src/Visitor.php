@@ -107,6 +107,10 @@ class Visitor {
     private function handleInitialProperties(): void {
         $this->request = request();
 
+        if (! isset($this->ipAddress)) {
+            $this->ipAddress = $this->request->ip();
+        }
+
         if (! isset($this->userAgent)) {
             $this->userAgent = $this->request->userAgent();
         }
@@ -127,10 +131,6 @@ class Visitor {
     }
 
     private function handleRestProperties(): void {
-        if (! isset($this->ipAddress)) {
-            $this->ipAddress = $this->request->ip();
-        }
-
         if (! isset($this->category)) {
             $defaultCategory = config('visitors.default_category');
             $this->category = (is_string($defaultCategory) && VisitorCategory::isValidCase($defaultCategory))
