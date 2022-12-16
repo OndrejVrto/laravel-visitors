@@ -2,9 +2,8 @@
 
 /**
  * for packages: ondrej-vrto/laravel-visitors
- * @see https://github.com/artesaos/seotools
+ * @see https://github.com/OndrejVrto/laravel-visitors
  */
-
 
 return [
 
