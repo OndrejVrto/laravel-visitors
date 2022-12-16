@@ -176,7 +176,7 @@ class Visitor {
         // dump($visitorExpire);
 
         if ($visitorExpire instanceof BaseVisitors) {
-            if (Carbon::now()->lessThan($visitorExpire->expires_at)) {
+            if (Carbon::now()->lessThan($visitorExpire->getAttributeValue('expires_at'))) {
                 return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
             }
 
