@@ -20,9 +20,7 @@ class VisitorsServiceProvider extends PackageServiceProvider {
         $package
             ->name('laravel-visitors')
             ->hasConfigFile()
-            ->hasMigrations([
-                'create_all_visitors_tables',
-            ])
+            ->hasMigration('create_all_visitors_tables')
             ->hasCommands([
                 VisitorsFreshCommand::class,
                 VisitorsCleanCommand::class,

@@ -53,6 +53,7 @@ class Visitor {
 
         if ($checkExpire) {
             $visitorExpires = VisitorsExpires::query()
+                ->select(['id', 'expires_at'])
                 ->whereMorphedTo(
                     'viewable',
                     $this->subject
@@ -78,7 +79,7 @@ class Visitor {
                     $visitorExpires->update(['expires_at' => $this->expiresAt]);
                 }
             } else {
-                $this->subject->visitExpire()->create([
+                $this->subject->visitExpires()->create([
                     'ip_address' => $this->ipAddress,
                     'category'   => $this->category,
                     'expires_at' => $this->expiresAt,
