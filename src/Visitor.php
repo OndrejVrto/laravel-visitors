@@ -15,32 +15,31 @@ use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {
-    protected readonly Model $subject;
+    private bool $isCrawler;
 
     private Request $request;
 
-    private ?string $ipAddress = null;
-
-    private ?string $userAgent = null;
-
-    private ?Category $category = null;
-
     private bool $crawlerStorage;
-
-    private DateTimeInterface $expiresAt;
-
-    private bool $isCrawler;
 
     private ?string $country = null;
 
     private ?string $language = null;
 
-    private OperatingSystem $operatingSystem;
+    private ?string $userAgent = null;
+
+    private ?string $ipAddress = null;
+
+    private ?Category $category = null;
+
+    private DateTimeInterface $expiresAt;
 
     private DateTimeInterface $visitedAt;
 
-    public function __construct(Model $subject) {
-        $this->subject = $subject;
+    private OperatingSystem $operatingSystem;
+
+    public function __construct(
+        protected readonly Model $subject
+    ) {
     }
 
     public function increment(bool $checkExpire = true): StatusVisitor {
