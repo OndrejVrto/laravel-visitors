@@ -2,6 +2,7 @@
 
 namespace OndrejVrto\Visitors\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -38,5 +39,17 @@ class VisitorsStatistics extends BaseVisitors {
 
     protected static function newFactory(): Factory {
         return new VisitorsStatisticsFactory();
+    }
+
+    // todo this scopes
+    public function scopeOrderByVisits(Builder $query): Builder {
+        return $query
+            ->orderByDesc('visit_persons');
+    }
+
+    // todo this scopes
+    public function scopeOrderByVisitsAcs(Builder $query): Builder {
+        return $query
+            ->orderBy('visit_persons');
     }
 }

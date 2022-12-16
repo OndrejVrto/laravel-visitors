@@ -3,8 +3,9 @@
 namespace OndrejVrto\Visitors\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-
 abstract class BaseVisitors extends Model {
     public $timestamps = false;
 
@@ -34,5 +35,14 @@ abstract class BaseVisitors extends Model {
         return is_string($nameTable)
             ? $nameTable
             : parent::getTable();
+    }
+
+    public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
+        return $query
+            ->when(
+                $category === null,
+                fn ($q) => $q->whereNull('category'),
+                fn ($q) => $q->where('category', $category),
+            );
     }
 }

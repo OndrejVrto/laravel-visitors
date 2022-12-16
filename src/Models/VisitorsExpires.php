@@ -2,6 +2,7 @@
 
 namespace OndrejVrto\Visitors\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsExpiresFactory;
@@ -21,5 +22,14 @@ class VisitorsExpires extends BaseVisitors {
 
     protected static function newFactory(): Factory {
         return new VisitorsExpiresFactory();
+    }
+
+    public function scopeWhereIpAddress(Builder $query, ?string $ipAddress = null): Builder {
+        return $query
+            ->when(
+                $ipAddress === null,
+                fn ($q) => $q->whereNull('ip_address'),
+                fn ($q) => $q->where('ip_address', $ipAddress),
+            );
     }
 }
