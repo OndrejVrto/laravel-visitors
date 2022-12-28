@@ -30,8 +30,8 @@ return new class extends Migration
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
+            $table->unsignedTinyInteger('category');  // ENUM
             $table->ipAddress('ip_address')->nullable();
-            $table->unsignedTinyInteger('category')->nullable();  // ENUM
             $table->unique(
                 ["viewable_type", "viewable_id", "ip_address", 'category'],
                 'visitors_expires_viewable_ip_address_category_unique'
@@ -45,10 +45,13 @@ return new class extends Migration
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
-            $table->unsignedTinyInteger('category')->nullable();  // ENUM
-            $table->index(["viewable_type", "viewable_id", 'category']);
-
+            $table->unsignedTinyInteger('category');  // ENUM
             $table->boolean('is_crawler');
+            $table->index(
+                ["viewable_type", "viewable_id", 'category', 'is_crawler'],
+                'visitors_data_viewable_category_crawler_index'
+            );
+
             $table->string('country')->nullable();
             $table->string('language')->nullable();
             $table->unsignedTinyInteger('operating_system');  // ENUM
@@ -56,34 +59,50 @@ return new class extends Migration
             $table->timestamp('visited_at')->useCurrent();
         });
 
-        $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
+        $this->schemaBuilder->create($this->tableNames['daily_graph'], function (Blueprint $table) {
             $table->mediumIncrements('id');
 
-            $table->string("viewable_type", 60);
-            $table->unsignedInteger("viewable_id");
+            $table->string("viewable_type", 60)->nullable();
+            $table->unsignedInteger("viewable_id")->nullable();
             $table->unsignedTinyInteger('category')->nullable();  // ENUM
-            $table->index(["viewable_type", "viewable_id", 'category']);
+            $table->boolean('is_crawler')->nullable();
 
-            $table->unsignedSmallInteger('visit_yesterday')->default(0);
-            $table->unsignedSmallInteger('visit_this_week')->default(0);
-            $table->unsignedMediumInteger('visit_this_month')->default(0);
-            $table->unsignedMediumInteger('visit_last_year')->default(0);
-
-            $table->unsignedMediumInteger('visit_persons')->default(0);
-            $table->unsignedMediumInteger('visit_crawlers')->default(0);
-            $table->unsignedMediumInteger('visit_total')->default(0);
+            $table->index(
+                ["viewable_type", "viewable_id", 'category', 'is_crawler'],
+                'visitors_daily_graph_viewable_category_crawler_index'
+            );
 
             $table->json('daily_numbers')->nullable();
-            $table->json('weekly_numbers')->nullable();
-            $table->json('monthly_numbers')->nullable();
-            $table->json('annual_numbers')->nullable();
+            $table->unsignedSmallInteger('day_maximum')->default(0);
 
-            $table->json('countries')->nullable();
-            $table->json('languages')->nullable();
-            $table->json('operating_systems')->nullable();
+            $table->unsignedMediumInteger('visit_total')->default(0);
+            $table->unsignedSmallInteger('visit_yesterday')->default(0);
+            $table->unsignedSmallInteger('visit_last_7_days')->default(0);
+            $table->unsignedMediumInteger('visit_last_30_days')->default(0);
+            $table->unsignedMediumInteger('visit_last_365_days')->default(0);
+        });
 
-            $table->timestamp('updated_at')->useCurrent();
-            $table->softDeletes();
+        $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
+            $table->smallInteger('id')->primary();
+
+            $table->json('daily_numbers')->nullable();
+            $table->unsignedSmallInteger('day_maximum')->default(0);
+
+            $table->unsignedMediumInteger('visit_total')->default(0);
+            $table->unsignedSmallInteger('visit_yesterday')->default(0);
+            $table->unsignedSmallInteger('visit_last_7_days')->default(0);
+            $table->unsignedMediumInteger('visit_last_30_days')->default(0);
+            $table->unsignedMediumInteger('visit_last_365_days')->default(0);
+
+            $table->json('sumar_countries')->nullable();
+            $table->json('sumar_languages')->nullable();
+            $table->json('sumar_operating_systems')->nullable();
+
+            $table->timestamp('from')->nullable();
+            $table->timestamp('to')->nullable();
+            $table->unsignedMediumInteger("last_data_id")->nullable();
+
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
@@ -92,8 +111,9 @@ return new class extends Migration
             throw new \Exception('Error: config/visitors.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
         }
 
-        $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
         $this->schemaBuilder->dropIfExists($this->tableNames['data']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
         $this->schemaBuilder->dropIfExists($this->tableNames['statistics']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['daily_graph']);
     }
 };
