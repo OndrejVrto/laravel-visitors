@@ -6,12 +6,12 @@ namespace OndrejVrto\Visitors\Traits;
 
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
-use OndrejVrto\Visitors\Models\VisitorsStatistics;
+use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
 use OndrejVrto\Visitors\Observers\VisitableObserver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait InteractsWithVisits {
-    protected $removeStatisticsOnDelete = true;
+    protected $removeDataOnDelete = true;
 
     public static function bootInteractsWithVisits(): void {
         static::observe(VisitableObserver::class);
@@ -25,7 +25,7 @@ trait InteractsWithVisits {
         return $this->morphMany(VisitorsData::class, 'viewable');
     }
 
-    public function visitStatistics(): MorphMany {
-        return $this->morphMany(VisitorsStatistics::class, 'viewable');
+    public function visitDailyGraphs(): MorphMany {
+        return $this->morphMany(VisitorsDailyGraph::class, 'viewable');
     }
 }

@@ -2,54 +2,44 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OndrejVrto\Visitors\Enums\VisitorCategory;
+use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Models\ModelSettings;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use OndrejVrto\Visitors\Database\Factories\VisitorsStatisticsFactory;
 
-class VisitorsStatistics extends BaseVisitors {
-    use SoftDeletes;
+class VisitorsStatistics extends Model {
+    use ModelSettings;
 
-    public function __construct(array $attributes = []) {
-        $this->mergeCasts([
-            'category'          => VisitorCategory::class,
-            'visit_yesterday'   => 'integer',
-            'visit_this_week'   => 'integer',
-            'visit_this_month'  => 'integer',
-            'visit_last_year'   => 'integer',
-            'visit_persons'     => 'integer',
-            'visit_crawlers'    => 'integer',
-            'visit_total'       => 'integer',
-            'daily_numbers'     => AsCollection::class,
-            'weekly_numbers'    => AsCollection::class,
-            'monthly_numbers'   => AsCollection::class,
-            'annual_numbers'    => AsCollection::class,
-            'countries'         => AsCollection::class,
-            'languages'         => AsCollection::class,
-            'operating_systems' => AsCollection::class,
-            'updated_at'        => 'datetime',
-        ]);
+    public $timestamps = false;
 
-        $this->configTableName = "statistics";
+    public $guarded = [];
 
-        parent::__construct($attributes);
-    }
+    protected string $configTableName = "statistics";
+
+    protected $casts = [
+        'id'                      => 'integer',
+        'daily_numbers'           => AsCollection::class,
+        'day_maximum'             => 'integer',
+
+        'visit_total'             => 'integer',
+        'visit_yesterday'         => 'integer',
+        'visit_last_7_days'       => 'integer',
+        'visit_last_30_days'      => 'integer',
+        'visit_last_365_days'     => 'integer',
+
+        'sumar_countries'         => AsCollection::class,
+        'sumar_languages'         => AsCollection::class,
+        'sumar_operating_systems' => AsCollection::class,
+
+        'from'                    => 'datetime',
+        'to'                      => 'datetime',
+        'last_data_id'            => 'integer',
+
+        'updated_at'              => 'datetime',
+    ];
 
     protected static function newFactory(): Factory {
         return new VisitorsStatisticsFactory();
-    }
-
-    // todo this scopes
-    public function scopeOrderByVisits(Builder $query): Builder {
-        return $query
-            ->orderByDesc('visit_persons');
-    }
-
-    // todo this scopes
-    public function scopeOrderByVisitsAcs(Builder $query): Builder {
-        return $query
-            ->orderBy('visit_persons');
     }
 }

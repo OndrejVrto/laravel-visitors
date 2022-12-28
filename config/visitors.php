@@ -9,7 +9,7 @@ return [
 
     /**
     * --------------------------------------------------------------------------
-    * Eloquent Connection
+    * Eloquent settings
     * --------------------------------------------------------------------------
     *
     * Here you can configure connection for store data in database.
@@ -18,17 +18,14 @@ return [
     'eloquent_connection' => env('DB_CONNECTION', 'mysql'),
 
     /**
-    * --------------------------------------------------------------------------
-    * Eloquent Connection
-    * --------------------------------------------------------------------------
-    *
     * Here you can configure the table names in database.
     */
 
     'table_names' => [
-        'expires'    => 'visitors_expires',
-        'data'       => 'visitors_data',
-        'statistics' => 'visitors_statistics',
+        'expires'     => 'visitors_expires',
+        'data'        => 'visitors_data',
+        'statistics'  => 'visitors_statistics',
+        'daily_graph' => 'visitors_daily_graph',
     ],
 
 
@@ -62,7 +59,7 @@ return [
 
     /**
     * --------------------------------------------------------------------------
-    * Ignore Bots
+    * Ignore Bots and IP addresses
     * --------------------------------------------------------------------------
     *
     * If you want to ignore bots, you can specify that here. The default
@@ -74,16 +71,45 @@ return [
 
     'storage_request_from_crawlers_and_bots' => false,
 
-
     /**
-    * --------------------------------------------------------------------------
-    * Ignore IP Addresses
-    * --------------------------------------------------------------------------
-    *
     * Ignore views of the following IP addresses.
     */
 
     'ignored_ip_addresses' => [
         // '127.0.0.1',
     ],
+
+
+    /**
+    * --------------------------------------------------------------------------
+    * Statistics and Graph data
+    * --------------------------------------------------------------------------
+    *
+    * The number of days for which traffic statistics are created from today.
+    * Warning: Older data will be permanently deleted.
+    *
+    * Value range: 1 day - 36500 days
+    * Default value: 730 (two years)
+    */
+
+    'number_days_statistics' => 730,
+
+    /**
+    * Create statistics for all used categories.
+    * Warning: Slows down data generation.
+    *
+    * Default value: false
+    */
+
+    'create_categories_statistics' => false,
+
+    /**
+    * Create statistics for crawler data as well.
+    * Warning: Slows down data generation.
+    * Note: enable setting "storage_request_from_crawlers_and_bots" to true
+    *   or apply withCrawlers() method.
+    *
+    * Default value: false
+    */
+    'create_crawlers_statistics' => false,
 ];

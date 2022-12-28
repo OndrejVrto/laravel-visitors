@@ -8,6 +8,8 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 abstract class BaseVisitors extends Model {
+    use ModelSettings;
+
     public $timestamps = false;
 
     public $guarded = [];
@@ -22,20 +24,6 @@ abstract class BaseVisitors extends Model {
 
     public function viewable(): MorphTo {
         return $this->morphTo();
-    }
-
-    public function getConnectionName(): ?string {
-        $nameConnection = config('visitors.eloquent_connection');
-        return is_string($nameConnection)
-            ? $nameConnection
-            : parent::getConnectionName();
-    }
-
-    public function getTable(): string {
-        $nameTable = config("visitors.table_names.$this->configTableName");
-        return is_string($nameTable)
-            ? $nameTable
-            : parent::getTable();
     }
 
     public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
