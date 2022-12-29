@@ -46,6 +46,18 @@ visit($post)
 	->forceIncrement();
 
 
+
+
+// -----------------------------------------------------------------------------
+// PRUNE MODELS
+// -----------------------------------------------------------------------------
+// in App\Console\Kernel
+$schedule->command('model:prune')->daily();
+// OR
+$schedule->command('model:prune', [
+    '--model' => [VisitorsData::class, VisitorsExpires::class],
+])->daily();
+
 // -----------------------------------------------------------------------------
 // GENERATE STATISTICS
 // -----------------------------------------------------------------------------
@@ -138,7 +150,7 @@ class Post extends Model implements Visitable
 {
     use InteractsWithVisits;
 
-	protected $removeStatisticsOnDelete = true;
+	protected $removeDataOnDelete = true;
 
 	// ...
 }
