@@ -37,7 +37,7 @@ return [
     * Use one of the options of the enum VisitCategory to set
     * the default category.
     *
-    * Default value: OndrejVrto\Visitors\Enums\VisitorCategory::UNDEFINED
+    * Default: OndrejVrto\Visitors\Enums\VisitorCategory::UNDEFINED
     */
 
     'default_category' => OndrejVrto\Visitors\Enums\VisitorCategory::UNDEFINED,
@@ -51,7 +51,7 @@ return [
     * If you want set expiration time for ip adress and models in minutes.
     * Ignore this setting apply forceIncrement() method
     *
-    * Default value: 15
+    * Default: 15
     */
 
     'expires_time' => 15,  // in minutes
@@ -88,28 +88,27 @@ return [
     * The number of days for which traffic statistics are created from today.
     * Warning: Older data will be permanently deleted.
     *
-    * Value range: 1 day - 36500 days
+    * Value range  : 1 day - 36500 days
     * Default value: 730 (two years)
     */
 
-    'number_days_statistics' => 730,
+    'number_days_statistics' => 365,
 
     /**
-    * Create statistics for all used categories.
-    * Warning: Slows down data generation.
+    * Create separate daily graphs for used categories.
     *
-    * Default value: false
+    * Warning: Slows down daily graph data generation.
+    * Default: false
     */
 
     'create_categories_statistics' => false,
 
     /**
-    * Create statistics for crawler data as well.
-    * Warning: Slows down data generation.
-    * Note: enable setting "storage_request_from_crawlers_and_bots" to true
-    *   or apply withCrawlers() method.
+    * Create separate daily graphs for crawler.
     *
-    * Default value: false
+    * Note   : If is set "storage_request_from_crawlers_and_bots" to true or apply withCrawlers() method.
+    * Warning: Slows down daily graph data generation.
+    * Default: false
     */
     'create_crawlers_statistics' => false,
 ];

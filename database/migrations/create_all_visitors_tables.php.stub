@@ -72,37 +72,37 @@ return new class extends Migration
                 'visitors_daily_graph_viewable_category_crawler_index'
             );
 
-            $table->json('daily_numbers')->nullable();
-            $table->unsignedSmallInteger('day_maximum')->default(0);
+            $table->json('daily_numbers');
+            $table->unsignedSmallInteger('day_maximum');
 
-            $table->unsignedMediumInteger('visit_total')->default(0);
-            $table->unsignedSmallInteger('visit_yesterday')->default(0);
-            $table->unsignedSmallInteger('visit_last_7_days')->default(0);
-            $table->unsignedMediumInteger('visit_last_30_days')->default(0);
-            $table->unsignedMediumInteger('visit_last_365_days')->default(0);
+            $table->unsignedMediumInteger('visit_total');
+            $table->unsignedSmallInteger('visit_yesterday');
+            $table->unsignedSmallInteger('visit_last_7_days');
+            $table->unsignedMediumInteger('visit_last_30_days');
+            $table->unsignedMediumInteger('visit_last_365_days');
         });
 
         $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
             $table->smallInteger('id')->primary();
 
-            $table->json('daily_numbers')->nullable();
-            $table->unsignedSmallInteger('day_maximum')->default(0);
+            $table->json('daily_numbers');
+            $table->unsignedSmallInteger('day_maximum');
 
-            $table->unsignedMediumInteger('visit_total')->default(0);
-            $table->unsignedSmallInteger('visit_yesterday')->default(0);
-            $table->unsignedSmallInteger('visit_last_7_days')->default(0);
-            $table->unsignedMediumInteger('visit_last_30_days')->default(0);
-            $table->unsignedMediumInteger('visit_last_365_days')->default(0);
+            $table->unsignedMediumInteger('visit_total');
+            $table->unsignedSmallInteger('visit_yesterday');
+            $table->unsignedSmallInteger('visit_last_7_days');
+            $table->unsignedMediumInteger('visit_last_30_days');
+            $table->unsignedMediumInteger('visit_last_365_days');
 
-            $table->json('sumar_countries')->nullable();
-            $table->json('sumar_languages')->nullable();
-            $table->json('sumar_operating_systems')->nullable();
+            $table->json('sumar_countries');
+            $table->json('sumar_languages');
+            $table->json('sumar_operating_systems');
 
-            $table->timestamp('from')->nullable();
-            $table->timestamp('to')->nullable();
-            $table->unsignedMediumInteger("last_data_id")->nullable();
+            $table->timestamp('from');
+            $table->timestamp('to');
+            $table->unsignedMediumInteger("last_data_id");
 
-            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
