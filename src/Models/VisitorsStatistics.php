@@ -3,7 +3,6 @@
 namespace OndrejVrto\Visitors\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OndrejVrto\Visitors\Models\ModelSettings;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use OndrejVrto\Visitors\Database\Factories\VisitorsStatisticsFactory;

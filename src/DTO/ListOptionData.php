@@ -10,6 +10,6 @@ class ListOptionData {
         public readonly ?int $viewable_id,
         public readonly ?bool $is_crawler,
         public readonly ?int $category,
-    ){
+    ) {
     }
 }

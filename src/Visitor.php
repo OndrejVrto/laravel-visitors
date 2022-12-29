@@ -12,9 +12,9 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
-use OndrejVrto\Visitors\Traits\VisitorSetters;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
+use OndrejVrto\Visitors\Traits\VisitorSetters;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visitor {

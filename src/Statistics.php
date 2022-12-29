@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
@@ -71,7 +70,6 @@ class Statistics {
 
         $dateQuery = $this->dateListQuery();
         foreach ($listOfOptions as $listOptionData) {
-
             $dailyVisitQuery = $this->visitQuery($listOptionData);
 
             $dailyNumbers = $this->dailyNumbersQuery($dateQuery, $dailyVisitQuery)->get();
@@ -128,10 +126,10 @@ class Statistics {
         return VisitorsData::query()
             ->selectRaw("DATE(visited_at) AS visits_date")
             ->selectRaw("COUNT(visited_at) AS visits_count")
-            ->when(!is_null($listOptionData->viewable_type), fn($q) => $q->where("viewable_type", $listOptionData->viewable_type))
-            ->when(!is_null($listOptionData->viewable_id), fn($q) => $q->where("viewable_id", $listOptionData->viewable_id))
-            ->when(!is_null($listOptionData->is_crawler), fn($q) => $q->where("is_crawler", $listOptionData->is_crawler))
-            ->when(!is_null($listOptionData->category), fn($q) => $q->where("category", $listOptionData->category))
+            ->when(!is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
+            ->when(!is_null($listOptionData->viewable_id), fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
+            ->when(!is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
+            ->when(!is_null($listOptionData->category), fn ($q) => $q->where("category", $listOptionData->category))
             ->groupBy("visits_date");
     }
 
@@ -164,32 +162,32 @@ class Statistics {
 /**
 SELECT DATE_LIST.selected_date, COALESCE(VISIT.visits_count, 0) AS visits_count
 FROM
-	(SELECT *
-	FROM
-		(SELECT adddate('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date
-		FROM
-			(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
-			(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
-			(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
-			(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
-			(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
-		) v
-	WHERE selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL 365 DAY) AND CURDATE()
-	) AS DATE_LIST
+    (SELECT *
+    FROM
+        (SELECT adddate('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date
+        FROM
+            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
+            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
+            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
+            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
+            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
+        ) v
+    WHERE selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL 365 DAY) AND CURDATE()
+    ) AS DATE_LIST
 LEFT JOIN
-	(SELECT
-		DATE(visited_at) AS visits_date,
-		COUNT(visited_at) AS visits_count
-	FROM `visitors_data`
-	WHERE
-		viewable_type = 'App\\Models\\StaticPage'
-		AND
-		viewable_id = 73
-		AND
-		category = 5
-		AND
-		is_crawler = 0
-	GROUP BY visits_date) AS VISIT
+    (SELECT
+        DATE(visited_at) AS visits_date,
+        COUNT(visited_at) AS visits_count
+    FROM `visitors_data`
+    WHERE
+        viewable_type = 'App\\Models\\StaticPage'
+        AND
+        viewable_id = 73
+        AND
+        category = 5
+        AND
+        is_crawler = 0
+    GROUP BY visits_date) AS VISIT
 ON DATE_LIST.selected_date = VISIT.visits_date
 ORDER BY selected_date DESC;
 */

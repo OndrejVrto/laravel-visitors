@@ -50,10 +50,10 @@ class ListOptions {
             ->where("id", "<=", $lastId)
             ->orderByRaw(implode(", ", $columns))
             ->get()
-            ->map(fn($item) => (array) $item)
-            ->map(function($item) {
-                $is_crawler = array_key_exists("is_crawler", $item) ? (is_null($item["is_crawler"]) ? null : (bool) $item["is_crawler"] ) : false;
-                $category   = array_key_exists("category", $item) ? (is_null($item["category"]) ? null : (int) $item["category"] ) : null;
+            ->map(fn ($item) => (array) $item)
+            ->map(function ($item) {
+                $is_crawler = array_key_exists("is_crawler", $item) ? (is_null($item["is_crawler"]) ? null : (bool) $item["is_crawler"]) : false;
+                $category   = array_key_exists("category", $item) ? (is_null($item["category"]) ? null : (int) $item["category"]) : null;
 
                 return new ListOptionData(
                     $item["viewable_type"],
