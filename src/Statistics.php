@@ -42,9 +42,9 @@ class Statistics {
         $this->numberDaysStatistics = static::numberDaysStatistics();
 
         $range = VisitorsData::query()
-            ->selectRaw("MIN(`visited_at`) AS date_from")
-            ->selectRaw("MAX(`visited_at`) AS date_to")
-            ->selectRaw("MAX(`id`) AS last_id")
+            ->selectRaw("min(`visited_at`) as `date_from`")
+            ->selectRaw("max(`visited_at`) as `date_to`")
+            ->selectRaw("max(`id`) as `last_id`")
             ->first();
 
         if (!$range instanceof \OndrejVrto\Visitors\Models\VisitorsData) {
@@ -99,7 +99,7 @@ class Statistics {
             'from'                    => $this->from,
             'to'                      => $this->to,
             'last_data_id'            => $this->lastId,
-            'updated_at'              => Carbon::now(),
+            'updated_at'              => now(),
         ]);
 
         // generate daily graphs
@@ -136,7 +136,7 @@ class Statistics {
         return $this->dbConnection
             ->query()
             ->select($columnName)
-            ->selectRaw("COUNT($columnName) AS count_$columnName")
+            ->selectRaw("count(`$columnName`) as `count_$columnName`")
             ->from($this->dataTableName)
             ->where('id', "<=", $this->lastId)
             ->groupBy($columnName)
@@ -146,32 +146,33 @@ class Statistics {
     private function dailyNumbersQuery(Builder $dateQuery, Builder $dailyVisitQuery): Builder {
         return $this->dbConnection
             ->query()
-            ->selectRaw("DATE_LIST.selected_date")
-            ->selectRaw("COALESCE(VISIT.visits_count, 0) AS visits_count")
-            ->fromSub($dateQuery->toSql(), 'DATE_LIST')
-            ->setBindings($dateQuery->getBindings())
-            ->leftJoinSub($dailyVisitQuery->toSql(), 'VISIT', "DATE_LIST.selected_date", "=", "VISIT.visits_date")
-            ->addBinding($dailyVisitQuery->getBindings())
+            ->selectRaw("`date_list`.`selected_date`")
+            ->selectRaw("coalesce(`visit`.`visits_count`, 0) as `visits_count`")
+            ->fromSub($dateQuery, 'date_list')
+            ->leftJoinSub($dailyVisitQuery, 'visit', "date_list.selected_date", "=", "visit.visits_date")
             ->orderByDesc("selected_date");
     }
 
     private function dateListQuery(): Builder {
-        $selectedDateQuery = "SELECT ADDDATE('1970-01-01', t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date FROM
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4";
-        // $selectedDateQuery = preg_replace(['/\r\n|\r|\n/', '/ +/'], " ", $selectedDateQuery);
+        $dateRangeQuery = "select adddate('2022-01-01', t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) as `selected_date` from
+            (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t0,
+            (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1,
+            (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2,
+            (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3";
+        $dateRangeQuery = trim(preg_replace('/\s\s+/', ' ', $dateRangeQuery));
 
-        return DB::query()->fromSub($selectedDateQuery, 'V')
-            ->whereRaw("selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL ? DAY) AND CURDATE()", [$this->numberDaysStatistics]);
+        return $this->dbConnection
+            ->query()
+            ->fromSub($dateRangeQuery, 'x')
+            ->whereRaw("`selected_date` between subdate(curdate(), interval ? day) and curdate()", [$this->numberDaysStatistics]);
     }
 
     private function visitQuery(ListOptionData $listOptionData): Builder {
-        return DB::table($this->dataTableName)
-            ->selectRaw("DATE(visited_at) AS visits_date")
-            ->selectRaw("COUNT(visited_at) AS visits_count")
+        return $this->dbConnection
+            ->query()
+            ->selectRaw("date(`visited_at`) as `visits_date`")
+            ->selectRaw("count(`visited_at`) as `visits_count`")
+            ->from($this->dataTableName)
             ->where('id', "<=", $this->lastId)
             ->when(!is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
             ->when(!is_null($listOptionData->viewable_id), fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
