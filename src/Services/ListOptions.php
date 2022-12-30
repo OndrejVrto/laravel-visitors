@@ -12,7 +12,6 @@ class ListOptions {
     /**
      * TODO: desc
      *
-     *
      * @return Collection<int,ListOptionData>
      */
     public static function prepare(
@@ -22,49 +21,57 @@ class ListOptions {
         bool $generateCrawlersStatistics,
         int $lastId,
     ): Collection {
-        // aply configuration
-        $range = [["id, viewable_type, viewable_id", "id, viewable_type, NULL", "id, NULL, NULL"]];
         $columns = ["viewable_type", "viewable_id"];
+        $range = [[
+            "`id`, `viewable_type`, `viewable_id`",
+            "`id`, `viewable_type`, null",
+            "`id`, null, null"
+        ]];
 
         if ($generateCrawlersStatistics) {
-            $range[] = ["is_crawler", "NULL"];
             $columns[] = "is_crawler";
+            $range[] = ["`is_crawler`", "null"];
         }
 
         if ($generateCategoryStatistics) {
-            $range[] = ["category", "NULL"];
             $columns[] = "category";
+            $range[] = ["`category`", "null"];
         }
 
         // generate list of posibilities
-        $unionSubQuery = collect(combinations($range, ", "))
-            ->map(function ($i) use ($tableName): string {
+        $unionSubQuery = collect(
+                combinations($range, ", ")
+            )->map(function ($i) use ($tableName): string {
                 $i = is_array($i) ? implode(", ", $i) : $i;
-                return "SELECT ".$i." FROM `".$tableName."`";
-            })->implode(" UNION ");
+                return "select $i from `$tableName`";
+            })->implode(" union ");
 
         // fetch query
         return $dbConnection
             ->query()
             ->select($columns)
             ->distinct()
-            ->fromSub($unionSubQuery, 'VARIANTS')
-            ->where("id", "<=", $lastId)
-            // ->orderByRaw(implode(", ", $columns))
+            ->fromSub($unionSubQuery, 'variants')
+            ->where('id', '<=', $lastId)
+            ->orderBy('viewable_type')
+            ->orderBy('viewable_id')
+            ->when($generateCrawlersStatistics, fn($q) => $q->orderBy('is_crawler'))
+            ->when($generateCategoryStatistics, fn($q) => $q->orderBy('category'))
+            // ->dd()
             ->get()
             // ->dump()
             ->map(function ($item): ListOptionData {
                 $item = (object) $item;
-                $viewable_type = property_exists($item, "viewable_type")
+                $viewable_type = property_exists($item, 'viewable_type')
                     ? (is_null($item->viewable_type) ? null : (string) $item->viewable_type)
                     : null;
-                $viewable_id = property_exists($item, "viewable_id")
+                $viewable_id = property_exists($item, 'viewable_id')
                     ? (is_null($item->viewable_id) ? null : (int) $item->viewable_id)
                     : null;
-                $is_crawler = property_exists($item, "is_crawler")
+                $is_crawler = property_exists($item, 'is_crawler')
                     ? (is_null($item->is_crawler) ? null : (bool) $item->is_crawler)
                     : false;
-                $category = property_exists($item, "category")
+                $category = property_exists($item, 'category')
                     ? (is_null($item->category) ? null : (int) $item->category)
                     : null;
 
