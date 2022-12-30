@@ -105,7 +105,7 @@ return new class extends Migration
         });
 
         $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
-            $table->smallInteger('id')->primary();
+            $table->smallIncrements('id');
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');

@@ -72,14 +72,6 @@ class Statistics {
     }
 
     public function generateStatistics(): void {
-        $listOfOptions = ListOptions::prepare(
-            dbConnection              : $this->dbConnection,
-            tableName                 : $this->dataTableName,
-            generateCategoryStatistics: $this->generateCategoryStatistics,
-            generateCrawlersStatistics: $this->generateCrawlersStatistics,
-            lastId                    : $this->lastId,
-        );
-
         $this->dbConnection
             ->table((new VisitorsStatistics())->getTable())
             ->truncate();
@@ -89,13 +81,41 @@ class Statistics {
 
         $dateQuery = $this->dateListQuery();
 
-        foreach ($listOfOptions as $option) {
+        // Generate Statistics table
+        $totalDailyVisitQuery = $this->visitQuery(new ListOptionData(null, null, null, null));
+        $totalDailyNumbers = $this->dailyNumbersQuery($dateQuery, $totalDailyVisitQuery)->get();
+
+        VisitorsStatistics::create([
+            "daily_numbers"           => $totalDailyNumbers,
+            "day_maximum"             => $this->calculateDayMaximumCount($totalDailyNumbers),
+            "visit_total"             => $this->calculateTotalCount($totalDailyNumbers),
+            "visit_yesterday"         => $this->calculateYesterdayCount($totalDailyNumbers),
+            "visit_last_7_days"       => $this->calculateLast7daysCount($totalDailyNumbers),
+            "visit_last_30_days"      => $this->calculateLast30daysCount($totalDailyNumbers),
+            "visit_last_365_days"     => $this->calculateLast365daysCount($totalDailyNumbers),
+            'sumar_countries'         => $this->sumarQuery('country')->get(),
+            'sumar_languages'         => $this->sumarQuery('language')->get(),
+            'sumar_operating_systems' => $this->sumarQuery('operating_system')->get(),
+            'from'                    => $this->from,
+            'to'                      => $this->to,
+            'last_data_id'            => $this->lastId,
+            'updated_at'              => Carbon::now(),
+        ]);
+
+        // generate daily graphs
+        ListOptions::prepare(
+            dbConnection              : $this->dbConnection,
+            tableName                 : $this->dataTableName,
+            generateCategoryStatistics: $this->generateCategoryStatistics,
+            generateCrawlersStatistics: $this->generateCrawlersStatistics,
+            lastId                    : $this->lastId,
+        )->each(function($option) use ($dateQuery) {
             $dailyVisitQuery = $this->visitQuery($option);
 
-            // dispatch start
+            // dispatch this start
             $dailyNumbers = $this->dailyNumbersQuery($dateQuery, $dailyVisitQuery)->get();
 
-            $storeData = [
+            VisitorsDailyGraph::create([
                 "viewable_type"       => $option->viewable_type,
                 "viewable_id"         => $option->viewable_id,
                 "category"            => $option->category,
@@ -107,17 +127,20 @@ class Statistics {
                 "visit_last_7_days"   => $this->calculateLast7daysCount($dailyNumbers),
                 "visit_last_30_days"  => $this->calculateLast30daysCount($dailyNumbers),
                 "visit_last_365_days" => $this->calculateLast365daysCount($dailyNumbers),
-            ];
-
-            VisitorsDailyGraph::create($storeData);
+            ]);
             // dispatch end
+        });
+    }
 
-
-            // dd($listOfOptions, $dailyNumbers, $storeData);
-            // dump($dailyVisitQuery->dump(), $storeData);
-        }
-
-        // return;
+    private function sumarQuery(string $columnName): Builder {
+        return $this->dbConnection
+            ->query()
+            ->select($columnName)
+            ->selectRaw("COUNT($columnName) AS count_$columnName")
+            ->from($this->dataTableName)
+            ->where('id', "<=", $this->lastId)
+            ->groupBy($columnName)
+            ->orderByDesc("count_$columnName");
     }
 
     private function dailyNumbersQuery(Builder $dateQuery, Builder $dailyVisitQuery): Builder {
@@ -181,37 +204,3 @@ class Statistics {
         return intOrZero($dailyNumbers->take(365)->sum('visits_count'));
     }
 }
-
-
-/**
-SELECT DATE_LIST.selected_date, COALESCE(VISIT.visits_count, 0) AS visits_count
-FROM
-    (SELECT *
-    FROM
-        (SELECT adddate('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date
-        FROM
-            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
-            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
-            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
-            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
-            (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
-        ) v
-    WHERE selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL 365 DAY) AND CURDATE()
-    ) AS DATE_LIST
-LEFT JOIN
-    (SELECT
-        DATE(visited_at) AS visits_date,
-        COUNT(visited_at) AS visits_count
-    FROM `visitors_data`
-    WHERE
-        viewable_type = 'App\\Models\\StaticPage'
-        AND
-        viewable_id = 73
-        AND
-        category = 5
-        AND
-        is_crawler = 0
-    GROUP BY visits_date) AS VISIT
-ON DATE_LIST.selected_date = VISIT.visits_date
-ORDER BY selected_date DESC;
-*/
