@@ -67,8 +67,8 @@ return new class extends Migration
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
-            $table->unsignedTinyInteger('category');  // ENUM
             $table->boolean('is_crawler');
+            $table->unsignedTinyInteger('category');  // ENUM
             $table->index(
                 ["viewable_type", "viewable_id", 'category', 'is_crawler'],
                 'visitors_data_viewable_category_crawler_index'
@@ -86,8 +86,8 @@ return new class extends Migration
 
             $table->string("viewable_type", 60)->nullable();
             $table->unsignedInteger("viewable_id")->nullable();
-            $table->unsignedTinyInteger('category')->nullable();  // ENUM
             $table->boolean('is_crawler')->nullable();
+            $table->unsignedTinyInteger('category')->nullable();  // ENUM
 
             $table->unique(
                 ["viewable_type", "viewable_id", 'category', 'is_crawler'],
