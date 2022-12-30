@@ -9,11 +9,22 @@ if (! function_exists('vrtoVisits')) {
     /**
      * TODO: description
      *
-     * @param Visitable $model
-     * @return Visitor
      */
     function vrtoVisit(Visitable $model): Visitor {
         return new Visitor($model);
+    }
+}
+
+if (! function_exists('intOrZero')) {
+    /**
+     * Return integer ar zero value from mixed value
+     *
+     */
+    function intOrZero(mixed $value): int
+    {
+        return is_int($value)
+            ? $value
+            : 0;
     }
 }
 
@@ -23,8 +34,6 @@ if (! function_exists('combinations')) {
      * if you use the delimiter option, it returns an array of concatenated strings
      *
      * @param array<int,array> $arrays
-     * @param string|null $delimiter
-     * @param integer $level
      * @return array<int,array<int,string>>|array<int,string>
      */
     function combinations(array $arrays, ?string $delimiter = null, int $level = 0): array {
@@ -44,8 +53,8 @@ if (! function_exists('combinations')) {
         foreach ($arrays[$level] as $v) {
             foreach ($tmp as $t) {
                 $tmpResult = is_array($t)
-                    ? array_merge(array($v), $t)
-                    : array($v, $t);
+                    ? [...[$v], ...$t]
+                    : [$v, $t];
 
                 $result[] = $delimiter === null
                     ? $tmpResult

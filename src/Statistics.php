@@ -7,32 +7,30 @@ namespace OndrejVrto\Visitors;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder;
 use OndrejVrto\Visitors\DTO\ListOptionData;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Services\ListOptions;
-use OndrejVrto\Visitors\Traits\StatisticsGetters;
 use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 
 class Statistics {
-    use StatisticsGetters;
+    private readonly int $numberDaysStatistics;
 
-    private int $numberDaysStatistics;
+    private readonly bool $generateCategoryStatistics;
 
-    private bool $generateCategoryStatistics;
+    private readonly bool $generateCrawlersStatistics;
 
-    private bool $generateCrawlersStatistics;
+    private readonly Carbon $from;
 
-    private Carbon $from;
+    private readonly Carbon $to;
 
-    private Carbon $to;
+    private readonly int $lastId;
 
-    private int $lastId;
+    private readonly string $dataTableName;
 
-    private string $dataTableName;
-
-    private ?string $nameConnection;
+    private readonly Connection $dbConnection;
 
     public function __construct() {
         $crawlerStatistics = config('visitors.create_crawlers_statistics');
@@ -49,7 +47,7 @@ class Statistics {
             ->selectRaw("MAX(`id`) AS last_id")
             ->first();
 
-        if ($range === null) {
+        if (!$range instanceof \OndrejVrto\Visitors\Models\VisitorsData) {
             throw new \Exception("Visitor data table don't exists.");
         }
 
@@ -63,7 +61,7 @@ class Statistics {
 
         $visitorData = new VisitorsData();
         $this->dataTableName = $visitorData->getTable();
-        $this->nameConnection = $visitorData->getConnectionName();
+        $this->dbConnection = DB::connection($visitorData->getConnectionName());
     }
 
     public static function numberDaysStatistics(): int {
@@ -75,17 +73,17 @@ class Statistics {
 
     public function generateStatistics(): void {
         $listOfOptions = ListOptions::prepare(
-            nameConnection            : $this->getNameConnection(),
-            tableName                 : $this->getDataTableName(),
-            generateCategoryStatistics: $this->getGenerateCategoryStatistics(),
-            generateCrawlersStatistics: $this->getGenerateCrawlersStatistics(),
-            lastId                    : $this->getLastId(),
+            dbConnection              : $this->dbConnection,
+            tableName                 : $this->dataTableName,
+            generateCategoryStatistics: $this->generateCategoryStatistics,
+            generateCrawlersStatistics: $this->generateCrawlersStatistics,
+            lastId                    : $this->lastId,
         );
 
-        DB::connection($this->getNameConnection())
+        $this->dbConnection
             ->table((new VisitorsStatistics())->getTable())
             ->truncate();
-        DB::connection($this->getNameConnection())
+        $this->dbConnection
             ->table((new VisitorsDailyGraph())->getTable())
             ->truncate();
 
@@ -123,7 +121,7 @@ class Statistics {
     }
 
     private function dailyNumbersQuery(Builder $dateQuery, Builder $dailyVisitQuery): Builder {
-        return DB::connection($this->getNameConnection())
+        return $this->dbConnection
             ->query()
             ->selectRaw("DATE_LIST.selected_date")
             ->selectRaw("COALESCE(VISIT.visits_count, 0) AS visits_count")
@@ -144,14 +142,14 @@ class Statistics {
         // $selectedDateQuery = preg_replace(['/\r\n|\r|\n/', '/ +/'], " ", $selectedDateQuery);
 
         return DB::query()->fromSub($selectedDateQuery, 'V')
-            ->whereRaw("selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL ? DAY) AND CURDATE()", [$this->getNumberDaysStatistics()]);
+            ->whereRaw("selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL ? DAY) AND CURDATE()", [$this->numberDaysStatistics]);
     }
 
     private function visitQuery(ListOptionData $listOptionData): Builder {
-        return DB::table($this->getDataTableName())
+        return DB::table($this->dataTableName)
             ->selectRaw("DATE(visited_at) AS visits_date")
             ->selectRaw("COUNT(visited_at) AS visits_count")
-            ->where('id', "<=", $this->getLastId())
+            ->where('id', "<=", $this->lastId)
             ->when(!is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
             ->when(!is_null($listOptionData->viewable_id), fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
             ->when(!is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
@@ -160,31 +158,27 @@ class Statistics {
     }
 
     private function calculateDayMaximumCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->max('visits_count'));
+        return intOrZero($dailyNumbers->max('visits_count'));
     }
 
     private function calculateTotalCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->sum('visits_count'));
+        return intOrZero($dailyNumbers->sum('visits_count'));
     }
 
     private function calculateYesterdayCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->slice(1, 1)->value('visits_count'));
+        return intOrZero($dailyNumbers->slice(1, 1)->value('visits_count'));
     }
 
     private function calculateLast7daysCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->take(7)->sum('visits_count'));
+        return intOrZero($dailyNumbers->take(7)->sum('visits_count'));
     }
 
     private function calculateLast30daysCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->take(30)->sum('visits_count'));
+        return intOrZero($dailyNumbers->take(30)->sum('visits_count'));
     }
 
     private function calculateLast365daysCount(Collection $dailyNumbers): int {
-        return $this->intOrZero($dailyNumbers->take(365)->sum('visits_count'));
-    }
-
-    private function intOrZero(mixed $value): int {
-        return is_int($value) ? $value : 0;
+        return intOrZero($dailyNumbers->take(365)->sum('visits_count'));
     }
 }
 

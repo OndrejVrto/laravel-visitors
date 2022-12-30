@@ -5,22 +5,18 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Services;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 use OndrejVrto\Visitors\DTO\ListOptionData;
 
 class ListOptions {
     /**
      * TODO: desc
      *
-     * @param string $tableName
-     * @param boolean $generateCategoryStatistics
-     * @param boolean $generateCrawlersStatistics
-     * @param integer $lastId
      *
      * @return Collection<int,ListOptionData>
      */
     public static function prepare(
-        ?string $nameConnection,
+        Connection $dbConnection,
         string $tableName,
         bool $generateCategoryStatistics,
         bool $generateCrawlersStatistics,
@@ -42,13 +38,13 @@ class ListOptions {
 
         // generate list of posibilities
         $unionSubQuery = collect(combinations($range, ", "))
-            ->map(function ($i) use ($tableName) {
+            ->map(function ($i) use ($tableName): string {
                 $i = is_array($i) ? implode(", ", $i) : $i;
                 return "SELECT ".$i." FROM `".$tableName."`";
             })->implode(" UNION ");
 
         // fetch query
-        return DB::connection($nameConnection)
+        return $dbConnection
             ->query()
             ->select($columns)
             ->distinct()
@@ -57,7 +53,7 @@ class ListOptions {
             // ->orderByRaw(implode(", ", $columns))
             ->get()
             // ->dump()
-            ->map(function ($item) {
+            ->map(function ($item): ListOptionData {
                 $item = (object) $item;
                 $viewable_type = property_exists($item, "viewable_type")
                     ? (is_null($item->viewable_type) ? null : (string) $item->viewable_type)
