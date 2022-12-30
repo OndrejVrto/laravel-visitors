@@ -15,15 +15,15 @@ return [
     * Here you can configure connection for store data in database.
     */
 
-    'eloquent_connection' => env('DB_CONNECTION', 'mysql'),
+    'eloquent_connection' => env('VISITORS_DB_CONNECTION', 'mysql'),
 
     /**
     * Here you can configure the table names in database.
     */
 
     'table_names' => [
-        'expires'     => 'visitors_expires',
         'data'        => 'visitors_data',
+        'expires'     => 'visitors_expires',
         'statistics'  => 'visitors_statistics',
         'daily_graph' => 'visitors_daily_graph',
     ],

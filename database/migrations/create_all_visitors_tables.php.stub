@@ -12,19 +12,41 @@ return new class extends Migration
     /** @var array<string,string>  */
     protected $tableNames;
 
-    /** @var string  */
-    protected $morphsName;
-
     public function __construct() {
-        $this->schemaBuilder = Schema::connection(config('visitors.eloquent_connection'));
-        $this->tableNames = config('visitors.table_names');
+        $this->schemaBuilder = Schema::connection($this->handleConnection());
+        $this->tableNames = $this->handleTableNames();
     }
 
-    public function up(): void {
-        if (empty($this->tableNames)) {
+    private function handleConnection(): string {
+        $connection = config('visitors.eloquent_connection');
+        $connection = is_string($connection) ? $connection : 'mysql';
+
+        if (config("database.connections.{$connection}.driver") !== 'mysql') {
+            throw new \Exception('Error: The visit package tables were not migrated. Database driver must by "mysql" type.');
+        }
+
+        return $connection;
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private function handleTableNames(): array {
+        $tableNames = config('visitors.table_names');
+
+        if (!is_array($tableNames) OR empty($tableNames)) {
             throw new \Exception('Error: config/visitors.php not loaded. Run [php artisan config:clear] or publish the package configuration and try again.');
         }
 
+        return [
+            'data'        => (string) config('visitors.table_names.data', 'visitors_data'),
+            'expires'     => (string) config('visitors.table_names.expires', 'visitors_expires'),
+            'statistics'  => (string) config('visitors.table_names.statistics', 'visitors_statistics'),
+            'daily_graph' => (string) config('visitors.table_names.daily_graph', 'visitors_daily_graph'),
+        ];
+    }
+
+    public function up(): void {
         $this->schemaBuilder->create($this->tableNames['expires'], function (Blueprint $table) {
             $table->mediumIncrements('id');
 
@@ -67,9 +89,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('category')->nullable();  // ENUM
             $table->boolean('is_crawler')->nullable();
 
-            $table->index(
+            $table->unique(
                 ["viewable_type", "viewable_id", 'category', 'is_crawler'],
-                'visitors_daily_graph_viewable_category_crawler_index'
+                'visitors_daily_graph_viewable_category_crawler_unique'
             );
 
             $table->json('daily_numbers');

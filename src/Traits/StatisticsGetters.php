@@ -30,4 +30,12 @@ trait StatisticsGetters {
     public function getNumberDaysStatistics(): int {
         return $this->numberDaysStatistics;
     }
+
+    public function getDataTableName(): string {
+        return $this->dataTableName;
+    }
+
+    public function getNameConnection(): ?string {
+        return $this->nameConnection;
+    }
 }

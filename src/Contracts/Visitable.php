@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 interface Visitable {
@@ -19,4 +20,6 @@ interface Visitable {
     public function visitData(): MorphMany;
 
     public function visitDailyGraphs(): MorphMany;
+
+    public function dailyVisitGraph(): MorphOne;
 }

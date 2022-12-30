@@ -7,6 +7,7 @@ namespace OndrejVrto\Visitors\Traits;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use OndrejVrto\Visitors\Observers\VisitableObserver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -27,5 +28,9 @@ trait InteractsWithVisits {
 
     public function visitDailyGraphs(): MorphMany {
         return $this->morphMany(VisitorsDailyGraph::class, 'viewable');
+    }
+
+    public function dailyVisitGraph(): MorphOne {
+        return $this->morphOne(VisitorsDailyGraph::class, 'viewable')->whereNull('category')->where('is_crawler', false);
     }
 }

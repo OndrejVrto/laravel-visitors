@@ -13,7 +13,7 @@ use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Services\ListOptions;
 use OndrejVrto\Visitors\Traits\StatisticsGetters;
 use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use OndrejVrto\Visitors\Models\VisitorsStatistics;
 
 class Statistics {
     use StatisticsGetters;
@@ -30,6 +30,10 @@ class Statistics {
 
     private int $lastId;
 
+    private string $dataTableName;
+
+    private ?string $nameConnection;
+
     public function __construct() {
         $crawlerStatistics = config('visitors.create_crawlers_statistics');
         $this->generateCrawlersStatistics = is_bool($crawlerStatistics) && $crawlerStatistics;
@@ -37,7 +41,7 @@ class Statistics {
         $categoryStatistics = config('visitors.create_categories_statistics');
         $this->generateCategoryStatistics = is_bool($categoryStatistics) && $categoryStatistics;
 
-        $this->numberDaysStatistics = self::numberDaysStatistics();
+        $this->numberDaysStatistics = static::numberDaysStatistics();
 
         $range = VisitorsData::query()
             ->selectRaw("MIN(`visited_at`) AS date_from")
@@ -45,9 +49,21 @@ class Statistics {
             ->selectRaw("MAX(`id`) AS last_id")
             ->first();
 
-        $this->from = $range->date_from;
-        $this->to = $range->date_to;
-        $this->lastId = $range->last_id;
+        if ($range === null) {
+            throw new \Exception("Visitor data table don't exists.");
+        }
+
+        $from = $range->getAttributeValue('date_from');
+        $to = $range->getAttributeValue('date_to');
+        $lastId = $range->getAttributeValue('last_id');
+
+        $this->from = ($from instanceof Carbon) ? $from : Carbon::now()->subYear();
+        $this->to = ($to instanceof Carbon) ? $to : Carbon::now();
+        $this->lastId = is_int($lastId) ? $lastId : 1;
+
+        $visitorData = new VisitorsData();
+        $this->dataTableName = $visitorData->getTable();
+        $this->nameConnection = $visitorData->getConnectionName();
     }
 
     public static function numberDaysStatistics(): int {
@@ -57,29 +73,36 @@ class Statistics {
             : 730;
     }
 
-
-    public function generateStatistics() {
+    public function generateStatistics(): void {
         $listOfOptions = ListOptions::prepare(
-            tableName                 : (new VisitorsData())->getTable(),
+            nameConnection            : $this->getNameConnection(),
+            tableName                 : $this->getDataTableName(),
             generateCategoryStatistics: $this->getGenerateCategoryStatistics(),
             generateCrawlersStatistics: $this->getGenerateCrawlersStatistics(),
             lastId                    : $this->getLastId(),
         );
 
-        dump($listOfOptions);
+        DB::connection($this->getNameConnection())
+            ->table((new VisitorsStatistics())->getTable())
+            ->truncate();
+        DB::connection($this->getNameConnection())
+            ->table((new VisitorsDailyGraph())->getTable())
+            ->truncate();
 
         $dateQuery = $this->dateListQuery();
-        foreach ($listOfOptions as $listOptionData) {
-            $dailyVisitQuery = $this->visitQuery($listOptionData);
 
+        foreach ($listOfOptions as $option) {
+            $dailyVisitQuery = $this->visitQuery($option);
+
+            // dispatch start
             $dailyNumbers = $this->dailyNumbersQuery($dateQuery, $dailyVisitQuery)->get();
 
             $storeData = [
-                "viewable_type"       => $listOptionData->viewable_type,
-                "viewable_id"         => $listOptionData->viewable_id,
-                "category"            => $listOptionData->is_crawler,
-                "is_crawler"          => $listOptionData->category,
-                "daily_numbers"       => $dailyNumbers->toJson(),
+                "viewable_type"       => $option->viewable_type,
+                "viewable_id"         => $option->viewable_id,
+                "category"            => $option->category,
+                "is_crawler"          => $option->is_crawler,
+                "daily_numbers"       => $dailyNumbers,
                 "day_maximum"         => $this->calculateDayMaximumCount($dailyNumbers),
                 "visit_total"         => $this->calculateTotalCount($dailyNumbers),
                 "visit_yesterday"     => $this->calculateYesterdayCount($dailyNumbers),
@@ -88,44 +111,47 @@ class Statistics {
                 "visit_last_365_days" => $this->calculateLast365daysCount($dailyNumbers),
             ];
 
-            dd($dailyNumbers, $storeData);
+            VisitorsDailyGraph::create($storeData);
+            // dispatch end
 
-            $status = VisitorsDailyGraph::create($storeData);
 
-            // dump($storeData);
-            return $status;
+            // dd($listOfOptions, $dailyNumbers, $storeData);
+            // dump($dailyVisitQuery->dump(), $storeData);
         }
+
+        // return;
     }
 
-    private function dailyNumbersQuery(Builder $dateQuery, EloquentBuilder $dailyVisitQuery): Builder {
-        return DB::table(DB::raw("({$dateQuery->toSql()}) AS DATE_LIST"))
-            ->setBindings($dateQuery->getBindings())
+    private function dailyNumbersQuery(Builder $dateQuery, Builder $dailyVisitQuery): Builder {
+        return DB::connection($this->getNameConnection())
+            ->query()
             ->selectRaw("DATE_LIST.selected_date")
             ->selectRaw("COALESCE(VISIT.visits_count, 0) AS visits_count")
-            ->leftJoin(DB::raw("({$dailyVisitQuery->toSql()}) AS VISIT"), "DATE_LIST.selected_date", "=", "VISIT.visits_date")
+            ->fromSub($dateQuery->toSql(), 'DATE_LIST')
+            ->setBindings($dateQuery->getBindings())
+            ->leftJoinSub($dailyVisitQuery->toSql(), 'VISIT', "DATE_LIST.selected_date", "=", "VISIT.visits_date")
             ->addBinding($dailyVisitQuery->getBindings())
             ->orderByDesc("selected_date");
     }
 
     private function dateListQuery(): Builder {
-        $selectedDateQuery = "SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date
-            FROM
+        $selectedDateQuery = "SELECT ADDDATE('1970-01-01', t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) AS selected_date FROM
                 (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
                 (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
                 (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
                 (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
-                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
-            ";
-        $selectedDateQuery = preg_replace(['/\r\n|\r|\n/', '/ +/'], " ", $selectedDateQuery);
+                (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4";
+        // $selectedDateQuery = preg_replace(['/\r\n|\r|\n/', '/ +/'], " ", $selectedDateQuery);
 
-        return DB::table(DB::raw("({$selectedDateQuery}) AS V"))
+        return DB::query()->fromSub($selectedDateQuery, 'V')
             ->whereRaw("selected_date BETWEEN SUBDATE(CURDATE(), INTERVAL ? DAY) AND CURDATE()", [$this->getNumberDaysStatistics()]);
     }
 
-    private function visitQuery(ListOptionData $listOptionData): EloquentBuilder {
-        return VisitorsData::query()
+    private function visitQuery(ListOptionData $listOptionData): Builder {
+        return DB::table($this->getDataTableName())
             ->selectRaw("DATE(visited_at) AS visits_date")
             ->selectRaw("COUNT(visited_at) AS visits_count")
+            ->where('id', "<=", $this->getLastId())
             ->when(!is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
             ->when(!is_null($listOptionData->viewable_id), fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
             ->when(!is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
@@ -134,27 +160,31 @@ class Statistics {
     }
 
     private function calculateDayMaximumCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->max('visits_count');
+        return $this->intOrZero($dailyNumbers->max('visits_count'));
     }
 
     private function calculateTotalCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->sum('visits_count');
+        return $this->intOrZero($dailyNumbers->sum('visits_count'));
     }
 
     private function calculateYesterdayCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->slice(1, 1)->value('visits_count');
+        return $this->intOrZero($dailyNumbers->slice(1, 1)->value('visits_count'));
     }
 
     private function calculateLast7daysCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->take(7)->sum('visits_count');
+        return $this->intOrZero($dailyNumbers->take(7)->sum('visits_count'));
     }
 
     private function calculateLast30daysCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->take(30)->sum('visits_count');
+        return $this->intOrZero($dailyNumbers->take(30)->sum('visits_count'));
     }
 
     private function calculateLast365daysCount(Collection $dailyNumbers): int {
-        return (int) $dailyNumbers->take(365)->sum('visits_count');
+        return $this->intOrZero($dailyNumbers->take(365)->sum('visits_count'));
+    }
+
+    private function intOrZero(mixed $value): int {
+        return is_int($value) ? $value : 0;
     }
 }
 

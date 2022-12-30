@@ -14,7 +14,7 @@ abstract class BaseVisitors extends Model {
 
     public $guarded = [];
 
-    protected string $configTableName;
+    protected ?string $configTableName = null;
 
     protected $casts = [
         'id'            => 'integer',
