@@ -57,6 +57,7 @@ class GenerateDailyGraphJob implements ShouldQueue {
                 ];
         }
 
-        VisitorsDailyGraph::insert($data);
+        VisitorsDailyGraph::query()
+            ->insert($data);
     }
 }

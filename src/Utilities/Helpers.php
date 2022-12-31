@@ -32,8 +32,8 @@ if (! function_exists('combinations')) {
      * Create all possible combinations of values from input arrays
      * if you use the delimiter option, it returns an array of concatenated strings
      *
-     * @param array<int,array> $arrays
-     * @return array<int,array<int,string>>|array<int,string>
+     * @param array<string[]> $arrays
+     * @return array<string[]>|string[]
      */
     function combinations(array $arrays, ?string $delimiter = null, int $level = 0): array {
         if (!isset($arrays[$level])) {

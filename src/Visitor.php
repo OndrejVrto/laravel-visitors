@@ -169,8 +169,8 @@ class Visitor {
         $visitorExpire = VisitorsExpires::query()
             ->select(['id', 'expires_at'])
             ->whereMorphedTo('viewable', $this->model->getMorphClass())
-            ->whereIpAddress($this->ipAddress)
-            ->whereCategory($this->category)
+            ->where('ip_address', $this->ipAddress)
+            ->where('category', $this->category)
             ->first();
         // dump($visitorExpire);
 
@@ -179,13 +179,17 @@ class Visitor {
                 return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
             }
 
-            $status = $visitorExpire->update(['expires_at' => $this->expiresAt]);
+            $status = $visitorExpire
+                ->query()
+                ->update(['expires_at' => $this->expiresAt]);
         } else {
-            $model = $this->model->visitExpires()->create([
-                'ip_address' => $this->ipAddress,
-                'category'   => $this->category,
-                'expires_at' => $this->expiresAt,
-            ]);
+            $model = $this->model
+                ->visitExpires()
+                ->create([
+                    'ip_address' => $this->ipAddress,
+                    'category'   => $this->category,
+                    'expires_at' => $this->expiresAt,
+                ]);
 
             $status = $model instanceof VisitorsExpires;
         }
@@ -196,14 +200,16 @@ class Visitor {
     }
 
     private function sevaData(): StatusVisitor {
-        $status = $this->model->visitData()->create([
-            'category'         => $this->category,
-            'is_crawler'       => $this->isCrawler,
-            'country'          => $this->country,
-            'language'         => $this->language,
-            'operating_system' => $this->operatingSystem,
-            'visited_at'       => $this->visitedAt,
-        ]);
+        $status = $this->model
+            ->visitData()
+            ->create([
+                'category'         => $this->category,
+                'is_crawler'       => $this->isCrawler,
+                'country'          => $this->country,
+                'language'         => $this->language,
+                'operating_system' => $this->operatingSystem,
+                'visited_at'       => $this->visitedAt,
+            ]);
 
         return $status instanceof VisitorsData
             ? StatusVisitor::INCREMENT_DATA_OK

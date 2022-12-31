@@ -28,7 +28,8 @@ class VisitorsExpires extends BaseVisitors {
     }
 
     public function prunable(): Builder {
-        return static::where('expires_at', '<', now());
+        return static::query()
+            ->where('expires_at', '<', now());
     }
 
     public function scopeWhereIpAddress(Builder $query, ?string $ipAddress = null): Builder {
