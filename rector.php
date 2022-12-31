@@ -45,5 +45,5 @@ return static function (RectorConfig $rectorConfig): void {
         // __DIR__ . '/src/Commands/PriceLabelsFetchCommand.php',
     ]);
 
-    $rectorConfig->disableParallel();
+    // $rectorConfig->disableParallel();
 };

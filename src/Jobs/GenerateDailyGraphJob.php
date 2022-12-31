@@ -27,8 +27,8 @@ class GenerateDailyGraphJob implements ShouldQueue {
      * @param Collection<int,ListPossibleQueriesData> $listPossibleQueries
      */
     public function __construct(
-        private StatisticsConfigData $configuration,
-        private Collection $listPossibleQueries,
+        private readonly StatisticsConfigData $configuration,
+        private readonly Collection $listPossibleQueries,
     ) {
     }
 

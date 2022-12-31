@@ -23,8 +23,8 @@ class GenerateTotalGraphJob implements ShouldQueue {
     use CalculateStatistics;
 
     public function __construct(
-        private StatisticsConfigData $configuration,
-        private ListPossibleQueriesData $listPossibleQueries,
+        private readonly StatisticsConfigData $configuration,
+        private readonly ListPossibleQueriesData $listPossibleQueries,
     ) {
     }
 

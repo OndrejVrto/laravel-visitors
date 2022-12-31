@@ -11,7 +11,7 @@ use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 
 final class StatisticsQueriesBuilder {
     public function __construct(
-        private StatisticsConfigData $configuration
+        private readonly StatisticsConfigData $configuration
     ) {
     }
 

@@ -31,7 +31,7 @@ class StatisticsGenerator {
         (new ListPossibleQueries($this->configuration))
             ->get()
             ->chunk(12)
-            ->each(function ($list) {
+            ->each(function ($list): void {
                 dispatch(new GenerateDailyGraphJob($this->configuration, $list));
             });
     }
