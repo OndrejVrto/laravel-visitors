@@ -49,7 +49,7 @@ class GenerateTotalGraphJob implements ShouldQueue {
             'from'                    => $this->configuration->from,
             'to'                      => $this->configuration->to,
             'last_data_id'            => $this->configuration->lastId,
-            'updated_at'              => now(),
+            // 'updated_at'              => now(),
         ]);
     }
 }
