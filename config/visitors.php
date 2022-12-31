@@ -92,7 +92,7 @@ return [
     * Default value: 730 (two years)
     */
 
-    'number_days_statistics' => 365,
+    'number_days_statistics' => 730,
 
     /**
     * Create separate daily graphs for used categories.
@@ -101,7 +101,7 @@ return [
     * Default: false
     */
 
-    'create_categories_statistics' => false,
+    'create_categories_statistics' => true,
 
     /**
     * Create separate daily graphs for crawler.
@@ -110,5 +110,5 @@ return [
     * Warning: Slows down daily graph data generation.
     * Default: false
     */
-    'create_crawlers_statistics' => false,
+    'create_crawlers_statistics' => true,
 ];

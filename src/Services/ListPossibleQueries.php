@@ -67,7 +67,7 @@ class ListPossibleQueries {
     }
 
     /**
-     * @return string[]
+     * @return array<int,array<int,string>>
      */
     private function getRangeNames(): array {
         $range = [[

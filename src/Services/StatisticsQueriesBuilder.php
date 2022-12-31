@@ -32,7 +32,7 @@ final class StatisticsQueriesBuilder {
             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1,
             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2,
             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3";
-        $dateRangeQuery = trim(preg_replace('/\s\s+/', ' ', $dateRangeQuery));
+        // $dateRangeQuery = trim(preg_replace('/\s\s+/', ' ', $dateRangeQuery));
 
         return DB::connection($this->configuration->dbConnectionName)
             ->query()
