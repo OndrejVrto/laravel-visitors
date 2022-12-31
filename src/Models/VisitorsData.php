@@ -2,7 +2,6 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use OndrejVrto\Visitors\Statistics;
 use Illuminate\Database\Eloquent\MassPrunable;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
@@ -39,7 +38,14 @@ class VisitorsData extends BaseVisitors {
 
     public function prunable(): Builder {
         return static::query()
-            ->whereDate('visited_at', '<=', now()->subDays(Statistics::numberDaysStatistics()))
+            ->whereDate('visited_at', '<=', now()->subDays($this->numberDaysStatistics()))
             ->limit(5000);
+    }
+
+    public function numberDaysStatistics(): int {
+        $days = config('visitors.number_days_statistics');
+        return is_int($days) && $days >= 1 && $days <= 36500
+            ? $days
+            : 730;
     }
 }

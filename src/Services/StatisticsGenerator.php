@@ -34,36 +34,32 @@ class StatisticsGenerator {
             });
     }
 
-    public static function numberDaysStatistics(): int {
-        $days = config('visitors.number_days_statistics');
-        return is_int($days) && $days >= 1 && $days <= 36500
-            ? $days
-            : 730;
-    }
-
     private function handleConfiguration(): StatisticsConfigData {
-        $range = VisitorsData::query()
-            ->selectRaw("min(`visited_at`) as `date_from`")
-            ->selectRaw("max(`visited_at`) as `date_to`")
+        $visitorData = new VisitorsData();
+
+        $visitorData
+            ->query()
             ->selectRaw("max(`id`) as `last_id`")
+            ->selectRaw("max(`visited_at`) as `date_to`")
+            ->selectRaw("min(`visited_at`) as `date_from`")
             ->firstOrFail();
 
-        $from = $range->getAttributeValue('date_from');
-        $to = $range->getAttributeValue('date_to');
-        $lastId = $range->getAttributeValue('last_id');
+        $to = $visitorData->getAttributeValue('date_to');
+        $from = $visitorData->getAttributeValue('date_from');
+        $lastId = $visitorData->getAttributeValue('last_id');
 
         $crawlerStatistics = config('visitors.create_crawlers_statistics');
         $categoryStatistics = config('visitors.create_categories_statistics');
 
         return new StatisticsConfigData(
-            lastId                    : is_int($lastId) ? $lastId : 1,
-            numberDaysStatistics      : static::numberDaysStatistics(),
-            dataTableName             : (new VisitorsData())->getTable(),
+            numberDaysStatistics      : $visitorData->numberDaysStatistics(),
+            dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
+            dataTableName             : $visitorData->getTable(),
             graphTableName            : (new VisitorsDailyGraph())->getTable(),
             statisticsTableName       : (new VisitorsStatistics())->getTable(),
-            dbConnectionName          : (new VisitorsData())->getConnectionName(),
             to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
             from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subYear(),
+            lastId                    : is_int($lastId) ? $lastId : 1,
             generateCrawlersStatistics: is_bool($crawlerStatistics) && $crawlerStatistics,
             generateCategoryStatistics: is_bool($categoryStatistics) && $categoryStatistics,
         );
