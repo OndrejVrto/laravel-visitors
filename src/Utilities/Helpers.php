@@ -20,8 +20,7 @@ if (! function_exists('intOrZero')) {
      * Return integer ar zero value from mixed value
      *
      */
-    function intOrZero(mixed $value): int
-    {
+    function intOrZero(mixed $value): int {
         return is_int($value)
             ? $value
             : 0;

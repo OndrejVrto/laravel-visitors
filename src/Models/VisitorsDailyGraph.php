@@ -19,7 +19,7 @@ class VisitorsDailyGraph extends BaseVisitors {
             'day_maximum'         => 'integer',
 
             'visit_total'         => 'integer',
-            'visit_yesterday'     => 'integer',
+            'visit_last_1_day'     => 'integer',
             'visit_last_7_days'   => 'integer',
             'visit_last_30_days'  => 'integer',
             'visit_last_365_days' => 'integer',

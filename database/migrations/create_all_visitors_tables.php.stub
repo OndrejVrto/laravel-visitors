@@ -98,7 +98,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('day_maximum');
 
             $table->unsignedMediumInteger('visit_total');
-            $table->unsignedSmallInteger('visit_yesterday');
+            $table->unsignedSmallInteger('visit_last_1_day');
             $table->unsignedSmallInteger('visit_last_7_days');
             $table->unsignedMediumInteger('visit_last_30_days');
             $table->unsignedMediumInteger('visit_last_365_days');
@@ -111,7 +111,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('day_maximum');
 
             $table->unsignedMediumInteger('visit_total');
-            $table->unsignedSmallInteger('visit_yesterday');
+            $table->unsignedSmallInteger('visit_last_1_day');
             $table->unsignedSmallInteger('visit_last_7_days');
             $table->unsignedMediumInteger('visit_last_30_days');
             $table->unsignedMediumInteger('visit_last_365_days');
