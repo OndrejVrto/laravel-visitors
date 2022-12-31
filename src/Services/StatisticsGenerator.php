@@ -6,7 +6,9 @@ namespace OndrejVrto\Visitors\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
@@ -22,7 +24,7 @@ class StatisticsGenerator {
     }
 
     public function run(): void {
-        $this->truncateTables();
+        $this->prepareTables();
 
         dispatch(new GenerateTotalGraphJob($this->configuration, new ListPossibleQueriesData()));
 
@@ -65,7 +67,14 @@ class StatisticsGenerator {
         );
     }
 
-    private function truncateTables(): void {
+    private function prepareTables(): void {
+        Artisan::call('model:prune', [
+            '--model' => [
+                VisitorsData::class,
+                VisitorsExpires::class
+            ],
+        ]);
+
         DB::connection($this->configuration->dbConnectionName)
             ->table($this->configuration->statisticsTableName)
             ->truncate();
