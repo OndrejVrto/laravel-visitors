@@ -39,6 +39,8 @@ class StatisticsGenerator {
     private function handleConfiguration(): StatisticsConfigData {
         $visitorData = new VisitorsData();
 
+        $days = $visitorData->numberDaysStatistics();
+
         $range = $visitorData
             ->query()
             ->selectRaw("max(`id`) as `last_id`")
@@ -54,13 +56,13 @@ class StatisticsGenerator {
         $categoryStatistics = config('visitors.create_categories_statistics');
 
         return new StatisticsConfigData(
-            numberDaysStatistics      : $visitorData->numberDaysStatistics(),
+            numberDaysStatistics      : $days,
             dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
             dataTableName             : $visitorData->getTable(),
             graphTableName            : (new VisitorsDailyGraph())->getTable(),
             statisticsTableName       : (new VisitorsStatistics())->getTable(),
             to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
-            from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subYear(),
+            from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
             lastId                    : is_int($lastId) ? $lastId : 1,
             generateCrawlersStatistics: is_bool($crawlerStatistics) && $crawlerStatistics,
             generateCategoryStatistics: is_bool($categoryStatistics) && $categoryStatistics,
