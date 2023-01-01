@@ -91,7 +91,7 @@ class ListPossibleQueries {
         $combinationRange = combinations($range);
 
         return collect($combinationRange)
-            ->map(fn ($col) => is_array($col) ? implode(', ', $col) : '');
+            ->map(fn ($col) => is_array($col) ? implode(', ', $col) : $col);
     }
 
     /**
