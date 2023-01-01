@@ -55,19 +55,25 @@ class ListPossibleQueries {
     }
 
     private function unionQuery(): string {
-        return collect( $this->possibleCombinationColumn() )
-            ->map(fn ($columnsString) => sprintf(
-                'select %s from `%s`',
-                $columnsString,
-                $this->configuration->dataTableName
-            ))
+        return $this->possibleCombinationColumn()
+            ->map(fn ($columnsString) => is_string($columnsString)
+                ? sprintf(
+                    'select %s from `%s`',
+                    $columnsString,
+                    $this->configuration->dataTableName)
+                : ''
+            )
             ->implode(' union ');
     }
 
     /**
      * @return string[]
      */
-    private function possibleCombinationColumn(): array {
+
+    /**
+     * @return Collection<string>
+     */
+    private function possibleCombinationColumn(): Collection {
         $range = [[
             "`id`, `viewable_type`, `viewable_id`",
             "`id`, `viewable_type`, null",
@@ -82,11 +88,10 @@ class ListPossibleQueries {
             $range[] = ['`category`', 'null'];
         }
 
-        $combination = combinations($range);
+        $combinationRange = combinations($range);
 
-        return collect( $combination )
-            ->map(fn ($columnsNames) => implode(', ', $columnsNames))
-            ->toArray();
+        return collect($combinationRange)
+            ->map(fn ($col) => is_array($col) ? implode(', ', $col) : '');
     }
 
     /**

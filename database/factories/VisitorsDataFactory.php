@@ -2,28 +2,34 @@
 
 namespace OndrejVrto\Visitors\Database\Factories;
 
-use Illuminate\Support\Str;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Enums\OperatingSystem;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VisitorsDataFactory extends Factory {
     protected $model = VisitorsData::class;
 
     public function definition() {
-        // $name = Str::upper(("SHOP-" . $this->faker->citySuffix() . "-" . $this->faker->word() . $this->faker->randomDigit()));
-        // $enabled = (bool) $this->faker->boolean(70);
+        $visitableModels = [
+            "App\\Models\\Post",
+            "App\\Models\\Page",
+            "App\\Models\\Album",
+            "App\\Models\\Article",
+        ];
+
+        $os = collect(OperatingSystem::cases())->pluck('value')->toArray();
+        $category = collect(VisitorCategory::cases())->pluck('value')->toArray();
 
         return [
-            // "uuid"         => $this->faker->uuid(),
-            // "enabled"      => $enabled,
-            // "name"         => $name,
-            // "slug"         => Str::slug($name),
-            // "preety_name"  => $this->faker->city() . " " . $this->faker->word(),
-            // "server_type"  => $this->faker->randomElement(CoreServerType::cases()),
-            // "ip"           => $this->faker->ipv4(),
-            // "api_key"      => $this->faker->numerify("XX-000000000000##########"),
-            // "api_password" => $this->faker->password(),
-            // "description"  => $enabled ? null : $this->faker->sentence(3),
+            'viewable_type'    => $this->faker->randomElement($visitableModels),
+            'viewable_id'      => $this->faker->numberBetween(1, 50),
+            'is_crawler'       => $this->faker->boolean(80),
+            'category'         => $this->faker->randomElement($category),
+            'country'          => $this->faker->countryCode(),
+            'language'         => $this->faker->languageCode(),
+            'operating_system' => $this->faker->randomElement($os),
+            'visited_at'       => $this->faker->dateTimeBetween('-3 years', 'now'),
         ];
     }
 }

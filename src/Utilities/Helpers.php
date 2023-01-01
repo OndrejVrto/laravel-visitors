@@ -32,7 +32,7 @@ if (! function_exists('combinations')) {
      * Create all possible combinations of values from input arrays
      *
      * @param array<int|string,array<int|string,mixed>> $arrays
-     * @return array<int,array<int,mixed>>
+     * @return array<int,array<int,mixed>>|array<int|string,mixed>
      */
     function combinations(array $arrays, int $level = 0): array {
         if (!isset($arrays[$level])) {

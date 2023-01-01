@@ -2,7 +2,7 @@
 
 namespace OndrejVrto\Visitors\Database\Factories;
 
-use Illuminate\Support\Str;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,20 +10,21 @@ class VisitorsExpiresFactory extends Factory {
     protected $model = VisitorsExpires::class;
 
     public function definition() {
-        // $name = Str::upper(("SHOP-" . $this->faker->citySuffix() . "-" . $this->faker->word() . $this->faker->randomDigit()));
-        // $enabled = (bool) $this->faker->boolean(70);
+        $visitableModels = [
+            "App\\Models\\Post",
+            "App\\Models\\Page",
+            "App\\Models\\Album",
+            "App\\Models\\Article",
+        ];
+
+        $category = collect(VisitorCategory::cases())->pluck('value')->toArray();
 
         return [
-            // "uuid"         => $this->faker->uuid(),
-            // "enabled"      => $enabled,
-            // "name"         => $name,
-            // "slug"         => Str::slug($name),
-            // "preety_name"  => $this->faker->city() . " " . $this->faker->word(),
-            // "server_type"  => $this->faker->randomElement(CoreServerType::cases()),
-            // "ip"           => $this->faker->ipv4(),
-            // "api_key"      => $this->faker->numerify("XX-000000000000##########"),
-            // "api_password" => $this->faker->password(),
-            // "description"  => $enabled ? null : $this->faker->sentence(3),
+            'viewable_type'    => $this->faker->randomElement($visitableModels),
+            'viewable_id'      => $this->faker->numberBetween(1, 50),
+            'category'         => $this->faker->randomElement($category),
+            'ip_address'       => $this->faker->boolean(30) ? $this->faker->ipv4() : $this->faker->ipv6(),
+            'expires_at'       => $this->faker->dateTimeBetween('-3 hours', '+2 hours'),
         ];
     }
 }

@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsExpiresFactory;
 
 class VisitorsExpires extends BaseVisitors {
+    use HasFactory;
     use MassPrunable;
 
     public function __construct(array $attributes = []) {
