@@ -39,16 +39,16 @@ class StatisticsGenerator {
     private function handleConfiguration(): StatisticsConfigData {
         $visitorData = new VisitorsData();
 
-        $visitorData
+        $range = $visitorData
             ->query()
             ->selectRaw("max(`id`) as `last_id`")
             ->selectRaw("max(`visited_at`) as `date_to`")
             ->selectRaw("min(`visited_at`) as `date_from`")
             ->firstOrFail();
 
-        $to = $visitorData->getAttributeValue('date_to');
-        $from = $visitorData->getAttributeValue('date_from');
-        $lastId = $visitorData->getAttributeValue('last_id');
+        $to = $range->getAttributeValue('date_to');
+        $from = $range->getAttributeValue('date_from');
+        $lastId = $range->getAttributeValue('last_id');
 
         $crawlerStatistics = config('visitors.create_crawlers_statistics');
         $categoryStatistics = config('visitors.create_categories_statistics');

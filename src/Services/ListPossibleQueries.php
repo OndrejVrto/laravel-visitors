@@ -21,17 +21,15 @@ class ListPossibleQueries {
     public function get(): Collection {
         return DB::connection($this->configuration->dbConnectionName)
             ->query()
-            ->select($this->getColumnNames())
+            ->select($this->columnNames())
             ->distinct()
-            ->fromSub($this->getUnionQuery(), 'variants')
+            ->fromSub($this->unionQuery(), 'variants')
             ->where('id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
             ->orderBy('viewable_id')
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
             ->when($this->configuration->generateCategoryStatistics, fn ($q) => $q->orderBy('category'))
-            // ->dd()
             ->get()
-            // ->dump()
             ->map(function ($item): ListPossibleQueriesData {
                 $item = (object) $item;
                 $viewable_type = property_exists($item, 'viewable_type')
@@ -54,22 +52,22 @@ class ListPossibleQueries {
                     $category
                 );
             });
-        // ->dd();
     }
 
-    private function getUnionQuery(): string {
-        return collect(
-            combinations($this->getRangeNames(), ", ")
-        )->map(function ($i): string {
-            $i = is_array($i) ? implode(", ", $i) : $i;
-            return "select {$i} from `{$this->configuration->dataTableName}`";
-        })->implode(" union ");
+    private function unionQuery(): string {
+        return collect( $this->possibleCombinationColumn() )
+            ->map(fn ($columnsString) => sprintf(
+                'select %s from `%s`',
+                $columnsString,
+                $this->configuration->dataTableName
+            ))
+            ->implode(' union ');
     }
 
     /**
-     * @return array<int,array<int,string>>
+     * @return string[]
      */
-    private function getRangeNames(): array {
+    private function possibleCombinationColumn(): array {
         $range = [[
             "`id`, `viewable_type`, `viewable_id`",
             "`id`, `viewable_type`, null",
@@ -77,28 +75,32 @@ class ListPossibleQueries {
         ]];
 
         if ($this->configuration->generateCrawlersStatistics) {
-            $range[] = ["`is_crawler`", "null"];
+            $range[] = ['`is_crawler`', 'null'];
         }
 
         if ($this->configuration->generateCategoryStatistics) {
-            $range[] = ["`category`", "null"];
+            $range[] = ['`category`', 'null'];
         }
 
-        return $range;
+        $combination = combinations($range);
+
+        return collect( $combination )
+            ->map(fn ($columnsNames) => implode(', ', $columnsNames))
+            ->toArray();
     }
 
     /**
      * @return string[]
      */
-    private function getColumnNames(): array {
-        $columns = ["viewable_type", "viewable_id"];
+    private function columnNames(): array {
+        $columns = ['viewable_type', 'viewable_id'];
 
         if ($this->configuration->generateCrawlersStatistics) {
-            $columns[] = "is_crawler";
+            $columns[] = 'is_crawler';
         }
 
         if ($this->configuration->generateCategoryStatistics) {
-            $columns[] = "category";
+            $columns[] = 'category';
         }
 
         return $columns;

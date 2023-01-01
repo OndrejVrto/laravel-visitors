@@ -30,12 +30,11 @@ if (! function_exists('intOrZero')) {
 if (! function_exists('combinations')) {
     /**
      * Create all possible combinations of values from input arrays
-     * if you use the delimiter option, it returns an array of concatenated strings
      *
-     * @param array<string[]> $arrays
-     * @return array<string[]>|string[]
+     * @param array<int|string,array<int|string,mixed>> $arrays
+     * @return array<int,array<int,mixed>>
      */
-    function combinations(array $arrays, ?string $delimiter = null, int $level = 0): array {
+    function combinations(array $arrays, int $level = 0): array {
         if (!isset($arrays[$level])) {
             return [];
         }
@@ -45,19 +44,15 @@ if (! function_exists('combinations')) {
         }
 
         // get combinations from subsequent arrays
-        $tmp = combinations($arrays, $delimiter, $level + 1);
+        $tmp = combinations($arrays, $level + 1);
 
         // concat each array from tmp with each element from $arrays[$level]
         $result = [];
         foreach ($arrays[$level] as $v) {
             foreach ($tmp as $t) {
-                $tmpResult = is_array($t)
+                $result[] = is_array($t)
                     ? [...[$v], ...$t]
                     : [$v, $t];
-
-                $result[] = $delimiter === null
-                    ? $tmpResult
-                    : implode($delimiter, $tmpResult);
             }
         }
 
