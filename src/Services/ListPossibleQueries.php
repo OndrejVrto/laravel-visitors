@@ -56,19 +56,19 @@ class ListPossibleQueries {
 
     private function unionQuery(): string {
         return $this->possibleCombinationColumn()
-            ->map(fn ($columnsString) => is_string($columnsString)
-                ? sprintf(
+            ->map(function ($columnsString): string {
+                if (!is_string($columnsString)) {
+                    return '';
+                }
+
+                return sprintf(
                     'select %s from `%s`',
                     $columnsString,
-                    $this->configuration->dataTableName)
-                : ''
-            )
+                    $this->configuration->dataTableName
+                );
+            })
             ->implode(' union ');
     }
-
-    /**
-     * @return string[]
-     */
 
     /**
      * @return Collection<string>

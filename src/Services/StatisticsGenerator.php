@@ -17,7 +17,7 @@ use OndrejVrto\Visitors\Jobs\GenerateTotalGraphJob;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 
 class StatisticsGenerator {
-    private readonly StatisticsConfigData $configuration;
+    private StatisticsConfigData $configuration;
 
     public function __construct() {
         $this->configuration = $this->handleConfiguration();
