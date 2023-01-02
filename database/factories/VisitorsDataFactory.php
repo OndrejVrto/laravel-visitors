@@ -13,23 +13,25 @@ class VisitorsDataFactory extends Factory {
     public function definition() {
         $visitableModels = [
             "App\\Models\\Post",
-            "App\\Models\\Page",
+            // "App\\Models\\Page",
             "App\\Models\\Album",
             "App\\Models\\Article",
         ];
 
-        $os = collect(OperatingSystem::cases())->pluck('value')->toArray();
-        $category = collect(VisitorCategory::cases())->pluck('value')->toArray();
+        // $os = collect(OperatingSystem::cases())->pluck('value')->toArray();
+        // $category = collect(VisitorCategory::cases())->pluck('value')->toArray();
 
         return [
             'viewable_type'    => $this->faker->randomElement($visitableModels),
-            'viewable_id'      => $this->faker->numberBetween(1, 50),
-            'is_crawler'       => $this->faker->boolean(80),
-            'category'         => $this->faker->randomElement($category),
+            'viewable_id'      => $this->faker->numberBetween(1, 20),
+            'is_crawler'       => $this->faker->boolean(50),
+            // 'category'         => $this->faker->randomElement($category),
+            'category'         => $this->faker->numberBetween(1, 2),
             'country'          => $this->faker->countryCode(),
             'language'         => $this->faker->languageCode(),
-            'operating_system' => $this->faker->randomElement($os),
-            'visited_at'       => $this->faker->dateTimeBetween('-3 years', 'now'),
+            // 'operating_system' => $this->faker->randomElement($os),
+            'operating_system' => $this->faker->numberBetween(1, 9),
+            'visited_at'       => $this->faker->dateTimeBetween('-2 years', 'now'),
         ];
     }
 }
