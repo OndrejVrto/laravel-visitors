@@ -10,8 +10,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
-use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
 use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\StatisticsQueriesBuilder;
@@ -57,7 +57,7 @@ class GenerateDailyGraphJob implements ShouldQueue {
                 ];
         }
 
-        VisitorsDailyGraph::query()
+        VisitorsTraffic::query()
             ->insert($data);
     }
 }

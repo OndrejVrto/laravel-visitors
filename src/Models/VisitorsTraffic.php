@@ -5,7 +5,7 @@ namespace OndrejVrto\Visitors\Models;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
-class VisitorsDailyGraph extends BaseVisitors {
+class VisitorsTraffic extends BaseVisitors {
     public function __construct(array $attributes = []) {
         $this->configTableName = "traffic";
 
@@ -17,7 +17,7 @@ class VisitorsDailyGraph extends BaseVisitors {
             'day_maximum'         => 'integer',
 
             'visit_total'         => 'integer',
-            'visit_last_1_day'     => 'integer',
+            'visit_last_1_day'    => 'integer',
             'visit_last_7_days'   => 'integer',
             'visit_last_30_days'  => 'integer',
             'visit_last_365_days' => 'integer',

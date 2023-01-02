@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
+use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
-use OndrejVrto\Visitors\Models\VisitorsDailyGraph;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Jobs\GenerateDailyGraphJob;
 use OndrejVrto\Visitors\Jobs\GenerateTotalGraphJob;
@@ -59,7 +59,7 @@ class StatisticsGenerator {
             numberDaysStatistics      : $days,
             dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
             dataTableName             : $visitorData->getTable(),
-            graphTableName            : (new VisitorsDailyGraph())->getTable(),
+            graphTableName            : (new VisitorsTraffic())->getTable(),
             statisticsTableName       : (new VisitorsStatistics())->getTable(),
             to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
             from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
