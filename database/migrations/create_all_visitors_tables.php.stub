@@ -41,8 +41,8 @@ return new class extends Migration
         return [
             'data'        => (string) config('visitors.table_names.data', 'visitors_data'),
             'expires'     => (string) config('visitors.table_names.expires', 'visitors_expires'),
+            'traffic'     => (string) config('visitors.table_names.traffic', 'visitors_traffic'),
             'statistics'  => (string) config('visitors.table_names.statistics', 'visitors_statistics'),
-            'daily_graph' => (string) config('visitors.table_names.daily_graph', 'visitors_daily_graph'),
         ];
     }
 
@@ -81,7 +81,7 @@ return new class extends Migration
             $table->timestamp('visited_at')->useCurrent();
         });
 
-        $this->schemaBuilder->create($this->tableNames['daily_graph'], function (Blueprint $table) {
+        $this->schemaBuilder->create($this->tableNames['traffic'], function (Blueprint $table) {
             $table->mediumIncrements('id');
 
             $table->string("viewable_type", 60)->nullable();
@@ -91,7 +91,7 @@ return new class extends Migration
 
             $table->unique(
                 ["viewable_type", "viewable_id", 'category', 'is_crawler'],
-                'visitors_daily_graph_viewable_category_crawler_unique'
+                'visitors_traffic_viewable_category_crawler_unique'
             );
 
             $table->json('daily_numbers');
@@ -106,6 +106,8 @@ return new class extends Migration
 
         $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
             $table->smallIncrements('id');
+
+            $table->boolean('is_crawler')->nullable();
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');
@@ -135,7 +137,7 @@ return new class extends Migration
 
         $this->schemaBuilder->dropIfExists($this->tableNames['data']);
         $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
+        $this->schemaBuilder->dropIfExists($this->tableNames['traffic']);
         $this->schemaBuilder->dropIfExists($this->tableNames['statistics']);
-        $this->schemaBuilder->dropIfExists($this->tableNames['daily_graph']);
     }
 };

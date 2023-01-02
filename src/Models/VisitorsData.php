@@ -45,7 +45,7 @@ class VisitorsData extends BaseVisitors {
     }
 
     public function numberDaysStatistics(): int {
-        $days = config('visitors.number_days_statistics');
+        $days = config('visitors.number_days_traffic');
         return is_int($days) && $days >= 1 && $days <= 36500
             ? $days
             : 730;

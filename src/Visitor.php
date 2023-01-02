@@ -139,7 +139,7 @@ class Visitor {
         }
 
         if (! isset($this->expiresAt)) {
-            $expireTime = config('visitors.expires_time');
+            $expireTime = config('visitors.expires_time_for_visit');
             $expireTime = is_int($expireTime) ? $expireTime : 15;
             $this->expiresAt($expireTime);
         }

@@ -24,8 +24,8 @@ return [
     'table_names' => [
         'data'        => 'visitors_data',
         'expires'     => 'visitors_expires',
+        'traffic'     => 'visitors_traffic',
         'statistics'  => 'visitors_statistics',
-        'daily_graph' => 'visitors_daily_graph',
     ],
 
 
@@ -54,7 +54,7 @@ return [
     * Default: 15
     */
 
-    'expires_time' => 15,  // in minutes
+    'expires_time_for_visit' => 15,  // in minutes
 
 
     /**
@@ -82,33 +82,34 @@ return [
 
     /**
     * --------------------------------------------------------------------------
-    * Statistics and Graph data
+    * Statistics and traffic data
     * --------------------------------------------------------------------------
     *
-    * The number of days for which traffic statistics are created from today.
+    * The number of days after which traffic data will be deleted from today.
     * Warning: Older data will be permanently deleted.
     *
     * Value range  : 1 day - 36500 days
     * Default value: 730 (two years)
     */
 
-    'number_days_statistics' => 730,
+    'number_days_traffic' => 730,
 
     /**
-    * Create separate daily graphs for used categories.
+    * Create separate daily traffic graphs for used categories.
     *
-    * Warning: Slows down daily graph data generation.
+    * Warning: Slows down data generation.
     * Default: false
     */
 
-    'create_categories_statistics' => true,
+    'generate_traffic_for_categories' => true,
 
     /**
-    * Create separate daily graphs for crawler.
+    * Create separate daily traffic graphs for crawlers and persons.
     *
     * Note   : If is set "storage_request_from_crawlers_and_bots" to true or apply withCrawlers() method.
-    * Warning: Slows down daily graph data generation.
+    * Warning: Slows down data generation.
     * Default: false
     */
-    'create_crawlers_statistics' => true,
+
+    'generate_traffic_for_crawlers_and_persons' => true,
 ];

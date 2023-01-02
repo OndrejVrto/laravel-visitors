@@ -52,8 +52,8 @@ class StatisticsGenerator {
         $from = $range->getAttributeValue('date_from');
         $lastId = $range->getAttributeValue('last_id');
 
-        $crawlerStatistics = config('visitors.create_crawlers_statistics');
-        $categoryStatistics = config('visitors.create_categories_statistics');
+        $crawlerStatistics = config('visitors.generate_traffic_for_crawlers_and_persons');
+        $categoryStatistics = config('visitors.generate_traffic_for_categories');
 
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,

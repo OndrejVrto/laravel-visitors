@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 
 class VisitorsDailyGraph extends BaseVisitors {
     public function __construct(array $attributes = []) {
-        $this->configTableName = "daily_graph";
+        $this->configTableName = "traffic";
 
         $this->mergeCasts([
             'category'            => VisitorCategory::class,
