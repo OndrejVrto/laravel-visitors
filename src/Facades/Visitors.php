@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Facades;
 
+use OndrejVrto\Visitors\Visitor;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -11,6 +12,6 @@ use Illuminate\Support\Facades\Facade;
  */
 class Visitors extends Facade {
     protected static function getFacadeAccessor() {
-        return \OndrejVrto\Visitors\Visitor::class;
+        return Visitor::class;
     }
 }

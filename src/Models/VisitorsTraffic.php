@@ -32,10 +32,9 @@ class VisitorsTraffic extends BaseVisitors {
     }
 
     /**
-    * @param Visitable|string|class-string|array<class-string> $visitable
-    * @throws InvalidClassParameter
-    * @return Builder
-    */
+     * @param Visitable|string|class-string|array<class-string> $visitable
+     * @throws InvalidClassParameter
+     */
     public function trafficList(Visitable|string|array $visitable): Builder {
         $classes = (new CheckVisitable())($visitable);
         $countClasses = count($classes);
@@ -51,10 +50,8 @@ class VisitorsTraffic extends BaseVisitors {
     }
 
     /**
-    * @param Builder $query
-    * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
-    * @return Builder
-    */
+     * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
+     */
     public function scopeInCategory(Builder $query, VisitorCategory|string|int|array $category): Builder {
         $categories = (new CheckCategory())($category);
         $countCategories = count($categories);

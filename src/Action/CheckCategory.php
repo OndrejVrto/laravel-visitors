@@ -28,12 +28,12 @@ class CheckCategory {
         if (is_string($category)) {
             try {
                 return [VisitorCategory::fromName(Str::upper($category))->value];
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
         }
 
         if (is_int($category)) {
-            $category = VisitorCategory::tryFrom((int) $category);
+            $category = VisitorCategory::tryFrom($category);
             return is_null($category) ? [] : [$category->value];
         }
         return array_values(array_unique($listCategories));
