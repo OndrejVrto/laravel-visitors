@@ -31,14 +31,14 @@
     "require-dev": {
         "laravel/pint": "^1.2",
         "nunomaduro/collision": "^6.0",
-        "nunomaduro/larastan": "^2.0.1",
-        "orchestra/testbench": "^7.15",
+        "nunomaduro/larastan": "^2.3.4",
+        "orchestra/testbench": "^v7.17.0",
         "pestphp/pest": "^1.22",
         "pestphp/pest-plugin-faker": "^1.0",
         "pestphp/pest-plugin-laravel": "^1.1",
         "pestphp/pest-plugin-mock": "^1.0",
         "pestphp/pest-plugin-parallel": "^1.2",
-        "phpstan/extension-installer": "^1.1",
+        "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^0.14.7"
