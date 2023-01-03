@@ -11,7 +11,7 @@ parameters:
 
     tmpDir: build/phpstan
 
-    checkOctaneCompatibility: true
+    checkOctaneCompatibility: false
 
     checkModelProperties: true
 

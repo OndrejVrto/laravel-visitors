@@ -26,7 +26,8 @@ stan-help:
 
 
 rector:
-	vendor\bin\rector --clear-cache
+	vendor\bin\rector
+# vendor\bin\rector --clear-cache
 
 rector-dry:
 	vendor\bin\rector --dry-run
