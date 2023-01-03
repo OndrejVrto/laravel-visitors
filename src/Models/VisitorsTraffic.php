@@ -7,10 +7,13 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
+use OndrejVrto\Visitors\Traits\TrafficSettings;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 
 class VisitorsTraffic extends BaseVisitors {
+    use TrafficSettings;
+
     public function __construct(array $attributes = []) {
         $this->configTableName = "traffic";
 
@@ -44,9 +47,14 @@ class VisitorsTraffic extends BaseVisitors {
         }
 
         return self::query()
+            ->when(
+                $countClasses === 1,
+                fn (Builder $q) => $q->where('viewable_type', $classes[0]),
+                fn (Builder $q) => $q->whereIn('viewable_type', $classes)
+            )
             ->whereNotNull('viewable_id')
-            ->when($countClasses > 1, fn ($q) => $q->whereIn('viewable_type', $classes))
-            ->when($countClasses === 1, fn ($q) => $q->where('viewable_type', $classes[0]));
+            ->when($this->trafficForCategories() === false, fn (Builder $q) => $q->whereNull('category'))
+            ->when($this->trafficForCrawlersAndPersons() === false, fn (Builder $q) => $q->where('is_crawler', false));
     }
 
     /**
@@ -57,8 +65,26 @@ class VisitorsTraffic extends BaseVisitors {
         $countCategories = count($categories);
 
         return $query
-            ->when($countCategories === 1, fn (Builder $q) => $q->where('category', $categories[0]))
-            ->when($countCategories > 1, fn (Builder $q) => $q->whereIn('category', $categories));
+            ->when(
+                $this->trafficForCategories() === true,
+                fn (Builder $query) => $query
+                    ->when($countCategories === 1, fn (Builder $q) => $q->where('category', $categories[0]))
+                    ->when($countCategories > 1, fn (Builder $q) => $q->whereIn('category', $categories))
+            );
+    }
+
+    public function scopeVisitedByPersons(Builder $query): Builder {
+        return $query
+            ->when($this->trafficForCrawlersAndPersons() === true, fn (Builder $q) => $q->where('is_crawler', '=', false));
+    }
+
+    public function scopeVisitedByCrawlers(Builder $query): Builder {
+        return $query
+            ->when($this->trafficForCrawlersAndPersons() === true, fn (Builder $q) => $q->where('is_crawler', '=', true));
+    }
+
+    public function scopeWithRelationships(Builder $query): Builder {
+        return $query->with('viewable');
     }
 
     public function scopeOrderByTotal(Builder $query, string $direction = 'desc'): Builder {
@@ -79,17 +105,5 @@ class VisitorsTraffic extends BaseVisitors {
 
     public function scopeOrderByLast365Days(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_last_365_days', $direction);
-    }
-
-    public function scopeVisitedByPersons(Builder $query): Builder {
-        return $query->where('is_crawler', '=', false);
-    }
-
-    public function scopeVisitedByCrawlers(Builder $query): Builder {
-        return $query->where('is_crawler', '=', true);
-    }
-
-    public function scopeWithRelationships(Builder $query): Builder {
-        return $query->with('viewable');
     }
 }

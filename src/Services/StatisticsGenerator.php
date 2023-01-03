@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
+use OndrejVrto\Visitors\Traits\TrafficSettings;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Jobs\GenerateDailyGraphJob;
@@ -17,6 +18,8 @@ use OndrejVrto\Visitors\Jobs\GenerateTotalGraphJob;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 
 class StatisticsGenerator {
+    use TrafficSettings;
+
     private StatisticsConfigData $configuration;
 
     public function __construct() {
@@ -52,9 +55,6 @@ class StatisticsGenerator {
         $from = $range->getAttributeValue('date_from');
         $lastId = $range->getAttributeValue('last_id');
 
-        $crawlerStatistics = config('visitors.generate_traffic_for_crawlers_and_persons');
-        $categoryStatistics = config('visitors.generate_traffic_for_categories');
-
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,
             dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
@@ -64,8 +64,8 @@ class StatisticsGenerator {
             to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
             from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
             lastId                    : is_int($lastId) ? $lastId : 1,
-            generateCrawlersStatistics: is_bool($crawlerStatistics) && $crawlerStatistics,
-            generateCategoryStatistics: is_bool($categoryStatistics) && $categoryStatistics,
+            generateCrawlersStatistics: $this->trafficForCrawlersAndPersons(),
+            generateCategoryStatistics: $this->trafficForCategories(),
         );
     }
 
