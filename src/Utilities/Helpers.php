@@ -3,27 +3,52 @@
 declare(strict_types=1);
 
 use OndrejVrto\Visitors\Visitor;
+use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Contracts\Visitable;
+use OndrejVrto\Visitors\Models\VisitorsTraffic;
 
-if (! function_exists('vrtoVisits')) {
+if (! function_exists('visit')) {
     /**
-     * TODO: description
-     *
+     * Construct a new Visitor instance.
      */
-    function vrtoVisit(Visitable $model): Visitor {
+    function visit(Visitable $model): Visitor {
         return new Visitor($model);
+    }
+}
+
+if (! function_exists('trafficList')) {
+    /**
+     * Construct a new Traffic instance.
+      *
+      * @param Visitable|string|class-string|array<class-string> $visitable
+      * @throws Exception
+      * @return Builder
+      */
+    function trafficList(Visitable|string|array $visitable) {
+        return (new VisitorsTraffic())->trafficList($visitable);
     }
 }
 
 if (! function_exists('intOrZero')) {
     /**
      * Return integer ar zero value from mixed value
-     *
      */
     function intOrZero(mixed $value): int {
-        return is_int($value)
-            ? $value
+        return isInteger($value)
+            ? (int) $value
             : 0;
+    }
+}
+
+if (! function_exists('isInteger')) {
+    /**
+     * Shorter way to check if your variable is an int
+     * or a string containing a int without others digit than 0 to 9.
+     */
+    function isInteger(mixed $value): bool {
+        return is_int($value)
+            ? true
+            : ctype_digit((string) $value);
     }
 }
 

@@ -98,9 +98,9 @@ $schedule->command(VisitorsFreshCommand::class)->dailyAt('01:00');
 // Return only one record
 // -----------------------------------------------------------------------------
 
-$statistics = traffic_statistics()->sumar();
-$statistics = traffic_statistics()->visitedByPersons()->sumar();
-$statistics = traffic_statistics()->visitedByCrawlers()->sumar();
+$statistics = trafficStatistics()->sumar();
+$statistics = trafficStatistics()->visitedByPersons()->sumar();
+$statistics = trafficStatistics()->visitedByCrawlers()->sumar();
 
 
 // -----------------------------------------------------------------------------
@@ -141,6 +141,9 @@ $trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->sumar();
 $trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
 $trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
 
+// adds relationships to the Visitable Model
+$list = trafficList(Post::class)->withRelationships()->get();
+
 
 // -----------------------------------------------------------------------------
 // LISTS OF TOP VISIT MODELS
@@ -156,29 +159,48 @@ $list = trafficList($post)->get();
 // define list of type models
 $list = trafficList([Post::class, Article::class, Album::class])->get();
 
+// all posibilities
+$list = trafficList([
+	StaticPage::class,
+	'basic'                   => [News::class],
+	'basic repeater'          => ['App\Models\News'],
+	'bad - vithout interface' => [Banner::class, Chart::class],
+	'extended'                => [\App\Models\News::class, News::find(1), Faq::class],
+])
+// add this array of type models to query builder
+array:3 [▼
+  0 => "App\Models\StaticPage"
+  1 => "App\Models\News"
+  2 => "App\Models\Faq"
+]
+
 // order by
-$list = trafficList(Post::class)->orderByTotal()->get();
-$list = trafficList(Post::class)->orderByLastDay()->get();
-$list = trafficList(Post::class)->orderByLast7Days()->get();
-$list = trafficList(Post::class)->orderByLast30Days()->get();
-$list = trafficList(Post::class)->orderByLast365Days()->get();
+	$list = trafficList(Post::class)->orderByTotal()->get();
+	$list = trafficList(Post::class)->orderByLastDay()->get();
+	$list = trafficList(Post::class)->orderByLast7Days()->get();
+	$list = trafficList(Post::class)->orderByLast30Days()->get();
+	$list = trafficList(Post::class)->orderByLast365Days()->get();
 // order direction
-$list = trafficList(Post::class)->orderByTotal('asc')->get();
-$list = trafficList(Post::class)->orderByTotal('desc')->get();
+	$list = trafficList(Post::class)->orderByTotal('asc')->get();
+	$list = trafficList(Post::class)->orderByTotal('desc')->get();
 
 // visited by persons or crawlers
-$list = trafficList(Post::class)->visitedByPersons()->get();
-$list = trafficList(Post::class)->visitedByCrawlers()->get();
+	$list = trafficList(Post::class)->visitedByPersons()->get();
+	$list = trafficList(Post::class)->visitedByCrawlers()->get();
 
 // visited in categories
-$list = trafficList(Post::class)->inCategory(VisitorCategory::WEB)->get();
-$list = trafficList(Post::class)->inCategory([VisitorCategory::WEB, VisitorCategory::API])->get();
-
-// adds relationships to the Visitable Model
-$list = trafficList(Post::class)->withRelationships()->get();
+  	$list = trafficList(Post::class)->inCategory(VisitorCategory::WEB)->get();
+  	$list = trafficList(Post::class)->inCategory([VisitorCategory::WEB, VisitorCategory::API])->get();
+  	// all posibilities to define list of categories
+	$list = trafficList(Post::class)->inCategory([
+		['UNDEFINED', 'web','web', 'web', 'blbost', 'a' => ['CUSTOM_02', 'CUSTOM_05'], VisitorCategory::CUSTOM_01, 5, 10000]
+  	])->get();
 
 // apply limit or paginator or another eloquent query builder methods
 $list = trafficList(Post::class)->limit(50)->paginate(10);
+
+// adds relationships to the Visitable Model
+$list = trafficList(Post::class)->withRelationships()->get(); //TODO:
 
 // Typical Example
 $list = trafficList([Post::class, Article::class])

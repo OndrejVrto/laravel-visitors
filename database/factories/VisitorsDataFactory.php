@@ -12,10 +12,9 @@ class VisitorsDataFactory extends Factory {
 
     public function definition() {
         $visitableModels = [
-            "App\\Models\\Post",
-            // "App\\Models\\Page",
-            "App\\Models\\Album",
-            "App\\Models\\Article",
+            "App\\Models\\News",
+            "App\\Models\\Faq",
+            "App\\Models\\StaticPage",
         ];
 
         // $os = collect(OperatingSystem::cases())->pluck('value')->toArray();

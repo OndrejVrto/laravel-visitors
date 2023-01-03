@@ -2,8 +2,13 @@
 
 namespace OndrejVrto\Visitors\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use OndrejVrto\Visitors\Contracts\Visitable;
+use OndrejVrto\Visitors\Action\CheckCategory;
+use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 
 class VisitorsTraffic extends BaseVisitors {
     public function __construct(array $attributes = []) {
@@ -24,5 +29,70 @@ class VisitorsTraffic extends BaseVisitors {
         ]);
 
         parent::__construct($attributes);
+    }
+
+    /**
+    * @param Visitable|string|class-string|array<class-string> $visitable
+    * @throws Exception
+    * @return Builder
+    */
+    public function trafficList(Visitable|string|array $visitable): Builder {
+        $classes = (new CheckVisitable())($visitable);
+        $count = count($classes);
+
+        if ($count == 0) {
+            throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
+        }
+
+        return self::query()
+            ->whereNotNull('viewable_id')
+            ->when($count === 1, fn ($q) => $q->where('viewable_type', $classes[0]))
+            ->when($count > 1, fn ($q) => $q->whereIn('viewable_type', $classes));
+    }
+
+    /**
+    * @param Builder $query
+    * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
+    * @return Builder
+    */
+    public function scopeInCategory(Builder $query, VisitorCategory|string|int|array $category): Builder {
+        $categories = (new CheckCategory())($category);
+        $count = count($categories);
+
+        return $query
+            ->when($count === 1, fn ($q) => $q->where('category', $categories[0]))
+            ->when($count > 1, fn ($q) => $q->whereIn('category', $categories));
+    }
+
+    public function scopeOrderByTotal(Builder $query, string $direction = 'desc'): Builder {
+        return $query->orderBy('visit_total', $direction);
+    }
+
+    public function scopeOrderByLastDay(Builder $query, string $direction = 'desc'): Builder {
+        return $query->orderBy('visit_last_1_day', $direction);
+    }
+
+    public function scopeOrderByLast7Days(Builder $query, string $direction = 'desc'): Builder {
+        return $query->orderBy('visit_last_7_days', $direction);
+    }
+
+    public function scopeOrderByLast30Days(Builder $query, string $direction = 'desc'): Builder {
+        return $query->orderBy('visit_last_30_days', $direction);
+    }
+
+    public function scopeOrderByLast365Days(Builder $query, string $direction = 'desc'): Builder {
+        return $query->orderBy('visit_last_365_days', $direction);
+    }
+
+    public function scopeVisitedByPersons(Builder $query): Builder {
+        return $query->where('is_crawler', '=', false);
+    }
+
+    public function scopeVisitedByCrawlers(Builder $query): Builder {
+        return $query->where('is_crawler', '=', true);
+    }
+
+    public function scopeWithRelationships(Builder $query): Builder {
+        return $query->with('viewable');
     }
 }

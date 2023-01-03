@@ -23,7 +23,7 @@ abstract class BaseVisitors extends Model {
     ];
 
     public function viewable(): MorphTo {
-        return $this->morphTo();
+        return $this->morphTo('viewable');
     }
 
     public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
