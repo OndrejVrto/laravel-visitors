@@ -31,24 +31,14 @@ if (! function_exists('trafficList')) {
 
 if (! function_exists('intOrZero')) {
     /**
-     * Return integer ar zero value from mixed value
+     * Return integer or zero value from mixed value
      */
     function intOrZero(mixed $value): int {
-        return isInteger($value)
-            ? (int) $value
-            : 0;
-    }
-}
-
-if (! function_exists('isInteger')) {
-    /**
-     * Shorter way to check if your variable is an int
-     * or a string containing a int without others digit than 0 to 9.
-     */
-    function isInteger(mixed $value): bool {
         return is_int($value)
-            ? true
-            : ctype_digit((string) $value);
+            ? $value
+            : (is_string($value) && ctype_digit($value)
+                ? (int) $value
+                : 0);
     }
 }
 

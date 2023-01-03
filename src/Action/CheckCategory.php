@@ -10,7 +10,7 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 class CheckCategory {
     /**
      * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
-     * @return array<int,int>
+     * @return int[]
      */
     public function __invoke(VisitorCategory|string|int|array $category): array {
         $listCategories = [];
@@ -36,7 +36,6 @@ class CheckCategory {
             $category = VisitorCategory::tryFrom((int) $category);
             return is_null($category) ? [] : [$category->value];
         }
-
-        return collect($listCategories)->unique()->values()->toArray();
+        return array_values(array_unique($listCategories));
     }
 }

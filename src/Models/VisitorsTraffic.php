@@ -33,21 +33,21 @@ class VisitorsTraffic extends BaseVisitors {
 
     /**
     * @param Visitable|string|class-string|array<class-string> $visitable
-    * @throws Exception
+    * @throws InvalidClassParameter
     * @return Builder
     */
     public function trafficList(Visitable|string|array $visitable): Builder {
         $classes = (new CheckVisitable())($visitable);
-        $count = count($classes);
+        $countClasses = count($classes);
 
-        if ($count == 0) {
+        if ($countClasses === 0) {
             throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
         }
 
         return self::query()
             ->whereNotNull('viewable_id')
-            ->when($count === 1, fn ($q) => $q->where('viewable_type', $classes[0]))
-            ->when($count > 1, fn ($q) => $q->whereIn('viewable_type', $classes));
+            ->when($countClasses > 1, fn ($q) => $q->whereIn('viewable_type', $classes))
+            ->when($countClasses === 1, fn ($q) => $q->where('viewable_type', $classes[0]));
     }
 
     /**
@@ -57,11 +57,11 @@ class VisitorsTraffic extends BaseVisitors {
     */
     public function scopeInCategory(Builder $query, VisitorCategory|string|int|array $category): Builder {
         $categories = (new CheckCategory())($category);
-        $count = count($categories);
+        $countCategories = count($categories);
 
         return $query
-            ->when($count === 1, fn ($q) => $q->where('category', $categories[0]))
-            ->when($count > 1, fn ($q) => $q->whereIn('category', $categories));
+            ->when($countCategories === 1, fn (Builder $q) => $q->where('category', $categories[0]))
+            ->when($countCategories > 1, fn (Builder $q) => $q->whereIn('category', $categories));
     }
 
     public function scopeOrderByTotal(Builder $query, string $direction = 'desc'): Builder {

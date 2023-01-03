@@ -10,7 +10,7 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 class CheckVisitable {
     /**
      * @param Visitable|string|class-string|array<class-string>|Visitable[]|string[] $visitable
-     * @return array<int,string>
+     * @return string[]
      */
     public function __invoke(Visitable|string|array $visitable): array {
         $listClasses = [];
@@ -26,9 +26,9 @@ class CheckVisitable {
         }
 
         if ($visitable instanceof Visitable) {
-            return [$visitable->getMorphClass()];
+            return [0 => $visitable->getMorphClass()];
         }
 
-        return collect($listClasses)->unique()->values()->toArray();
+        return array_values(array_unique($listClasses));
     }
 }
