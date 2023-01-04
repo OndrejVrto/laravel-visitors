@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Collection;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +15,6 @@ use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\StatisticsQueriesBuilder;
-use Illuminate\Support\Collection;
 
 class GenerateStatisticsJob implements ShouldQueue {
     use Dispatchable;

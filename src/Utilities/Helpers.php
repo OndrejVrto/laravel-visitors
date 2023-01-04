@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use OndrejVrto\Visitors\Traffic;
 use OndrejVrto\Visitors\Visitor;
-use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Statistics;
+use OndrejVrto\Visitors\Contracts\Visitable;
 
 if (! function_exists('visit')) {
     /**

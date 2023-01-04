@@ -75,16 +75,9 @@ class ListPossibleQueries {
      * @return Collection<string>
      */
     private function possibleCombinationColumn(): Collection {
-        if ($this->typeForTraffik) {
-            $range = [[
-                "`id`, `viewable_type`, `viewable_id`",
-            ]];
-        } else {
-            $range = [[
-                "`id`, `viewable_type`",
-                "`id`, null"
-            ]];
-        }
+        $range = $this->typeForTraffik
+            ? [["`id`, `viewable_type`, `viewable_id`",]]
+            : [["`id`, `viewable_type`", "`id`, null"]];
 
         if ($this->configuration->generateCrawlersStatistics) {
             $range[] = ['`is_crawler`', 'null'];
@@ -104,11 +97,9 @@ class ListPossibleQueries {
      * @return string[]
      */
     private function columnNames(): array {
-        if ($this->typeForTraffik) {
-            $columns = ['viewable_type', 'viewable_id'];
-        } else {
-            $columns = ['viewable_type'];
-        }
+        $columns = $this->typeForTraffik
+            ? ['viewable_type', 'viewable_id']
+            : ['viewable_type'];
 
         if ($this->configuration->generateCrawlersStatistics) {
             $columns[] = 'is_crawler';
