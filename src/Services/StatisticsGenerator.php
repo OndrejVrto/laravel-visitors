@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
-use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Traits\TrafficSettings;
 use OndrejVrto\Visitors\Jobs\GenerateTraffikJob;
@@ -25,22 +24,24 @@ class StatisticsGenerator {
         $this->configuration = $this->handleConfiguration();
     }
 
-    public function run(): void {
+    public function run(): int {
         $this->prepareTables();
 
-        (new ListPossibleQueries($this->configuration, false))
-            ->get()
+        $statistic = (new ListPossibleQueries($this->configuration, false))->get();
+        $statistic
             ->chunk(20)
             ->each(function ($list): void {
                 dispatch(new GenerateStatisticsJob($this->configuration, $list));
             });
 
-        (new ListPossibleQueries($this->configuration, true))
-            ->get()
+        $traffic = (new ListPossibleQueries($this->configuration, true))->get();
+        $traffic
             ->chunk(50)
             ->each(function ($list): void {
                 dispatch(new GenerateTraffikJob($this->configuration, $list));
             });
+
+        return $statistic->count() + $traffic->count();
     }
 
     private function handleConfiguration(): StatisticsConfigData {
@@ -74,12 +75,7 @@ class StatisticsGenerator {
     }
 
     private function prepareTables(): void {
-        Artisan::call('model:prune', [
-            '--model' => [
-                VisitorsData::class,
-                VisitorsExpires::class
-            ],
-        ]);
+        Artisan::call('model:prune', ['--model' => VisitorsData::class]);
 
         DB::connection($this->configuration->dbConnectionName)
             ->table($this->configuration->statisticsTableName)

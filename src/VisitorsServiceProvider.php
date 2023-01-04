@@ -8,7 +8,6 @@ use Spatie\LaravelPackageTools\Package;
 use OndrejVrto\Visitors\Commands\VisitorsCleanCommand;
 use OndrejVrto\Visitors\Commands\VisitorsFreshCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use OndrejVrto\Visitors\Commands\VisitorsUpdateCommand;
 
 class VisitorsServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {
@@ -25,7 +24,6 @@ class VisitorsServiceProvider extends PackageServiceProvider {
             ->hasCommands([
                 VisitorsFreshCommand::class,
                 VisitorsCleanCommand::class,
-                VisitorsUpdateCommand::class,
             ]);
     }
 }
