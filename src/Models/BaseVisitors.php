@@ -26,12 +26,12 @@ abstract class BaseVisitors extends Model {
         return $this->morphTo('viewable');
     }
 
-    public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
-        return $query
-            ->when(
-                $category === null,
-                fn ($q) => $q->whereNull('category'),
-                fn ($q) => $q->where('category', $category),
-            );
-    }
+    // public function scopeWhereVisitorCategory(Builder $query, ?VisitorCategory $category = null): Builder {
+    //     return $query
+    //         ->when(
+    //             $category === null,
+    //             fn ($q) => $q->whereNull('category'),
+    //             fn ($q) => $q->where('category', $category),
+    //         );
+    // }
 }
