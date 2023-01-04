@@ -38,7 +38,7 @@ class Traffic {
 
     private int $countCategories = 0;
 
-    private ?Visitable $model = null;
+    private ?Model $model = null;
 
     /**
      * @param Visitable|string|class-string|array<class-string> $visitable
@@ -47,7 +47,7 @@ class Traffic {
     public function __construct(Visitable|string|array $visitable) {
         $this->classes = (new CheckVisitable())($visitable);
 
-        if ($visitable instanceof Visitable) {
+        if ($visitable instanceof Visitable && $visitable instanceof Model) {
             $this->model = $visitable;
         }
 
@@ -63,14 +63,16 @@ class Traffic {
     */
     public function addModels(Visitable|string|array $visitable): self {
         $this->classes = [...$this->classes, ...(new CheckVisitable())($visitable)];
-        if ($visitable instanceof Visitable) {
+        if ($visitable instanceof Visitable && $visitable instanceof Model) {
             $this->model = $visitable;
         }
         return $this;
     }
 
     public function for(Visitable $visitable): self {
-        $this->model = $visitable;
+        if ($visitable instanceof Model) {
+            $this->model = $visitable;
+        }
         return $this;
     }
 
@@ -168,7 +170,7 @@ class Traffic {
     private function queryToplist(): Builder {
         $this->handleConfigurations();
 
-        return VisitorsTraffic::query()
+        return (new VisitorsTraffic())->query()
             ->whereNotNull('viewable_id')
             ->when($this->countClasses === 1, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
             ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->classes))
@@ -178,7 +180,7 @@ class Traffic {
             ->when($this->countCategories === 1, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
             ->when($this->countCategories > 1, fn (Builder $q) => $q->whereIn('category', $this->categories))
             ->when($this->withRelationship == true, fn (Builder $q) => $q->with('viewable'))
-            ->when(!is_null($this->limit), fn (Builder $q) => $q->limit($this->limit))
+            ->when(!is_null($this->limit), fn (Builder $q) => $q->limit($this->limit ?? 20))
             ->orderByRaw($this->getOrdersSql());
     }
 
@@ -189,7 +191,7 @@ class Traffic {
             throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
         }
 
-        return VisitorsTraffic::query()
+        return (new VisitorsTraffic())->query()
             ->whereMorphedTo('viewable', $this->model)
             ->when(is_null($this->isCrawler), fn (Builder $q) => $q->whereNull('is_crawler'))
             ->when(is_bool($this->isCrawler), fn (Builder $q) => $q->where('is_crawler', '=', $this->isCrawler))
@@ -201,33 +203,33 @@ class Traffic {
     /**
     * Execute the query as a "select" statement.
     *
-    * @param  array|string  $columns
-    * @return Collection|static[]
+    * @param  string[]|string  $columns
+    * @return Collection|Model[]
     */
-    public function get($columns = ['*']): Collection|static {
+    public function get(array|string $columns = ['*']): Collection|Model {
         return $this->queryToplist()->get($columns);
     }
 
     /**
     * Paginate the given query.
     *
-    * @param  int|null|\Closure  $perPage
-    * @param  array|string  $columns
+    * @param  int|null  $perPage
+    * @param  string[] $columns
     * @param  string  $pageName
     * @param  int|null  $page
     * @return LengthAwarePaginator
     */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator {
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginator {
         return $this->queryToplist()->paginate($perPage, $columns, $pageName, $page);
     }
 
     /**
     * Execute the query and get the first result or throw an exception.
     *
-    * @param  array|string  $columns
-    * @return Model|static
+    * @param  string[]|string  $columns
+    * @return Model
     */
-    public function firstOrFail($columns = ['*']): Model|static {
+    public function firstOrFail(array|string $columns = ['*']): Model {
         return $this->queryOneModel()->firstOrFail($columns);
     }
 }
