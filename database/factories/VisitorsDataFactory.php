@@ -22,10 +22,10 @@ class VisitorsDataFactory extends Factory {
 
         return [
             'viewable_type'    => $this->faker->randomElement($visitableModels),
-            'viewable_id'      => $this->faker->numberBetween(1, 20),
+            'viewable_id'      => $this->faker->numberBetween(1, 10),
             'is_crawler'       => $this->faker->boolean(50),
             // 'category'         => $this->faker->randomElement($category),
-            'category'         => $this->faker->numberBetween(1, 2),
+            'category'         => $this->faker->numberBetween(1, 3),
             'country'          => $this->faker->countryCode(),
             'language'         => $this->faker->languageCode(),
             // 'operating_system' => $this->faker->randomElement($os),
