@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
+use OndrejVrto\Visitors\Traffic;
 use OndrejVrto\Visitors\Visitor;
-use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Models\VisitorsTraffic;
 
 if (! function_exists('visit')) {
     /**
@@ -16,16 +15,15 @@ if (! function_exists('visit')) {
     }
 }
 
-if (! function_exists('trafficList')) {
+if (! function_exists('traffic')) {
     /**
      * Construct a new Traffic instance.
       *
       * @param Visitable|string|class-string|array<class-string> $visitable
-      * @throws Exception
-      * @return Builder
+      * @return Traffic
       */
-    function trafficList(Visitable|string|array $visitable) {
-        return (new VisitorsTraffic())->trafficList($visitable);
+    function traffic(Visitable|string|array $visitable): Traffic {
+        return new Traffic($visitable);
     }
 }
 
