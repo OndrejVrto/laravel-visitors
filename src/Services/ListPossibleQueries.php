@@ -12,6 +12,7 @@ use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 class ListPossibleQueries {
     public function __construct(
         private readonly StatisticsConfigData $configuration,
+        private readonly bool $typeForTraffik = true,
     ) {
     }
 
@@ -26,7 +27,7 @@ class ListPossibleQueries {
             ->fromSub($this->unionQuery(), 'variants')
             ->where('id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
-            ->orderBy('viewable_id')
+            ->when($this->typeForTraffik, fn ($q) => $q->orderBy('viewable_id'))
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
             ->when($this->configuration->generateCategoryStatistics, fn ($q) => $q->orderBy('category'))
             ->get()
@@ -74,11 +75,16 @@ class ListPossibleQueries {
      * @return Collection<string>
      */
     private function possibleCombinationColumn(): Collection {
-        $range = [[
-            "`id`, `viewable_type`, `viewable_id`",
-            "`id`, `viewable_type`, null",
-            "`id`, null, null"
-        ]];
+        if ($this->typeForTraffik) {
+            $range = [[
+                "`id`, `viewable_type`, `viewable_id`",
+            ]];
+        } else {
+            $range = [[
+                "`id`, `viewable_type`",
+                "`id`, null"
+            ]];
+        }
 
         if ($this->configuration->generateCrawlersStatistics) {
             $range[] = ['`is_crawler`', 'null'];
@@ -98,7 +104,11 @@ class ListPossibleQueries {
      * @return string[]
      */
     private function columnNames(): array {
-        $columns = ['viewable_type', 'viewable_id'];
+        if ($this->typeForTraffik) {
+            $columns = ['viewable_type', 'viewable_id'];
+        } else {
+            $columns = ['viewable_type'];
+        }
 
         if ($this->configuration->generateCrawlersStatistics) {
             $columns[] = 'is_crawler';

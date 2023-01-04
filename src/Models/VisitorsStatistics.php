@@ -16,6 +16,11 @@ class VisitorsStatistics extends Model {
 
     protected $casts = [
         'id'                      => 'integer',
+
+        "viewable_type"           => 'string',
+        'is_crawler'              => 'boolean',
+        'category'                => VisitorCategory::class,
+
         'daily_numbers'           => AsCollection::class,
         'day_maximum'             => 'integer',
 

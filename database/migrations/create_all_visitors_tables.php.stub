@@ -84,8 +84,8 @@ return new class extends Migration
         $this->schemaBuilder->create($this->tableNames['traffic'], function (Blueprint $table) {
             $table->mediumIncrements('id');
 
-            $table->string("viewable_type", 60)->nullable();
-            $table->unsignedInteger("viewable_id")->nullable();
+            $table->string("viewable_type", 60);
+            $table->unsignedInteger("viewable_id");
             $table->boolean('is_crawler')->nullable();
             $table->unsignedTinyInteger('category')->nullable();  // ENUM
 
@@ -105,9 +105,16 @@ return new class extends Migration
         });
 
         $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
-            $table->smallIncrements('id');
+            $table->mediumIncrements('id');
 
+            $table->string("viewable_type", 60)->nullable();
             $table->boolean('is_crawler')->nullable();
+            $table->unsignedTinyInteger('category')->nullable();  // ENUM
+
+            $table->unique(
+                ["viewable_type", 'category', 'is_crawler'],
+                'visitors_statistics_viewable_category_crawler_unique'
+            );
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');

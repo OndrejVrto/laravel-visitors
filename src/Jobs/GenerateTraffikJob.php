@@ -16,7 +16,7 @@ use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\StatisticsQueriesBuilder;
 
-class GenerateDailyGraphJob implements ShouldQueue {
+class GenerateTraffikJob implements ShouldQueue {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;

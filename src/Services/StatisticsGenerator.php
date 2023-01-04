@@ -13,9 +13,8 @@ use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Traits\TrafficSettings;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
-use OndrejVrto\Visitors\Jobs\GenerateDailyGraphJob;
-use OndrejVrto\Visitors\Jobs\GenerateTotalGraphJob;
-use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
+use OndrejVrto\Visitors\Jobs\GenerateTraffikJob;
+use OndrejVrto\Visitors\Jobs\GenerateStatisticsJob;
 
 class StatisticsGenerator {
     use TrafficSettings;
@@ -29,13 +28,18 @@ class StatisticsGenerator {
     public function run(): void {
         $this->prepareTables();
 
-        dispatch(new GenerateTotalGraphJob($this->configuration, new ListPossibleQueriesData()));
+        (new ListPossibleQueries($this->configuration, false))
+            ->get()
+            ->chunk(20)
+            ->each(function ($list): void {
+                dispatch(new GenerateStatisticsJob($this->configuration, $list));
+            });
 
-        (new ListPossibleQueries($this->configuration))
+        (new ListPossibleQueries($this->configuration, true))
             ->get()
             ->chunk(50)
             ->each(function ($list): void {
-                dispatch(new GenerateDailyGraphJob($this->configuration, $list));
+                dispatch(new GenerateTraffikJob($this->configuration, $list));
             });
     }
 

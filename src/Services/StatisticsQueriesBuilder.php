@@ -15,13 +15,16 @@ final class StatisticsQueriesBuilder {
     ) {
     }
 
-    public function sumarQuery(string $columnName): Builder {
+    public function sumarQuery(string $columnName, ListPossibleQueriesData $listOptionData): Builder {
         return DB::connection($this->configuration->dbConnectionName)
             ->query()
             ->select($columnName)
             ->selectRaw("count(*) as `count_$columnName`")
             ->from($this->configuration->dataTableName)
             ->where('id', "<=", $this->configuration->lastId)
+            ->when(!is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
+            ->when(!is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
+            ->when(!is_null($listOptionData->category), fn ($q) => $q->where("category", $listOptionData->category))
             ->groupBy($columnName)
             ->orderByDesc("count_$columnName");
     }
