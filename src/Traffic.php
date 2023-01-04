@@ -47,12 +47,12 @@ class Traffic {
     public function __construct(Visitable|string|array $visitable) {
         $this->classes = (new CheckVisitable())($visitable);
 
-        if ($visitable instanceof Visitable && $visitable instanceof Model) {
-            $this->model = $visitable;
+        if ($this->classes === []) {
+            throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
         }
 
-        if (count($this->classes) === 0) {
-            throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
+        if ($visitable instanceof Visitable && $visitable instanceof Model) {
+            $this->model = $visitable;
         }
 
         $this->orderBy = ['visit_total' => 'desc'];
@@ -148,12 +148,12 @@ class Traffic {
         $this->classes = array_values(array_unique($this->classes));
         $this->countClasses = is_null($this->classes) ? 0 : count($this->classes);
 
-        $this->categories = $this->trafficForCategories() === false
-            ? []
-            : array_values(array_unique($this->categories));
+        $this->categories = $this->trafficForCategories()
+            ? array_values(array_unique($this->categories))
+            : [];
         $this->countCategories = count($this->categories);
 
-        if ($this->trafficForCrawlersAndPersons() === false) {
+        if (!$this->trafficForCrawlersAndPersons()) {
             $this->isCrawler = false;
         }
     }
