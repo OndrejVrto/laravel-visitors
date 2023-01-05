@@ -14,7 +14,7 @@ class VisitableObserver {
         if ($this->removeDataOnDelete($visitable)) {
             $visitable->visitData()->delete();
             $visitable->visitExpires()->delete();
-            $visitable->visitDailyGraphs()->delete();
+            $visitable->visitTraffic()->delete();
         }
     }
 

@@ -19,7 +19,5 @@ interface Visitable {
 
     public function visitData(): MorphMany;
 
-    public function visitDailyGraphs(): MorphMany;
-
-    public function dailyVisitGraph(): MorphOne;
+    public function visitTraffic(): MorphMany;
 }

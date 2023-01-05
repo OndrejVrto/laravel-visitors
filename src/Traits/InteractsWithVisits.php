@@ -26,11 +26,11 @@ trait InteractsWithVisits {
         return $this->morphMany(VisitorsData::class, 'viewable');
     }
 
-    public function visitDailyGraphs(): MorphMany {
+    public function visitTraffic(): MorphMany {
         return $this->morphMany(VisitorsTraffic::class, 'viewable');
     }
 
-    public function dailyVisitGraph(): MorphOne {
+    public function visitTrafficOne(): MorphOne {
         return $this->morphOne(VisitorsTraffic::class, 'viewable')->whereNull('category')->where('is_crawler', false);
     }
 }
