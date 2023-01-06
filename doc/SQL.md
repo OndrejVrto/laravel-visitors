@@ -228,13 +228,23 @@ GROUP BY operating_system
 ORDER BY visitors_operating_system_count DESC;
 ```
 
-<!-- # 9. 
+# 9. Spojenie tabulky modelu s viewable interfacem s traffic tabuľkou
 ```SQL
-
+SELECT *
+FROM `faradetva`.`static_pages` AS VIEWABLE
+LEFT JOIN
+	(SELECT *
+	FROM `faradetva.statistics`.`visitors_traffic`
+	WHERE `faradetva.statistics`.`visitors_traffic`.`is_crawler` = 0
+	AND `faradetva.statistics`.`visitors_traffic`.`category` IS NULL) AS TRAFFIC
+ON VIEWABLE.`id` = TRAFFIC.`viewable_id`
+AND VIEWABLE.`deleted_at` IS NULL
+AND TRAFFIC.`viewable_type` = 'App\\Models\\StaticPage'
+ORDER BY TRAFFIC.`visit_total` DESC
 ```
 
 
-# 9. 
+<!-- # 9. 
 ```SQL
 
 ```
