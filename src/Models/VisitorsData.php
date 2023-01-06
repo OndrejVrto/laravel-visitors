@@ -16,6 +16,9 @@ class VisitorsData extends BaseVisitors {
     use MassPrunable;
     use VisitorsSettings;
 
+    /**
+     * @param array<mixed> $attributes
+     */
     public function __construct(array $attributes = []) {
         $this->configTableName = "data";
 

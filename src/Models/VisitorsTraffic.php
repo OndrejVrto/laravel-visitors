@@ -6,6 +6,9 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
 class VisitorsTraffic extends BaseVisitors {
+    /**
+     * @param array<mixed> $attributes
+     */
     public function __construct(array $attributes = []) {
         $this->configTableName = "traffic";
 

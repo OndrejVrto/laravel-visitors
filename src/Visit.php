@@ -120,7 +120,7 @@ class Visit {
         }
 
         if (! isset($this->country)) {
-            $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');
+            $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');  /** @phpstan-ignore-line */
             $this->country = is_null($countryCode)
                 ? null
                 : (is_string($countryCode) ? substr(strtolower($countryCode), 0, 14) : null);

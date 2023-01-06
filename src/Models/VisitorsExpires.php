@@ -13,6 +13,9 @@ class VisitorsExpires extends BaseVisitors {
     use HasFactory;
     use MassPrunable;
 
+    /**
+     * @param array<mixed> $attributes
+     */
     public function __construct(array $attributes = []) {
         $this->configTableName = "expires";
 
@@ -31,6 +34,6 @@ class VisitorsExpires extends BaseVisitors {
 
     public function prunable(): Builder {
         return static::query()
-            ->where('expires_at', '<', now());
+            ->whereTime("expires_at", "<", now());
     }
 }
