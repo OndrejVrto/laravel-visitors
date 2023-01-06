@@ -9,7 +9,7 @@ use DateTimeInterface;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
-trait VisitorSetters {
+trait VisitSetters {
     public function withCrawlers(): self {
         $this->crawlerStorage = true;
 

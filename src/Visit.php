@@ -13,13 +13,13 @@ use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Traits\VisitSetters;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
-use OndrejVrto\Visitors\Traits\VisitorSetters;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class Visit {
-    use VisitorSetters;
+    use VisitSetters;
 
     protected Visitable $model;
 
