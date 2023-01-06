@@ -1,7 +1,7 @@
 <?php
 
 /**
- * for packages: ondrej-vrto/laravel-visitors
+ * config for packages: ondrej-vrto/laravel-visitors
  * @see https://github.com/OndrejVrto/laravel-visitors
  */
 
@@ -16,6 +16,7 @@ return [
     */
 
     'eloquent_connection' => env('VISITORS_DB_CONNECTION', 'mysql'),
+
 
     /**
     * Here you can configure the table names in database.
@@ -71,6 +72,7 @@ return [
 
     'storage_request_from_crawlers_and_bots' => false,
 
+
     /**
     * Ignore views of the following IP addresses.
     */
@@ -94,6 +96,7 @@ return [
 
     'number_days_traffic' => 730,
 
+
     /**
     * Create separate daily traffic graphs for used categories.
     *
@@ -102,6 +105,7 @@ return [
     */
 
     'generate_traffic_for_categories' => true,
+
 
     /**
     * Create separate daily traffic graphs for crawlers and persons.
@@ -112,4 +116,14 @@ return [
     */
 
     'generate_traffic_for_crawlers_and_persons' => true,
+
+
+    /**
+    * Schedule the generation of traffic data and statistics within the internal scheduler of this package. It will run every three hours.
+    *
+    * Note   : Equivalent to setting in the scheduler (in App\Console\Kernel)  $schedule->command(VisitorsFreshCommand::class)->everyThreeHours();
+    * Default: true
+    */
+
+    'schedule_generate_traffic_data_automaticaly' => true,
 ];

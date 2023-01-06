@@ -11,7 +11,7 @@ use OndrejVrto\Visitors\Models\VisitorsExpires;
 class VisitorsCleanCommand extends Command {
     public $signature = 'visitors:clean';
 
-    public $description = 'Prune old records in the visitors table.';
+    public $description = 'Prune old records in the visitors tables.';
 
     public function handle(): int {
         $code = $this->call('model:prune', ['--model' => [VisitorsData::class, VisitorsExpires::class]]);

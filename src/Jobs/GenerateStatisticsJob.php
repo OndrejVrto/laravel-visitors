@@ -16,7 +16,6 @@ use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Builder\StatisticsQueriesBuilder;
 
-
 class GenerateStatisticsJob implements ShouldQueue {
     use Dispatchable;
     use InteractsWithQueue;
