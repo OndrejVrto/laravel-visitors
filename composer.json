@@ -81,7 +81,7 @@
                 "OndrejVrto\\Visitors\\VisitorsServiceProvider"
             ],
             "aliases": {
-                "Visitor": "OndrejVrto\\Visitors\\Facades\\Visitor",
+                "Visit": "OndrejVrto\\Visitors\\Facades\\Visit",
                 "Traffic": "OndrejVrto\\Visitors\\Facades\\Traffic",
                 "Statistics": "OndrejVrto\\Visitors\\Facades\\Statistics"
             }

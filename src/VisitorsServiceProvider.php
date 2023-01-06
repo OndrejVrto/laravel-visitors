@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors;
 
+use OndrejVrto\Visitors\Visit;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use OndrejVrto\Visitors\Commands\VisitorsCleanCommand;
@@ -24,8 +25,8 @@ class VisitorsServiceProvider extends PackageServiceProvider {
     }
 
     public function packageRegistered(): void {
-        $this->app->bind('visitor', fn (): Visitor => new Visitor());
-        $this->app->alias(Visitor::class, 'visitor');
+        $this->app->bind('visit', fn (): Visit => new Visit());
+        $this->app->alias(Visit::class, 'visit');
 
         $this->app->bind('traffic', fn (): Traffic => new Traffic());
         $this->app->alias(Traffic::class, 'traffic');

@@ -18,7 +18,7 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Traits\VisitorSetters;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
-class Visitor {
+class Visit {
     use VisitorSetters;
 
     protected Visitable $model;

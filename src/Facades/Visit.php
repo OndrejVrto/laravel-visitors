@@ -29,8 +29,8 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
  *
  * @see \OndrejVrto\Visitors\Visitor
  */
-class Visitor extends Facade {
+class Visit extends Facade {
     protected static function getFacadeAccessor(): string {
-        return 'visitor';
+        return 'visit';
     }
 }
