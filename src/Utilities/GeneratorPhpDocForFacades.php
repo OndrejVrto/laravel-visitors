@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-require __DIR__.'/vendor/autoload.php';
+namespace OndrejVrto\Visitors\Utilities;
 
+require __DIR__.'/../../vendor/autoload.php';
+
+use OndrejVrto\Visitors\Visit;
 use OndrejVrto\Visitors\Traffic;
-use OndrejVrto\Visitors\Visitor;
 use OndrejVrto\Visitors\Statistics;
 use Elfsundae\Laravel\FacadePhpdocGenerator;
+use OndrejVrto\Visitors\Facades\Visit as VisitFacade;
 use OndrejVrto\Visitors\Facades\Traffic as TrafficFacade;
-use OndrejVrto\Visitors\Facades\Visitor as VisitorFacade;
 use OndrejVrto\Visitors\Facades\Statistics as StatisticsFacade;
 
-FacadePhpdocGenerator::make(Visitor::class)
-    ->see(Visitor::class)
-    ->updateFacade(VisitorFacade::class);
+FacadePhpdocGenerator::make(Visit::class)
+    ->see(Visit::class)
+    ->updateFacade(VisitFacade::class);
 
 FacadePhpdocGenerator::make(Traffic::class)
     ->see(Traffic::class)
