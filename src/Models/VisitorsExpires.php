@@ -33,13 +33,4 @@ class VisitorsExpires extends BaseVisitors {
         return static::query()
             ->where('expires_at', '<', now());
     }
-
-    // public function scopeWhereIpAddress(Builder $query, ?string $ipAddress = null): Builder {
-    //     return $query
-    //         ->when(
-    //             $ipAddress === null,
-    //             fn ($q) => $q->whereNull('ip_address'),
-    //             fn ($q) => $q->where('ip_address', $ipAddress),
-    //         );
-    // }
 }
