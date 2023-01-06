@@ -6,11 +6,14 @@ namespace OndrejVrto\Visitors;
 
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use OndrejVrto\Visitors\Commands\VisitorsCleanCommand;
 use OndrejVrto\Visitors\Commands\VisitorsFreshCommand;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class VisitorsServiceProvider extends PackageServiceProvider {
+    use VisitorsSettings;
+
     public function configurePackage(Package $package): void {
         $package
             ->name('laravel-visitors')
@@ -35,10 +38,7 @@ class VisitorsServiceProvider extends PackageServiceProvider {
     }
 
     public function packageBooted(): void {
-        $scheduleGenerator = config('visitors.schedule_generate_traffic_data_automaticaly');
-        $scheduleGenerator = is_bool($scheduleGenerator) ? $scheduleGenerator : false;
-
-        if ($scheduleGenerator) {
+        if ($this->scheduleGenerateTrafficData()) {
             $this->app->booted(function (): void {
                 $schedule = $this->app->make(Schedule::class);
                 $schedule->command(VisitorsCleanCommand::class)->weekly();

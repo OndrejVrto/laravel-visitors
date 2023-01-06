@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OndrejVrto\Visitors\Models;
+namespace OndrejVrto\Visitors\Traits;
 
 trait ModelSettings {
     public function getConnectionName(): ?string {

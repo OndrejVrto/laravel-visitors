@@ -3,6 +3,7 @@
 namespace OndrejVrto\Visitors\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Traits\ModelSettings;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 abstract class BaseVisitors extends Model {

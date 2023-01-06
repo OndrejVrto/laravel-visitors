@@ -3,6 +3,7 @@
 namespace OndrejVrto\Visitors\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Traits\ModelSettings;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 

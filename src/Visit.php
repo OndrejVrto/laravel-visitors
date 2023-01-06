@@ -17,9 +17,11 @@ use OndrejVrto\Visitors\Traits\VisitSetters;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
 class Visit {
     use VisitSetters;
+    use VisitorsSettings;
 
     protected Visitable $model;
 
@@ -105,22 +107,15 @@ class Visit {
         }
 
         if (! isset($this->crawlerStorage)) {
-            $crawlerStorage = config('visitors.storage_request_from_crawlers_and_bots');
-            $this->crawlerStorage = is_bool($crawlerStorage) && $crawlerStorage;
+            $this->crawlerStorage = $this->defaultStorageCrawlersRequests();
         }
 
-        $defaultIgnoreIP = config('visitors.ignored_ip_addresses');
-        if (is_array($defaultIgnoreIP) || is_string($defaultIgnoreIP)) {
-            $this->addIpAddressToIgnoreList($defaultIgnoreIP);
-        }
+        $this->addIpAddressToIgnoreList($this->defaultVisitorsIgnoreIPList());
     }
 
     private function handleRestProperties(): void {
         if (! isset($this->category)) {
-            $defaultCategory = config('visitors.default_category');
-            $this->category = (is_string($defaultCategory) && VisitorCategory::isValidCase($defaultCategory))
-                ? VisitorCategory::fromName($defaultCategory)
-                : VisitorCategory::UNDEFINED;
+            $this->category = $this->defaultVisitorsCategory();
         }
 
         if (! isset($this->country)) {
@@ -144,9 +139,7 @@ class Visit {
         }
 
         if (! isset($this->expiresAt)) {
-            $expireTime = config('visitors.expires_time_for_visit');
-            $expireTime = is_int($expireTime) ? $expireTime : 15;
-            $this->expiresAt($expireTime);
+            $this->expiresAt($this->defaultVisitorsExpirationTime());
         }
     }
 
