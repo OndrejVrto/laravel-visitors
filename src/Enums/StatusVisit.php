@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Enums;
 
-enum StatusVisitor {
+enum StatusVisit {
     case INCREMENT_OK;
 
     case INCREMENT_DATA_OK;

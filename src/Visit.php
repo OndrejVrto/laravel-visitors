@@ -9,8 +9,8 @@ use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
@@ -50,12 +50,12 @@ class Visit {
 
     private OperatingSystem $operatingSystem;
 
-    public function forceIncrement(Visitable $visitable): StatusVisitor {
+    public function forceIncrement(Visitable $visitable): StatusVisit {
         $this->checkExpire = false;
         return $this->increment($visitable);
     }
 
-    public function increment(Visitable $visitable): StatusVisitor {
+    public function increment(Visitable $visitable): StatusVisit {
         if ($visitable instanceof Model) {
             $this->model = $visitable;
         } else {
@@ -65,28 +65,28 @@ class Visit {
         $this->handleInitialProperties();
 
         if ($this->isCrawler && ! $this->crawlerStorage) {
-            return StatusVisitor::NOT_INCREMENT_CRAWLERS;
+            return StatusVisit::NOT_INCREMENT_CRAWLERS;
         }
 
         if ($this->ipAddress !== null && collect($this->ignoredIpAddresses)->contains($this->ipAddress)) {
-            return StatusVisitor::NOT_INCREMENT_IP_ADDRESS;
+            return StatusVisit::NOT_INCREMENT_IP_ADDRESS;
         }
 
         $this->handleRestProperties();
 
         if ($this->checkExpire) {
             $statusExpire = $this->saveExpire();
-            if ($statusExpire !== StatusVisitor::INCREMENT_EXPIRATION_OK) {
+            if ($statusExpire !== StatusVisit::INCREMENT_EXPIRATION_OK) {
                 return $statusExpire;
             }
         }
 
         $statusData = $this->sevaData();
-        if ($statusData !== StatusVisitor::INCREMENT_DATA_OK) {
+        if ($statusData !== StatusVisit::INCREMENT_DATA_OK) {
             return $statusData;
         }
 
-        return StatusVisitor::INCREMENT_OK;
+        return StatusVisit::INCREMENT_OK;
     }
 
     private function handleInitialProperties(): void {
@@ -170,7 +170,7 @@ class Visit {
         return OperatingSystem::UNKNOWN;
     }
 
-    private function saveExpire(): StatusVisitor {
+    private function saveExpire(): StatusVisit {
         $visitorExpire = VisitorsExpires::query()
             ->select(['id', 'expires_at'])
             ->whereMorphedTo('viewable', $this->model->getMorphClass())
@@ -180,7 +180,7 @@ class Visit {
 
         if ($visitorExpire instanceof BaseVisitors) {
             if (Carbon::now()->lessThan($visitorExpire->getAttributeValue('expires_at'))) {
-                return StatusVisitor::NOT_PASSED_EXPIRATION_TIME;
+                return StatusVisit::NOT_PASSED_EXPIRATION_TIME;
             }
 
             $status = $visitorExpire
@@ -199,11 +199,11 @@ class Visit {
         }
 
         return $status
-            ? StatusVisitor::INCREMENT_EXPIRATION_OK
-            : StatusVisitor::INCREMENT_EXPIRATION_FAILED;
+            ? StatusVisit::INCREMENT_EXPIRATION_OK
+            : StatusVisit::INCREMENT_EXPIRATION_FAILED;
     }
 
-    private function sevaData(): StatusVisitor {
+    private function sevaData(): StatusVisit {
         $status = $this->model
             ->visitData()
             ->create([
@@ -216,7 +216,7 @@ class Visit {
             ]);
 
         return $status instanceof VisitorsData
-            ? StatusVisitor::INCREMENT_DATA_OK
-            : StatusVisitor::INCREMENT_DATA_FAILED;
+            ? StatusVisit::INCREMENT_DATA_OK
+            : StatusVisit::INCREMENT_DATA_FAILED;
     }
 }

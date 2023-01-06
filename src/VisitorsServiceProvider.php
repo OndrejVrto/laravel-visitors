@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors;
 
-use OndrejVrto\Visitors\Visit;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use OndrejVrto\Visitors\Commands\VisitorsCleanCommand;

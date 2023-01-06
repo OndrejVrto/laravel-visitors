@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Enums\StatusVisitor;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
@@ -24,8 +24,8 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
  * @method static self visitedAt(?DateTimeInterface $visitedAt = null)
  * @method static self withCrawlers()
  * @method static self withoutCrawlers()
- * @method static StatusVisitor forceIncrement(Visitable $visitable)
- * @method static StatusVisitor increment(Visitable $visitable)
+ * @method static StatusVisit forceIncrement(Visitable $visitable)
+ * @method static StatusVisit increment(Visitable $visitable)
  *
  * @see \OndrejVrto\Visitors\Visitor
  */
