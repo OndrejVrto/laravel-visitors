@@ -127,12 +127,12 @@ class Visit {
             $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');
             $this->country = is_null($countryCode)
                 ? null
-                : (is_string($countryCode) ? strtolower($countryCode) : null);
+                : (is_string($countryCode) ? substr(strtolower($countryCode), 0, 14) : null);
         }
 
         if (! isset($this->language)) {
             $language = $this->request->getLanguages();
-            $this->language = $language === [] ? null : $language[0];
+            $this->language = $language === [] ? null : substr(strtolower($language[0]), 0, 14);
         }
 
         if (! isset($this->operatingSystem)) {
