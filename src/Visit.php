@@ -12,7 +12,6 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Exceptions\BadModel;
-use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Traits\VisitSetters;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
@@ -172,12 +171,12 @@ class Visit {
             ->where('category', $this->category)
             ->first();
 
-        if ($visitorExpire instanceof BaseVisitors) {
+        if ($visitorExpire instanceof VisitorsExpires) {
             if (Carbon::now()->lessThan($visitorExpire->getAttributeValue('expires_at'))) {
                 return StatusVisit::NOT_PASSED_EXPIRATION_TIME;
             }
 
-            $status = $visitorExpire
+            $status = (bool) $visitorExpire
                 ->query()
                 ->update(['expires_at' => $this->expiresAt]);
         } else {

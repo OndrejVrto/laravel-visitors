@@ -11,41 +11,38 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
 
-class VisitorsData extends BaseVisitors {
+class VisitorsData extends VisitorsBase {
     use HasFactory;
     use MassPrunable;
     use VisitorsSettings;
 
-    /**
-     * @param array<mixed> $attributes
-     */
-    public function __construct(array $attributes = []) {
-        $this->configTableName = "data";
+    protected $casts = [
+        "viewable_type" => 'string',
+        "viewable_id"   => 'integer',
 
-        $this->mergeCasts([
-            'category'         => VisitorCategory::class,
-            'is_crawler'       => 'boolean',
-            'country'          => 'string',
-            'language'         => 'string',
-            'operating_system' => OperatingSystem::class,
-            'visited_at'       => 'datetime',
+        'category'         => VisitorCategory::class,
+        'is_crawler'       => 'boolean',
+        'country'          => 'string',
+        'language'         => 'string',
+        'operating_system' => OperatingSystem::class,
+        'visited_at'       => 'datetime',
 
-            // virtual
-            'date_from'        => 'datetime',
-            'date_to'          => 'datetime',
-            'last_id'          => 'integer',
-        ]);
+        // virtual
+        'date_from'        => 'datetime',
+        'date_to'          => 'datetime',
+        'last_id'          => 'integer',
+    ];
 
-        parent::__construct($attributes);
-    }
-
-    protected static function newFactory(): Factory {
-        return new VisitorsDataFactory();
+    protected function getConfigTableName(): string {
+        return 'data';
     }
 
     public function prunable(): Builder {
         return static::query()
-            ->whereDate('visited_at', '<=', now()->subDays($this->numberDaysStatistics()))
-            ->limit(5000);
+            ->whereDate('visited_at', '<=', now()->subDays($this->numberDaysStatistics()));
+    }
+
+    protected static function newFactory(): Factory {
+        return new VisitorsDataFactory();
     }
 }

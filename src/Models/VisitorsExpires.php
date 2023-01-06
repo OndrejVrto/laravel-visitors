@@ -9,31 +9,29 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsExpiresFactory;
 
-class VisitorsExpires extends BaseVisitors {
+class VisitorsExpires extends VisitorsBase {
     use HasFactory;
     use MassPrunable;
 
-    /**
-     * @param array<mixed> $attributes
-     */
-    public function __construct(array $attributes = []) {
-        $this->configTableName = "expires";
+    protected $casts = [
+        "viewable_type" => 'string',
+        "viewable_id"   => 'integer',
 
-        $this->mergeCasts([
-            'ip_address'    => 'string',
-            'category'      => VisitorCategory::class,
-            'expires_at'    => 'datetime',
-        ]);
+        'ip_address'    => 'string',
+        'category'      => VisitorCategory::class,
+        'expires_at'    => 'datetime',
+    ];
 
-        parent::__construct($attributes);
-    }
-
-    protected static function newFactory(): Factory {
-        return new VisitorsExpiresFactory();
+    protected function getConfigTableName(): string {
+        return 'expires';
     }
 
     public function prunable(): Builder {
         return static::query()
-            ->whereTime("expires_at", "<", now());
+        ->whereTime("expires_at", "<", now());
+    }
+
+    protected static function newFactory(): Factory {
+        return new VisitorsExpiresFactory();
     }
 }

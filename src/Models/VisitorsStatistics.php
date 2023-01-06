@@ -2,20 +2,10 @@
 
 namespace OndrejVrto\Visitors\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use OndrejVrto\Visitors\Traits\ModelSettings;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
-class VisitorsStatistics extends Model {
-    use ModelSettings;
-
-    public $timestamps = false;
-
-    public $guarded = [];
-
-    protected string $configTableName = "statistics";
-
+class VisitorsStatistics extends VisitorsBase {
     protected $casts = [
         "viewable_type"           => 'string',
         'is_crawler'              => 'boolean',
@@ -40,4 +30,8 @@ class VisitorsStatistics extends Model {
 
         'updated_at'              => 'datetime',
     ];
+
+    protected function getConfigTableName(): string {
+        return 'statistics';
+    }
 }
