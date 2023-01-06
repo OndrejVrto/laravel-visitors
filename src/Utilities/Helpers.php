@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
+use OndrejVrto\Visitors\Visit;
 use OndrejVrto\Visitors\Traffic;
-use OndrejVrto\Visitors\Visitor;
 use OndrejVrto\Visitors\Statistics;
 
 if (! function_exists('visit')) {
     /**
      * Construct a new Visitor instance.
      */
-    function visit(): Visitor {
-        return new Visitor();
+    function visit(): Visit {
+        return new Visit();
     }
 }
 
