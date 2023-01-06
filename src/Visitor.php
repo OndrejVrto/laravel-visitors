@@ -7,6 +7,7 @@ namespace OndrejVrto\Visitors;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Enums\StatusVisitor;
@@ -20,11 +21,15 @@ use OndrejVrto\Visitors\Models\VisitorsExpires;
 class Visitor {
     use VisitorSetters;
 
-    private bool $isCrawler;
+    protected Visitable $model;
 
     private Request $request;
 
+    private bool $isCrawler;
+
     private bool $crawlerStorage;
+
+    private bool $checkExpire = true;
 
     private ?string $country = null;
 
@@ -45,19 +50,19 @@ class Visitor {
 
     private OperatingSystem $operatingSystem;
 
-    public function __construct(
-        protected readonly Visitable $model
-    ) {
+    public function forceIncrement(Visitable $visitable): StatusVisitor {
+        $this->checkExpire = false;
+        return $this->increment($visitable);
     }
 
-    public function forceIncrement(): StatusVisitor {
-        return $this->increment(false);
-    }
+    public function increment(Visitable $visitable): StatusVisitor {
+        if ($visitable instanceof Model) {
+            $this->model = $visitable;
+        } else {
+            throw new \Exception("Class ".$visitable->getMorphClass()." must by ".Model::class." type.");
+        }
 
-    public function increment(bool $checkExpire = true): StatusVisitor {
         $this->handleInitialProperties();
-
-        // dump($this);
 
         if ($this->isCrawler && ! $this->crawlerStorage) {
             return StatusVisitor::NOT_INCREMENT_CRAWLERS;
@@ -69,7 +74,7 @@ class Visitor {
 
         $this->handleRestProperties();
 
-        if ($checkExpire) {
+        if ($this->checkExpire) {
             $statusExpire = $this->saveExpire();
             if ($statusExpire !== StatusVisitor::INCREMENT_EXPIRATION_OK) {
                 return $statusExpire;
@@ -172,7 +177,6 @@ class Visitor {
             ->where('ip_address', $this->ipAddress)
             ->where('category', $this->category)
             ->first();
-        // dump($visitorExpire);
 
         if ($visitorExpire instanceof BaseVisitors) {
             if (Carbon::now()->lessThan($visitorExpire->getAttributeValue('expires_at'))) {

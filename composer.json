@@ -4,6 +4,9 @@
     "keywords": [
         "Laravel",
         "Visits",
+        "Traffic",
+        "Statistics",
+        "Graph daily visit",
         "Counter",
         "Package",
         "Eloquent",
@@ -29,8 +32,9 @@
         "torann/geoip": "^1.0|^3.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.2",
         "driftingly/rector-laravel": "^0.14.1",
+        "elfsundae/laravel-facade-phpdoc-generator": "^0.1.2",
+        "laravel/pint": "^1.2",
         "nunomaduro/collision": "^6.0",
         "nunomaduro/larastan": "^2.3.4",
         "orchestra/testbench": "^v7.17.0",
@@ -77,7 +81,9 @@
                 "OndrejVrto\\Visitors\\VisitorsServiceProvider"
             ],
             "aliases": {
-                "Visitors": "OndrejVrto\\Visitors\\Facades\\Visitors"
+                "Visitor": "OndrejVrto\\Visitors\\Facades\\Visitor",
+                "Traffic": "OndrejVrto\\Visitors\\Facades\\Traffic",
+                "Statistics": "OndrejVrto\\Visitors\\Facades\\Statistics"
             }
         }
     },

@@ -60,8 +60,14 @@ trait VisitorSetters {
         return $this;
     }
 
-    public function isCrawler(bool $status = false): self {
+    public function isCrawler(bool $status = true): self {
         $this->isCrawler = $status;
+
+        return $this;
+    }
+
+    public function isPerson(bool $status = true): self {
+        $this->isCrawler = ! $status;
 
         return $this;
     }

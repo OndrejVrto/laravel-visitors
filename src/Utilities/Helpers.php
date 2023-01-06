@@ -5,14 +5,13 @@ declare(strict_types=1);
 use OndrejVrto\Visitors\Traffic;
 use OndrejVrto\Visitors\Visitor;
 use OndrejVrto\Visitors\Statistics;
-use OndrejVrto\Visitors\Contracts\Visitable;
 
 if (! function_exists('visit')) {
     /**
      * Construct a new Visitor instance.
      */
-    function visit(Visitable $model): Visitor {
-        return new Visitor($model);
+    function visit(): Visitor {
+        return new Visitor();
     }
 }
 
@@ -20,11 +19,10 @@ if (! function_exists('traffic')) {
     /**
      * Construct a new Visitor Traffic instance.
       *
-      * @param Visitable|string|class-string|array<class-string> $visitable
       * @return Traffic
       */
-    function traffic(Visitable|string|array $visitable): Traffic {
-        return new Traffic($visitable);
+    function traffic(): Traffic {
+        return new Traffic();
     }
 }
 
