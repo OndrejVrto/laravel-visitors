@@ -33,7 +33,7 @@ class VisitorsData extends VisitorsBase {
         'last_id'          => 'integer',
     ];
 
-    protected function getConfigTableName(): string {
+    protected function tableConfigKey(): string {
         return 'data';
     }
 

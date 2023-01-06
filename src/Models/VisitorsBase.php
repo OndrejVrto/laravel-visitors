@@ -3,27 +3,24 @@
 namespace OndrejVrto\Visitors\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 abstract class VisitorsBase extends Model {
+    use VisitorsSettings;
+
     public $timestamps = false;
 
     public $guarded = [];
 
-    abstract protected function getConfigTableName(): string;
+    abstract protected function tableConfigKey(): string;
 
     public function getConnectionName(): ?string {
-        $nameConnection = config('visitors.eloquent_connection');
-        return is_string($nameConnection)
-            ? $nameConnection
-            : parent::getConnectionName();
+        return $this->defaultVisitorsEloquentConnection() ?? parent::getConnectionName();
     }
 
     public function getTable(): string {
-        $nameTable = config("visitors.table_names.".$this->getConfigTableName());
-        return is_string($nameTable)
-            ? $nameTable
-            : parent::getTable();
+        return $this->defaultVisitorsNameTable($this->tableConfigKey()) ?? parent::getTable();
     }
 
     public function viewable(): MorphTo {

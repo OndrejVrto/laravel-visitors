@@ -7,14 +7,28 @@ namespace OndrejVrto\Visitors\Traits;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
 trait VisitorsSettings {
+    private function defaultVisitorsEloquentConnection(): ?string {
+        $nameConnection = config('visitors.eloquent_connection');
+        return is_string($nameConnection)
+            ? $nameConnection
+            : null;
+    }
+
+    private function defaultVisitorsNameTable(string $keyTableName): ?string {
+        $nameTable = config("visitors.table_names.$keyTableName");
+        return is_string($nameTable)
+            ? $nameTable
+            : null;
+    }
+
     private function trafficForCrawlersAndPersons(): bool {
-        $conf = config('visitors.generate_traffic_for_crawlers_and_persons');
-        return is_bool($conf) && $conf;
+        $generate = config('visitors.generate_traffic_for_crawlers_and_persons');
+        return is_bool($generate) && $generate;
     }
 
     private function trafficForCategories(): bool {
-        $conf = config('visitors.generate_traffic_for_categories');
-        return is_bool($conf) && $conf;
+        $generate = config('visitors.generate_traffic_for_categories');
+        return is_bool($generate) && $generate;
     }
 
     private function numberDaysStatistics(): int {
@@ -25,9 +39,9 @@ trait VisitorsSettings {
     }
 
     private function scheduleGenerateTrafficData(): bool {
-        $scheduleGenerator = config('visitors.schedule_generate_traffic_data_automaticaly');
-        return is_bool($scheduleGenerator)
-            ? $scheduleGenerator
+        $schedule = config('visitors.schedule_generate_traffic_data_automaticaly');
+        return is_bool($schedule)
+            ? $schedule
             : false;
     }
 
@@ -50,9 +64,7 @@ trait VisitorsSettings {
         return is_bool($crawlerStorage) && $crawlerStorage;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     private function defaultVisitorsIgnoreIPList(): array {
         $defaultIgnoreIP = config('visitors.ignored_ip_addresses');
 

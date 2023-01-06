@@ -31,7 +31,7 @@ class VisitorsStatistics extends VisitorsBase {
         'updated_at'              => 'datetime',
     ];
 
-    protected function getConfigTableName(): string {
+    protected function tableConfigKey(): string {
         return 'statistics';
     }
 }

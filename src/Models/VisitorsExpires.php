@@ -22,7 +22,7 @@ class VisitorsExpires extends VisitorsBase {
         'expires_at'    => 'datetime',
     ];
 
-    protected function getConfigTableName(): string {
+    protected function tableConfigKey(): string {
         return 'expires';
     }
 

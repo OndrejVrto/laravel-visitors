@@ -23,7 +23,7 @@ class VisitorsTraffic extends VisitorsBase {
         'visit_last_365_days' => 'integer',
     ];
 
-    protected function getConfigTableName(): string {
+    protected function tableConfigKey(): string {
         return 'traffic';
     }
 }
