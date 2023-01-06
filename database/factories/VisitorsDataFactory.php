@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class VisitorsDataFactory extends Factory {
     protected $model = VisitorsData::class;
 
+    /**
+     * @return array{viewable_type:string,viewable_id:int,is_crawler:bool,category:int,country:string,language:string,operating_system:int,visited_at:\DateTime}
+     */
     public function definition() {
         $visitableModels = [
             "App\\Models\\News",
