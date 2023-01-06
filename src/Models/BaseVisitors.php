@@ -15,7 +15,6 @@ abstract class BaseVisitors extends Model {
     protected ?string $configTableName = null;
 
     protected $casts = [
-        'id'            => 'integer',
         "viewable_type" => 'string',
         "viewable_id"   => 'integer',
     ];

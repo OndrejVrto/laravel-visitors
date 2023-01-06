@@ -37,8 +37,7 @@ trait InteractsWithVisits {
     public function scopeWithTraffic(
         Builder $query,
         ?VisitorCategory $category = null,
-        ?bool $isCrawler = false,
-        bool $orderByTotal = true
+        ?bool $isCrawler = false
     ): Builder {
         $modelTraffic = new VisitorsTraffic();
         $dbConnectionName = $modelTraffic->getConnectionName() ?? 'mysql';
@@ -68,26 +67,26 @@ trait InteractsWithVisits {
                 second  : 'traffic.viewable_id',
                 type    : 'left'
             )
-            ->when($orderByTotal, fn ($q) => $this->scopeOrderByTotal($q));
+            ->withCasts($modelTraffic->getCasts());
     }
 
-    public function scopeOrderByTotal(Builder $query, string $direction = 'desc'): Builder {
+    public function scopeOrderByVisitTotal(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_total', $direction);
     }
 
-    public function scopeOrderByLastDay(Builder $query, string $direction = 'desc'): Builder {
+    public function scopeOrderByVisitLastDay(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_last_1_day', $direction);
     }
 
-    public function scopeOrderByLast7Days(Builder $query, string $direction = 'desc'): Builder {
+    public function scopeOrderByVisitLast7Days(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_last_7_days', $direction);
     }
 
-    public function scopeOrderByLast30Days(Builder $query, string $direction = 'desc'): Builder {
+    public function scopeOrderByVisitLast30Days(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_last_30_days', $direction);
     }
 
-    public function scopeOrderByLast365Days(Builder $query, string $direction = 'desc'): Builder {
+    public function scopeOrderByVisitLast365Days(Builder $query, string $direction = 'desc'): Builder {
         return $query->orderBy('visit_last_365_days', $direction);
     }
 }

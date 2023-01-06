@@ -16,8 +16,6 @@ class VisitorsStatistics extends Model {
     protected string $configTableName = "statistics";
 
     protected $casts = [
-        'id'                      => 'integer',
-
         "viewable_type"           => 'string',
         'is_crawler'              => 'boolean',
         'category'                => VisitorCategory::class,
