@@ -6,8 +6,8 @@ namespace OndrejVrto\Visitors\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use OndrejVrto\Visitors\DTO\StatisticsConfigData;
-use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
+use OndrejVrto\Visitors\Data\StatisticsConfigData;
+use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 
 class ListPossibleQueries {
     public function __construct(

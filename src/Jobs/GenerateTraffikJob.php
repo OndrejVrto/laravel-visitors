@@ -11,9 +11,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\DTO\StatisticsConfigData;
+use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Traits\CalculateStatistics;
-use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
+use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Builder\StatisticsQueriesBuilder;
 
 class GenerateTraffikJob implements ShouldQueue {

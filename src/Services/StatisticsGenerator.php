@@ -11,7 +11,7 @@ use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Jobs\GenerateTraffikJob;
 use OndrejVrto\Visitors\Traits\VisitorsSettings;
-use OndrejVrto\Visitors\DTO\StatisticsConfigData;
+use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Jobs\GenerateStatisticsJob;
 

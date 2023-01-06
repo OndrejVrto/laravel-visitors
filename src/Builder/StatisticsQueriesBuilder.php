@@ -6,8 +6,8 @@ namespace OndrejVrto\Visitors\Builder;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
-use OndrejVrto\Visitors\DTO\StatisticsConfigData;
-use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
+use OndrejVrto\Visitors\Data\StatisticsConfigData;
+use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 
 final class StatisticsQueriesBuilder {
     public function __construct(

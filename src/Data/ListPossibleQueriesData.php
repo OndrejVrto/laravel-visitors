@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OndrejVrto\Visitors\DTO;
+namespace OndrejVrto\Visitors\Data;
 
 class ListPossibleQueriesData {
     public function __construct(
