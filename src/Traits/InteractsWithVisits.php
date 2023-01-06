@@ -14,7 +14,7 @@ use OndrejVrto\Visitors\Observers\VisitableObserver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait InteractsWithVisits {
-    use TrafficSettings;
+    use VisitorsSettings;
 
     protected $removeDataOnDelete = true;
 

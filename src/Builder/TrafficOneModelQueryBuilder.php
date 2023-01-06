@@ -10,10 +10,10 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\TrafficSettings;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
 class TrafficOneModelQueryBuilder {
-    use TrafficSettings;
+    use VisitorsSettings;
     use TrafficQueryMethods;
 
     private Visitable&Model $model;

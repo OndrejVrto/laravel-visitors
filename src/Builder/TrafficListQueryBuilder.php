@@ -12,12 +12,12 @@ use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\TrafficSettings;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 
 class TrafficListQueryBuilder {
-    use TrafficSettings;
+    use VisitorsSettings;
     use TrafficQueryMethods;
 
     /** @var string[] */

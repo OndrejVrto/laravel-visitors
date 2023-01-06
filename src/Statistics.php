@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
-use OndrejVrto\Visitors\Traits\TrafficSettings;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 
 class Statistics {
-    use TrafficSettings;
+    use VisitorsSettings;
 
     private ?int $category = null;
 

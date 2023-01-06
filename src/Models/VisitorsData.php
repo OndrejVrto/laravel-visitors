@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
@@ -13,6 +14,7 @@ use OndrejVrto\Visitors\Database\Factories\VisitorsDataFactory;
 class VisitorsData extends BaseVisitors {
     use HasFactory;
     use MassPrunable;
+    use VisitorsSettings;
 
     public function __construct(array $attributes = []) {
         $this->configTableName = "data";
@@ -42,12 +44,5 @@ class VisitorsData extends BaseVisitors {
         return static::query()
             ->whereDate('visited_at', '<=', now()->subDays($this->numberDaysStatistics()))
             ->limit(5000);
-    }
-
-    public function numberDaysStatistics(): int {
-        $days = config('visitors.number_days_traffic');
-        return is_int($days) && $days >= 1 && $days <= 36500
-            ? $days
-            : 730;
     }
 }

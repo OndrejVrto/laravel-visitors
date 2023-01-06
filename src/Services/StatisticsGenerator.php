@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\TrafficSettings;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use OndrejVrto\Visitors\Jobs\GenerateTraffikJob;
 use OndrejVrto\Visitors\DTO\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Jobs\GenerateStatisticsJob;
 
 class StatisticsGenerator {
-    use TrafficSettings;
+    use VisitorsSettings;
 
     private StatisticsConfigData $configuration;
 
@@ -47,8 +47,6 @@ class StatisticsGenerator {
     private function handleConfiguration(): StatisticsConfigData {
         $visitorData = new VisitorsData();
 
-        $days = $visitorData->numberDaysStatistics();
-
         $range = $visitorData
             ->query()
             ->selectRaw("max(`id`) as `last_id`")
@@ -59,6 +57,8 @@ class StatisticsGenerator {
         $to = $range->getAttributeValue('date_to');
         $from = $range->getAttributeValue('date_from');
         $lastId = $range->getAttributeValue('last_id');
+
+        $days = $this->numberDaysStatistics();
 
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,
