@@ -14,7 +14,8 @@ use OndrejVrto\Visitors\DTO\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\DTO\ListPossibleQueriesData;
-use OndrejVrto\Visitors\Services\StatisticsQueriesBuilder;
+use OndrejVrto\Visitors\Builder\StatisticsQueriesBuilder;
+
 
 class GenerateStatisticsJob implements ShouldQueue {
     use Dispatchable;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OndrejVrto\Visitors\Services;
+namespace OndrejVrto\Visitors\Builder;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
