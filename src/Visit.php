@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Contracts\Visitable;
+use OndrejVrto\Visitors\Exceptions\BadModel;
 use OndrejVrto\Visitors\Models\BaseVisitors;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Traits\VisitSetters;
@@ -61,7 +62,7 @@ class Visit {
         if ($visitable instanceof Model) {
             $this->model = $visitable;
         } else {
-            throw new \Exception("Class ".$visitable->getMorphClass()." must by ".Model::class." type.");
+            throw new BadModel("Class ".$visitable->getMorphClass()." must by ".Model::class." type.");
         }
 
         $this->handleInitialProperties();

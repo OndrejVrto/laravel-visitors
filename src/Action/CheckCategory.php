@@ -26,10 +26,7 @@ class CheckCategory {
         }
 
         if (is_string($category)) {
-            try {
-                return [VisitorCategory::fromName(Str::upper($category))->value];
-            } catch (\Exception) {
-            }
+            return [VisitorCategory::fromName(Str::upper($category))->value];
         }
 
         if (is_int($category)) {

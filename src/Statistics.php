@@ -80,12 +80,12 @@ class Statistics {
     }
 
     /**
-    * Execute the query and get the first result or throw an exception.
+    * Execute the query and get the first result or null.
     *
     * @param  string[]|string  $columns
     * @return Model
     */
     public function sumar(array|string $columns = ['*']): Model {
-        return $this->queryOneModel()->firstOrFail($columns);
+        return $this->queryOneModel()->first($columns);
     }
 }
