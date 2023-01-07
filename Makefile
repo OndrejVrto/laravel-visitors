@@ -1,8 +1,9 @@
+test:
+	vendor\bin\pest
+
 pint:
 	vendor\bin\pint
 
-test:
-	vendor\bin\pest
 
 test-coverage:
 	vendor\bin\pest --coverage

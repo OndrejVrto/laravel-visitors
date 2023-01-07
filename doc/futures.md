@@ -109,25 +109,25 @@ $statistics = trafficStatistics()->visitedByCrawlers()->sumar();
 // -----------------------------------------------------------------------------
 
 // summary for all type models and all categories
-$trafic = traffic()->sumar();                      // similar to traffic_statistics()->sumar();
-$trafic = traffic()->visitedByPersons()->sumar();  // similar to traffic_statistics()->persons();
-$trafic = traffic()->visitedByCrawlers()->sumar(); // similar to traffic_statistics()->crawlers();
+$traffic = traffic()->sumar();                      // similar to traffic_statistics()->sumar();
+$traffic = traffic()->visitedByPersons()->sumar();  // similar to traffic_statistics()->persons();
+$traffic = traffic()->visitedByCrawlers()->sumar(); // similar to traffic_statistics()->crawlers();
 
 // summary for all type models and one category
-$trafic = traffic()->inCategory(VisitorCategory::WEB)->sumar();
-$trafic = traffic()->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
-$trafic = traffic()->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
+$traffic = traffic()->inCategory(VisitorCategory::WEB)->sumar();
+$traffic = traffic()->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
+$traffic = traffic()->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
 
 // summary for one type model and all categories
-$trafic = traffic()->forModels(Post::class)->sumar();
-$trafic = traffic()->forModels('App\Models\Post')->sumar();
-$trafic = traffic()->forModels(Post::class)->visitedByPersons()->sumar();
-$trafic = traffic()->forModels(Post::class)->visitedByCrawlers()->sumar();
+$traffic = traffic()->forModel(Post::class)->sumar();
+$traffic = traffic()->forModel('App\Models\Post')->sumar();
+$traffic = traffic()->forModel(Post::class)->visitedByPersons()->sumar();
+$traffic = traffic()->forModel(Post::class)->visitedByCrawlers()->sumar();
 
 // summary for one type model and one category
-$trafic = traffic()->forModels(Post::class)->inCategory(VisitorCategory::WEB)->sumar();
-$trafic = traffic()->forModels(Post::class)->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
-$trafic = traffic()->forModels(Post::class)->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
+$traffic = traffic()->forModel(Post::class)->inCategory(VisitorCategory::WEB)->sumar();
+$traffic = traffic()->forModel(Post::class)->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
+$traffic = traffic()->forModel(Post::class)->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
 
 
 // -----------------------------------------------------------------------------
@@ -137,12 +137,12 @@ $trafic = traffic()->forModels(Post::class)->inCategory(VisitorCategory::WEB)->v
 
 $post = Post::find(1);
 
-$trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->sumar();
-$trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
-$trafic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
+$traffic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->sumar();
+$traffic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByPersons()->sumar();
+$traffic = traffic()->for($post)->inCategory(VisitorCategory::WEB)->visitedByCrawlers()->sumar();
 
 // adds relationships to the Visitable Model
-$list = trafficList(Post::class)->withRelationships()->get();
+$traffic = traffic()->for($post)->withRelationship()->sumar();
 
 
 // -----------------------------------------------------------------------------
@@ -151,22 +151,22 @@ $list = trafficList(Post::class)->withRelationships()->get();
 // -----------------------------------------------------------------------------
 
 // Define type of model
-$list = trafficList(Post::class)->get();
-$list = trafficList('App\Models\Post')->get();
-$list = trafficList(new Post())->get();
-$post = Post::find(1);
-$list = trafficList($post)->get();
+	$list = trafficList(Post::class)->get();
+	$list = trafficList('App\Models\Post')->get();
+	$list = trafficList(new Post())->get();
+	$post = Post::find(1);
+	$list = trafficList($post)->get();
 // define list of type models
-$list = trafficList([Post::class, Article::class, Album::class])->get();
+	$list = trafficList([Post::class, Article::class, Album::class])->get();
 
 // all posibilities
-$list = trafficList([
-	StaticPage::class,
-	'basic'                   => [News::class],
-	'basic repeater'          => ['App\Models\News'],
-	'bad - vithout interface' => [Banner::class, Chart::class],
-	'extended'                => [\App\Models\News::class, News::find(1), Faq::class],
-])
+	$list = trafficList([
+		StaticPage::class,
+		'basic'                   => [News::class],
+		'basic repeater'          => ['App\Models\News'],
+		'bad - vithout interface' => [Banner::class, Chart::class],
+		'extended'                => [\App\Models\News::class, News::find(1), Faq::class],
+	])
 // add this array of type models to query builder
 array:3 [▼
   0 => "App\Models\StaticPage"
@@ -189,24 +189,24 @@ array:3 [▼
 	$list = trafficList(Post::class)->visitedByCrawlers()->get();
 
 // visited in categories
-  	$list = trafficList(Post::class)->inCategory(VisitorCategory::WEB)->get();
-  	$list = trafficList(Post::class)->inCategory([VisitorCategory::WEB, VisitorCategory::API])->get();
+  	$list = trafficList(Post::class)->inCategories(VisitorCategory::WEB)->get();
+  	$list = trafficList(Post::class)->inCategories([VisitorCategory::WEB, VisitorCategory::API])->get();
   	// all posibilities to define list of categories
-	$list = trafficList(Post::class)->inCategory([
+	$list = trafficList(Post::class)->inCategories([
 		['UNDEFINED', 'web','web', 'web', 'blbost', 'a' => ['CUSTOM_02', 'CUSTOM_05'], VisitorCategory::CUSTOM_01, 5, 10000]
   	])->get();
 
 // apply limit or paginator or another eloquent query builder methods
-$list = trafficList(Post::class)->limit(50)->paginate(10);
+	$list = trafficList(Post::class)->limit(50)->paginate(10);
 
 // adds relationships to the Visitable Model
-$list = trafficList(Post::class)->withRelationships()->get(); //TODO:
+    $list = trafficList(Post::class)->withRelationship()->get();
 
 // Typical Example
 $list = trafficList([Post::class, Article::class])
-	->inCategory(VisitorCategory::WEB)
+	->inCategories(VisitorCategory::WEB)
 	->visitedByPersons()
-	->withRelationships()
+	->withRelationship()
 	->topLast30Days()
 	->limit(50)
 	->paginate(10);
