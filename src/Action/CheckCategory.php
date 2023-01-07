@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Action;
 
+use Exception;
 use Illuminate\Support\Str;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
@@ -26,13 +27,19 @@ class CheckCategory {
         }
 
         if (is_string($category)) {
-            return [VisitorCategory::fromName(Str::upper($category))->value];
+            try {
+                return [VisitorCategory::fromName(Str::upper($category))->value];
+            } catch (Exception $e) {
+            }
         }
 
         if (is_int($category)) {
             $category = VisitorCategory::tryFrom($category);
             return is_null($category) ? [] : [$category->value];
         }
+
+        sort($listCategories);
+
         return array_values(array_unique($listCategories));
     }
 }
