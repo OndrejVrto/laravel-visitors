@@ -19,5 +19,6 @@
 /phpstan-baseline.neon                          export-ignore
 /phpstan.neon                                   export-ignore
 /pint.json                                      export-ignore
+/rector.php                                     export-ignore
 /database/factories                             export-ignore
 /src/Utilities/GeneratorPhpDocForFacades.php    export-ignore
