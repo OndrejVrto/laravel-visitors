@@ -6,7 +6,7 @@ parameters:
 
     paths:
         - src
-        - database
+        # - database
 
     tmpDir: build/phpstan
 

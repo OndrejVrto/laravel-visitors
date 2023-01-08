@@ -1,6 +1,6 @@
 {
     "name": "ondrej-vrto/laravel-visitors",
-    "description": "Laravel package that allows you to associate views with Eloquent models and create statistics.",
+    "description": "Laravel package that allows you to associate views with Eloquent models and create traffic and statistics.",
     "keywords": [
         "Laravel",
         "Visits",

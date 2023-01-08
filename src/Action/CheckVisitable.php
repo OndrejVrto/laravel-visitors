@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Action;
 
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Contracts\Visitable;
 
 class CheckVisitable {
@@ -25,9 +26,11 @@ class CheckVisitable {
             $visitable = Container::getInstance()->make($visitable);
         }
 
-        if ($visitable instanceof Visitable) {
+        if ($visitable instanceof Visitable && $visitable instanceof Model) {
             return [0 => $visitable->getMorphClass()];
         }
+
+        sort($listClasses);
 
         return array_values(array_unique($listClasses));
     }
