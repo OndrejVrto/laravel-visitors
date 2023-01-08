@@ -6,7 +6,6 @@ parameters:
 
     paths:
         - src
-        # - database
 
     tmpDir: build/phpstan
 
@@ -18,13 +17,5 @@ parameters:
 
     checkGenericClassInNonGenericObjectType: false
 
-    scanDirectories:
-        # - vendor-for-stan
-
     ignoreErrors:
-        # - '#Property .expires_at. does not exist in OndrejVrto\\Visitors\\Models\\VisitorsExpires model#'
         # - '#Call to an undefined method Torann\\GeoIP\\GeoIP|Torann\\GeoIP\\Location::getAttribute\(\)#'
-        # - '#Method OndrejVrto\\Visitors\\Models\\.*::__construct\(\) has parameter \$attributes with no value type specified in iterable type array#'
-        # - '#Access to an undefined property OndrejVrto\\Visitors\\Models\\BaseVisitors::\$expires_at#'
-        # - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::.*#'
-        # - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::.*#'

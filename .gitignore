@@ -1,11 +1,23 @@
-.idea
-.phpunit.result.cache
-build
-composer.lock
-coverage
-docs
-phpunit.xml
-testbench.yaml
+# IDE
+.vscode
+
+# dependencies
 vendor
 node_modules
-.vscode/settings.json
+composer.lock
+
+# tests
+build
+coverage
+phpunit.xml
+testbench.yaml
+.phpunit.result.cache
+phpstan-baseline.neon
+
+# other
+TODO
+Makefile
+
+# temporary off
+docs
+README.md
