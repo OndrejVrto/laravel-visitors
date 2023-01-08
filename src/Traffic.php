@@ -13,18 +13,18 @@ use OndrejVrto\Visitors\Builder\TrafficOneModelQueryBuilder;
 
 class Traffic {
     /**
-     * @param Visitable|string|class-string|array<class-string> $visitable
+     * @param Visitable|class-string|Visitable[]|array<class-string> $visitable
      * @throws InvalidClassParameter
      * @return TrafficListQueryBuilder
      */
     public function forSeveralModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
         $visitableClasses = (new CheckVisitable())($visitable);
 
-        if ($visitableClasses !== []) {
-            return new TrafficListQueryBuilder($visitableClasses);
+        if ($visitableClasses === []) {
+            throw new InvalidClassParameter('Used class must by Model and implement Visitable contract.');
         }
 
-        throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
+        return new TrafficListQueryBuilder($visitableClasses);
     }
 
     /**
