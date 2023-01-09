@@ -34,6 +34,7 @@
     "require-dev": {
         "driftingly/rector-laravel": "^0.14.1",
         "elfsundae/laravel-facade-phpdoc-generator": "^0.1.2",
+        "laravel/legacy-factories": "^1.3",
         "laravel/pint": "^1.2",
         "nunomaduro/collision": "^6.0",
         "nunomaduro/larastan": "^2.3.4",
