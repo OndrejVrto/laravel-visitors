@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Traits;
 
 use Illuminate\Support\Facades\DB;
+use OndrejVrto\Visitors\Facades\Visit;
 use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
@@ -32,6 +33,12 @@ trait InteractsWithVisits {
 
     public function visitTraffic(): MorphMany {
         return $this->morphMany(VisitorsTraffic::class, 'viewable');
+    }
+
+    public function incrementVisit(): self {
+        Visit::increment($this);
+
+        return $this;
     }
 
     public function scopeWithTraffic(
