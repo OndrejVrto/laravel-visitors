@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OndrejVrto\Visitors\Database\Factories;
 
 use OndrejVrto\Visitors\Enums\VisitorCategory;

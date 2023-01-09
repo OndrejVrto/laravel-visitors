@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OndrejVrto\Visitors\Models;
 
 use OndrejVrto\Visitors\Enums\VisitorCategory;
