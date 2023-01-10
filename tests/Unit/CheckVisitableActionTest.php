@@ -5,9 +5,9 @@ use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModelWithoutVisitableContract;
 
-test('check visitable action', function ($visitable, $list) {
+test('check visitable action', function ($visitable, $expectedList) {
     $resultList = (new CheckVisitable())($visitable);
-    expect($resultList)->toBe($list);
+    expect($resultList)->toBe($expectedList);
 })->with(
     [
         'one good model' => [
@@ -44,6 +44,5 @@ test('check visitable action', function ($visitable, $list) {
             ],
             [0 => AnotherTestModel::class, 1 => TestModel::class]
         ],
-
     ]
-    );
+);

@@ -15,14 +15,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TestCase extends Orchestra {
-
     // use RefreshDatabase;
 
     /**
      * Setup the test environment.
      */
     protected function setUp(): void {
-
         // Code before Laravel application created.
         parent::setUp();
         // Code after Laravel application created.

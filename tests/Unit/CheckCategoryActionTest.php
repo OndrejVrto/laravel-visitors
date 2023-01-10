@@ -3,9 +3,9 @@
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
-test('check category action', function ($category, $list) {
+test('check category action', function ($category, $expectedList) {
     $resultList = (new CheckCategory())($category);
-    expect($resultList)->toBe($list);
+    expect($resultList)->toBe($expectedList);
 })->with(
     [
         'one good category' => [
