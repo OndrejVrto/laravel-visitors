@@ -50,7 +50,7 @@ return new class extends Migration
 
     public function up(): void {
         $this->schemaBuilder->create($this->tableNames['expires'], function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->mediumIncrements('expires_id');
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
@@ -65,7 +65,7 @@ return new class extends Migration
         });
 
         $this->schemaBuilder->create($this->tableNames['data'], function (Blueprint $table) {
-            $table->integerIncrements('id');
+            $table->integerIncrements('data_id');
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
@@ -84,7 +84,7 @@ return new class extends Migration
         });
 
         $this->schemaBuilder->create($this->tableNames['traffic'], function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->mediumIncrements('traffic_id');
 
             $table->string("viewable_type", 60);
             $table->unsignedInteger("viewable_id");
@@ -107,7 +107,7 @@ return new class extends Migration
         });
 
         $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->mediumIncrements('statistics_id');
 
             $table->string("viewable_type", 60)->nullable();
             $table->boolean('is_crawler')->nullable();

@@ -8,6 +8,9 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
 class VisitorsTraffic extends VisitorsBase {
+
+    protected $primaryKey = 'traffic_id';
+
     protected $casts = [
         "viewable_type" => 'string',
         "viewable_id"   => 'integer',

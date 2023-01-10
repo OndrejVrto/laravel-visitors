@@ -15,6 +15,8 @@ class VisitorsExpires extends VisitorsBase {
     use HasFactory;
     use MassPrunable;
 
+    protected $primaryKey = 'expires_id';
+
     protected $casts = [
         "viewable_type" => 'string',
         "viewable_id"   => 'integer',

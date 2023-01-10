@@ -18,6 +18,8 @@ class VisitorsData extends VisitorsBase {
     use MassPrunable;
     use VisitorsSettings;
 
+    protected $primaryKey = 'data_id';
+
     protected $casts = [
         "viewable_type" => 'string',
         "viewable_id"   => 'integer',

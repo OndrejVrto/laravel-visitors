@@ -25,7 +25,7 @@ class ListPossibleQueries {
             ->select($this->columnNames())
             ->distinct()
             ->fromSub($this->unionQuery(), 'variants')
-            ->where('id', '<=', $this->configuration->lastId)
+            ->where('data_id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
             ->when($this->typeForTraffik, fn ($q) => $q->orderBy('viewable_id'))
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
@@ -76,8 +76,8 @@ class ListPossibleQueries {
      */
     private function possibleCombinationColumn(): Collection {
         $range = $this->typeForTraffik
-            ? [["`id`, `viewable_type`, `viewable_id`",]]
-            : [["`id`, `viewable_type`", "`id`, null"]];
+            ? [["`data_id`, `viewable_type`, `viewable_id`",]]
+            : [["`data_id`, `viewable_type`", "`data_id`, null"]];
 
         if ($this->configuration->generateCrawlersStatistics) {
             $range[] = ['`is_crawler`', 'null'];

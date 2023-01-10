@@ -165,7 +165,7 @@ class Visit {
 
     private function saveExpire(): StatusVisit {
         $visitorExpire = VisitorsExpires::query()
-            ->select(['id', 'expires_at'])
+            ->select(['expires_at'])
             ->whereMorphedTo('viewable', $this->model)
             ->where('ip_address', $this->ipAddress)
             ->where('category', $this->category)

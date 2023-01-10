@@ -49,7 +49,7 @@ class StatisticsGenerator {
 
         $range = $visitorData
             ->query()
-            ->selectRaw("max(`id`) as `last_id`")
+            ->selectRaw("max(`data_id`) as `last_id`")
             ->selectRaw("max(`visited_at`) as `date_to`")
             ->selectRaw("min(`visited_at`) as `date_from`")
             ->firstOrFail();
