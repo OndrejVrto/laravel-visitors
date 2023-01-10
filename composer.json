@@ -46,6 +46,7 @@
         "pestphp/pest-plugin-parallel": "^1.2",
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.9",
+        "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^0.14.7"
     },

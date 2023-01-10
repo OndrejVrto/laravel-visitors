@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Utilities;
@@ -25,3 +27,5 @@ FacadePhpdocGenerator::make(Traffic::class)
 FacadePhpdocGenerator::make(Statistics::class)
     ->see(Statistics::class)
     ->updateFacade(StatisticsFacade::class);
+
+// @codeCoverageIgnoreEnd
