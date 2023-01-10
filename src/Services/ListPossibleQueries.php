@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
+use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 
 class ListPossibleQueries {
     public function __construct(
@@ -56,41 +57,29 @@ class ListPossibleQueries {
     }
 
     private function unionQuery(): string {
-        return $this->possibleCombinationColumn()
-            ->map(function ($columnsString): string {
-                if (!is_string($columnsString)) {
-                    return '';
-                }
+        /** @var array<string[]> $combinationRange */
+        $combinationRange = (new CartesianCombinations())
+            ->addItemWhen(
+                $this->typeForTraffik,
+                [["`data_id`, `viewable_type`, `viewable_id`"]],
+                [["`data_id`, `viewable_type`", "`data_id`, null",]]
+            )->addItemWhen(
+                $this->configuration->generateCrawlersStatistics,
+                ["`is_crawler`", "null"]
+            )->addItemWhen(
+                $this->configuration->generateCategoryStatistics,
+                ["`category`", "null"]
+            )->get();
 
+        return collect($combinationRange)
+            ->map(function ($col): string {
                 return sprintf(
                     'select %s from `%s`',
-                    $columnsString,
+                    implode(', ', $col),
                     $this->configuration->dataTableName
                 );
             })
             ->implode(' union ');
-    }
-
-    /**
-     * @return Collection<string>
-     */
-    private function possibleCombinationColumn(): Collection {
-        $range = $this->typeForTraffik
-            ? [["`data_id`, `viewable_type`, `viewable_id`",]]
-            : [["`data_id`, `viewable_type`", "`data_id`, null"]];
-
-        if ($this->configuration->generateCrawlersStatistics) {
-            $range[] = ['`is_crawler`', 'null'];
-        }
-
-        if ($this->configuration->generateCategoryStatistics) {
-            $range[] = ['`category`', 'null'];
-        }
-
-        $combinationRange = combinations($range);
-
-        return collect($combinationRange)
-            ->map(fn ($col) => is_array($col) ? implode(', ', $col) : $col);
     }
 
     /**
