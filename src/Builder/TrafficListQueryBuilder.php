@@ -138,15 +138,14 @@ class TrafficListQueryBuilder {
 
         return (new VisitorsTraffic())->query()
             ->whereNotNull('viewable_id')
+            ->where('is_crawler', '=', $this->isCrawler)
             ->when($this->countClasses === 1, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
             ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->classes))
-            ->when(is_null($this->isCrawler), fn (Builder $q) => $q->whereNull('is_crawler'))
-            ->when(is_bool($this->isCrawler), fn (Builder $q) => $q->where('is_crawler', '=', $this->isCrawler))
             ->when($this->countCategories === 0, fn (Builder $q) => $q->whereNull('category'))
             ->when($this->countCategories === 1, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
             ->when($this->countCategories > 1, fn (Builder $q) => $q->whereIn('category', $this->categories))
             ->when($this->withRelationship == true, fn (Builder $q) => $q->with('viewable'))
-            ->when(!is_null($this->limit), fn (Builder $q) => $q->limit($this->limit ?? 20))
+            ->unless(is_null($this->limit), fn (Builder $q) => $q->limit($this->limit ?? 20))
             ->orderByRaw($this->getOrdersSql());
     }
 

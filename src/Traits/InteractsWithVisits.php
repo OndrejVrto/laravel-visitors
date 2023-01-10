@@ -57,13 +57,8 @@ trait InteractsWithVisits {
             ->query()
             ->from($trafficTableName)
             ->where('viewable_type', get_class($this))
-            ->when(is_null($isCrawler), fn ($q) => $q->whereNull('is_crawler'))
-            ->when(is_bool($isCrawler), fn ($q) => $q->where('is_crawler', '=', $isCrawler))
-            ->when(
-                is_null($category),
-                fn ($q) => $q->whereNull('category'),
-                fn ($q) => $q->where('category', '=', $category->value)
-            );
+            ->where('is_crawler', '=', $isCrawler)
+            ->where('category', '=', $category?->value);
 
         return $query
             ->joinSub(
