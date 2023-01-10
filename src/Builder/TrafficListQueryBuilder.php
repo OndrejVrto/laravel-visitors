@@ -101,8 +101,16 @@ class TrafficListQueryBuilder {
     }
 
     private function setOrderBy(string $column, string $direction): void {
-        unset($this->orderBy[$column]);
+        $direction = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
         $this->orderBy[$column] = $direction;
+    }
+
+    private function getOrdersSql(): string {
+        $orders = [];
+        foreach ($this->orderBy as $type => $direction) {
+            $orders[] = sprintf("`%s` %s", $type, $direction);
+        }
+        return implode(", ", $orders);
     }
 
     public function limit(int $value): self {
@@ -122,15 +130,6 @@ class TrafficListQueryBuilder {
         if (!$this->trafficForCrawlersAndPersons()) {
             $this->isCrawler = false;
         }
-    }
-
-    private function getOrdersSql(): string {
-        $orders = [];
-        foreach ($this->orderBy as $type => $direction) {
-            $direction = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
-            $orders[] = sprintf("`%s` %s", $type, $direction);
-        }
-        return implode(", ", $orders);
     }
 
     private function queryToplist(): Builder {
