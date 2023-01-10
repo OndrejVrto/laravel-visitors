@@ -23,7 +23,7 @@ class Visit {
     use VisitSetters;
     use VisitorsSettings;
 
-    protected Visitable $model;
+    protected Visitable&Model $model;
 
     private Request $request;
 
