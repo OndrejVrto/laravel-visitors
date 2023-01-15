@@ -35,16 +35,16 @@ class ListPossibleQueries {
             ->map(function ($item): ListPossibleQueriesData {
                 $item = (object) $item;
                 $viewable_type = property_exists($item, 'viewable_type')
-                    ? (is_null($item->viewable_type) ? null : (string) $item->viewable_type)
+                    ? (null === $item->viewable_type ? null : (string) $item->viewable_type)
                     : null;
                 $viewable_id = property_exists($item, 'viewable_id')
-                    ? (is_null($item->viewable_id) ? null : (int) $item->viewable_id)
+                    ? (null === $item->viewable_id ? null : (int) $item->viewable_id)
                     : null;
                 $is_crawler = property_exists($item, 'is_crawler')
-                    ? (is_null($item->is_crawler) ? null : (bool) $item->is_crawler)
+                    ? (null === $item->is_crawler ? null : (bool) $item->is_crawler)
                     : false;
                 $category = property_exists($item, 'category')
-                    ? (is_null($item->category) ? null : (int) $item->category)
+                    ? (null === $item->category ? null : (int) $item->category)
                     : null;
 
                 return new ListPossibleQueriesData(

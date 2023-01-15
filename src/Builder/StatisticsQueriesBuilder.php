@@ -19,14 +19,14 @@ final class StatisticsQueriesBuilder {
         return DB::connection($this->configuration->dbConnectionName)
             ->query()
             ->select($columnName)
-            ->selectRaw("count(*) as `count_$columnName`")
+            ->selectRaw("count(*) as `count_{$columnName}`")
             ->from($this->configuration->dataTableName)
             ->where('data_id', "<=", $this->configuration->lastId)
-            ->unless(is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
-            ->unless(is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
-            ->unless(is_null($listOptionData->category), fn ($q) => $q->where("category", $listOptionData->category))
+            ->unless(null === $listOptionData->viewable_type, fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
+            ->unless(null === $listOptionData->is_crawler, fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
+            ->unless(null === $listOptionData->category, fn ($q) => $q->where("category", $listOptionData->category))
             ->groupBy($columnName)
-            ->orderByDesc("count_$columnName");
+            ->orderByDesc("count_{$columnName}");
     }
 
     public function dateRangeQuery(): Builder {
@@ -50,10 +50,10 @@ final class StatisticsQueriesBuilder {
             ->selectRaw("count(*) as `visits_count`")
             ->from($this->configuration->dataTableName)
             ->where('data_id', "<=", $this->configuration->lastId)
-            ->unless(is_null($listOptionData->viewable_type), fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
-            ->unless(is_null($listOptionData->viewable_id), fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
-            ->unless(is_null($listOptionData->is_crawler), fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
-            ->unless(is_null($listOptionData->category), fn ($q) => $q->where("category", $listOptionData->category))
+            ->unless(null === $listOptionData->viewable_type, fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
+            ->unless(null === $listOptionData->viewable_id, fn ($q) => $q->where("viewable_id", $listOptionData->viewable_id))
+            ->unless(null === $listOptionData->is_crawler, fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
+            ->unless(null === $listOptionData->category, fn ($q) => $q->where("category", $listOptionData->category))
             ->groupBy("visits_date");
     }
 

@@ -46,7 +46,7 @@ class TrafficListQueryBuilder {
     public function __construct(Visitable|string|array $visitable) {
         $this->classes = (new CheckVisitable())($visitable);
 
-        if ($this->classes === []) {
+        if ([] === $this->classes) {
             throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
         }
 
@@ -54,8 +54,8 @@ class TrafficListQueryBuilder {
     }
 
     /**
-    * @param Visitable|string|class-string|array<class-string> $visitable
-    */
+     * @param Visitable|string|class-string|array<class-string> $visitable
+     */
     public function addModels(Visitable|string|array $visitable): self {
         $this->classes = [...$this->classes, ...(new CheckVisitable())($visitable)];
 
@@ -63,8 +63,8 @@ class TrafficListQueryBuilder {
     }
 
     /**
-    * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
-    */
+     * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
+     */
     public function inCategories(VisitorCategory|string|int|array $category): self {
         $this->categories = [...$this->categories, ...(new CheckCategory())($category)];
         return $this;
@@ -120,14 +120,14 @@ class TrafficListQueryBuilder {
 
     private function handleConfigurations(): void {
         $this->classes = array_values(array_unique($this->classes));
-        $this->countClasses = is_null($this->classes) ? 0 : count($this->classes);
+        $this->countClasses = null === $this->classes ? 0 : count($this->classes);
 
         $this->categories = $this->trafficForCategories()
             ? array_values(array_unique($this->categories))
             : [];
         $this->countCategories = count($this->categories);
 
-        if (!$this->trafficForCrawlersAndPersons()) {
+        if ( ! $this->trafficForCrawlersAndPersons()) {
             $this->isCrawler = false;
         }
     }
@@ -138,35 +138,35 @@ class TrafficListQueryBuilder {
         return (new VisitorsTraffic())->query()
             ->whereNotNull('viewable_id')
             ->where('is_crawler', '=', $this->isCrawler)
-            ->when($this->countClasses === 1, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
+            ->when(1 === $this->countClasses, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
             ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->classes))
-            ->when($this->countCategories === 0, fn (Builder $q) => $q->whereNull('category'))
-            ->when($this->countCategories === 1, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
+            ->when(0 === $this->countCategories, fn (Builder $q) => $q->whereNull('category'))
+            ->when(1 === $this->countCategories, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
             ->when($this->countCategories > 1, fn (Builder $q) => $q->whereIn('category', $this->categories))
-            ->when($this->withRelationship == true, fn (Builder $q) => $q->with('viewable'))
-            ->unless(is_null($this->limit), fn (Builder $q) => $q->limit($this->limit ?? 20))
+            ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
+            ->unless(null === $this->limit, fn (Builder $q) => $q->limit($this->limit ?? 20))
             ->orderByRaw($this->getOrdersSql());
     }
 
     /**
-    * Execute the query as a "select" statement.
-    *
-    * @param  string[]|string  $columns
-    * @return Collection|Model[]
-    */
+     * Execute the query as a "select" statement.
+     *
+     * @param  string[]|string  $columns
+     * @return Collection|Model[]
+     */
     public function get(array|string $columns = ['*']): Collection|Model {
         return $this->queryToplist()->get($columns);
     }
 
     /**
-    * Paginate the given query.
-    *
-    * @param  int|null  $perPage
-    * @param  string[] $columns
-    * @param  string  $pageName
-    * @param  int|null  $page
-    * @return LengthAwarePaginator
-    */
+     * Paginate the given query.
+     *
+     * @param  int|null  $perPage
+     * @param  string[] $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return LengthAwarePaginator
+     */
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginator {
         return $this->queryToplist()->paginate($perPage, $columns, $pageName, $page);
     }

@@ -32,8 +32,8 @@ class TrafficOneModelQueryBuilder {
     }
 
     /**
-    * @param VisitorCategory|string|int $category
-    */
+     * @param VisitorCategory|string|int $category
+     */
     public function inCategory(VisitorCategory|string|int $category): self {
         $this->category = (new CheckCategory())($category)[0];
         return $this;
@@ -44,7 +44,7 @@ class TrafficOneModelQueryBuilder {
             ? $this->category
             : null;
 
-        if (!$this->trafficForCrawlersAndPersons()) {
+        if ( ! $this->trafficForCrawlersAndPersons()) {
             $this->isCrawler = false;
         }
     }
@@ -54,22 +54,22 @@ class TrafficOneModelQueryBuilder {
 
         return (new VisitorsTraffic())->query()
             ->whereMorphedTo('viewable', $this->model)
-            ->when($this->withRelationship == true, fn (Builder $q) => $q->with('viewable'))
-            ->when(is_null($this->isCrawler), fn (Builder $q) => $q->whereNull('is_crawler'))
+            ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
+            ->when(null === $this->isCrawler, fn (Builder $q) => $q->whereNull('is_crawler'))
             ->when(is_bool($this->isCrawler), fn (Builder $q) => $q->where('is_crawler', '=', $this->isCrawler))
             ->when(
-                is_null($this->category),
+                null === $this->category,
                 fn (Builder $q) => $q->whereNull('category'),
                 fn (Builder $q) => $q->where('category', '=', $this->category)
             );
     }
 
     /**
-    * Execute the query and get the first result or null.
-    *
-    * @param  string[]|string  $columns
-    * @return Model|null
-    */
+     * Execute the query and get the first result or null.
+     *
+     * @param  string[]|string  $columns
+     * @return Model|null
+     */
     public function get(array|string $columns = ['*']): ?Model {
         return $this->queryOneModel()->first($columns);
     }

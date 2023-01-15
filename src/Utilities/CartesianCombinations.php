@@ -15,7 +15,7 @@ class CartesianCombinations {
      * @return self
      */
     public function forItem(?array $item): self {
-        if (!is_null($item)) {
+        if (null !== $item) {
             $this->inputItems = $item;
         }
 
@@ -31,7 +31,7 @@ class CartesianCombinations {
     public function addItemWhen(bool $when, array $trueItem, ?array $falseItem = null): self {
         if ($when) {
             $this->inputItems[] = $trueItem;
-        } elseif (!is_null($falseItem)) {
+        } elseif (null !== $falseItem) {
             $this->inputItems[] = $falseItem;
         }
 
@@ -58,7 +58,7 @@ class CartesianCombinations {
                 return Arr::flatten($node);
             }
 
-            if (is_null($node)) {
+            if (null === $node) {
                 return [];
             }
 
@@ -74,12 +74,12 @@ class CartesianCombinations {
      * @return array<int,mixed>
      */
     private function combinations(array $arrays, int $level = 0): array {
-        if (!isset($arrays[$level])) {
+        if ( ! isset($arrays[$level])) {
             return [[]];
         }
 
         if ($level === count($arrays) - 1) {
-            return $level === 0
+            return 0 === $level
                 ? [$arrays[$level]]
                 : $arrays[$level];
         }

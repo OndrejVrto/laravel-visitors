@@ -15,7 +15,7 @@ trait VisitorsSettings {
     }
 
     private function defaultVisitorsNameTable(string $keyTableName): ?string {
-        $nameTable = config("visitors.table_names.$keyTableName");
+        $nameTable = config("visitors.table_names.{$keyTableName}");
         return is_string($nameTable)
             ? $nameTable
             : null;

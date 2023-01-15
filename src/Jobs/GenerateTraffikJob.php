@@ -54,7 +54,7 @@ class GenerateTraffikJob implements ShouldQueue {
                 "visit_last_7_days"   => $this->calculateLast7daysCount($dailyNumbers),
                 "visit_last_30_days"  => $this->calculateLast30daysCount($dailyNumbers),
                 "visit_last_365_days" => $this->calculateLast365daysCount($dailyNumbers),
-                ];
+            ];
         }
 
         VisitorsTraffic::query()
