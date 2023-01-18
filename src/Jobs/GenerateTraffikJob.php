@@ -17,10 +17,10 @@ use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Builder\StatisticsQueriesBuilder;
 
 class GenerateTraffikJob implements ShouldQueue {
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
+    use Dispatchable;
     use SerializesModels;
+    use InteractsWithQueue;
     use CalculateStatistics;
 
     /**
