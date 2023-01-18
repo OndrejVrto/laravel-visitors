@@ -15,4 +15,6 @@ interface Visitable {
     public function visitData(): MorphMany;
 
     public function visitTraffic(): MorphMany;
+
+    public function getDefaultRemoveDataOnDelete(): bool;
 }

@@ -35,7 +35,7 @@ class CheckCategory {
 
         if (is_int($category)) {
             $category = VisitorCategory::tryFrom($category);
-            return null === $category ? [] : [$category->value];
+            return $category instanceof VisitorCategory ? [$category->value] : [];
         }
 
         sort($listCategories);

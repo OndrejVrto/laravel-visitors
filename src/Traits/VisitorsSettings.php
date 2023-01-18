@@ -9,6 +9,7 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 trait VisitorsSettings {
     private function defaultVisitorsEloquentConnection(): ?string {
         $nameConnection = config('visitors.eloquent_connection');
+
         return is_string($nameConnection)
             ? $nameConnection
             : null;
@@ -16,9 +17,18 @@ trait VisitorsSettings {
 
     private function defaultVisitorsNameTable(string $keyTableName): ?string {
         $nameTable = config("visitors.table_names.{$keyTableName}");
-        return is_string($nameTable)
-            ? $nameTable
-            : null;
+
+        if (is_string($nameTable)) {
+            return $nameTable;
+        }
+
+        return match ($keyTableName) {
+            'data'       => 'visitors_data',
+            'expires'    => 'visitors_expires',
+            'traffic'    => 'visitors_traffic',
+            'statistics' => 'visitors_statistics',
+            default      => null,
+        };
     }
 
     private function trafficForCrawlersAndPersons(): bool {

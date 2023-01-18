@@ -62,7 +62,7 @@ class StatisticsGenerator {
 
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,
-            dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
+            dbConnectionName          : $visitorData->getConnectionName(),
             dataTableName             : $visitorData->getTable(),
             graphTableName            : (new VisitorsTraffic())->getTable(),
             statisticsTableName       : (new VisitorsStatistics())->getTable(),

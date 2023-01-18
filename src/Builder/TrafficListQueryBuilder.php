@@ -120,7 +120,7 @@ class TrafficListQueryBuilder {
 
     private function handleConfigurations(): void {
         $this->classes = array_values(array_unique($this->classes));
-        $this->countClasses = null === $this->classes ? 0 : count($this->classes);
+        $this->countClasses = [] === $this->classes ? 0 : count($this->classes);
 
         $this->categories = $this->trafficForCategories()
             ? array_values(array_unique($this->categories))

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
 use OndrejVrto\Visitors\Facades\Visit;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,10 +18,36 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait InteractsWithVisits {
     use VisitorsSettings;
 
-    protected $removeDataOnDelete = true;
+    protected bool $removeDataOnDelete = true;
 
     public static function bootInteractsWithVisits(): void {
+        if ( ! static::isMysqlDriver() || ! static::isSameDatabasesServer()) {
+            throw new Exception('Databases for this model and visitors must by "mysql" in same server.');
+        }
+
         static::observe(VisitableObserver::class);
+    }
+
+    private static function isMysqlDriver(): bool {
+        return 'mysql' === static::resolveConnection()->getDriverName();
+    }
+
+    private static function isSameDatabasesServer(): bool {
+        $modelTraffic = new VisitorsTraffic();
+        $visitorsConnectionConfig = $modelTraffic->resolveConnection($modelTraffic->getConnectionName())->getConfig();
+        $modelConnectionConfig = static::resolveConnection()->getConfig();
+
+        return ($visitorsConnectionConfig['driver'] === $modelConnectionConfig['driver'])
+            && ($visitorsConnectionConfig['host'] === $modelConnectionConfig['host'])
+            && ($visitorsConnectionConfig['port'] === $modelConnectionConfig['port']);
+    }
+
+    public function getTable(): string {
+        return $this->getConnection()->getDatabaseName().'.'.parent::getTable();
+    }
+
+    public function getDefaultRemoveDataOnDelete(): bool {
+        return $this->removeDataOnDelete;
     }
 
     public function visitExpires(): MorphMany {
@@ -47,7 +74,7 @@ trait InteractsWithVisits {
         ?bool $isCrawler = false
     ): Builder {
         $modelTraffic = new VisitorsTraffic();
-        $dbConnectionName = $modelTraffic->getConnectionName() ?? 'mysql';
+        $dbConnectionName = $modelTraffic->getConnectionName();
         $trafficTableName = $modelTraffic->getTable();
 
         $isCrawler = $this->trafficForCrawlersAndPersons() ? $isCrawler : false;

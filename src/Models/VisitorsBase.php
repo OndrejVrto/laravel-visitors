@@ -17,8 +17,8 @@ abstract class VisitorsBase extends Model {
 
     abstract protected function tableConfigKey(): string;
 
-    public function getConnectionName(): ?string {
-        return $this->defaultVisitorsEloquentConnection() ?? parent::getConnectionName();
+    public function getConnectionName(): string {
+        return $this->defaultVisitorsEloquentConnection() ?? parent::getConnectionName() ?? 'mysql';
     }
 
     public function getTable(): string {
