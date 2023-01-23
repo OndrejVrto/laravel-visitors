@@ -12,6 +12,7 @@ class StatisticsConfigData {
         public readonly int    $numberDaysStatistics,
         public readonly bool   $generateCategoryStatistics,
         public readonly bool   $generateCrawlersStatistics,
+        public readonly bool   $generateGraphs,
         public readonly Carbon $from,
         public readonly Carbon $to,
         public readonly string $dataTableName,

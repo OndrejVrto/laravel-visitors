@@ -69,6 +69,7 @@ return new class extends Migration {
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');
+            $table->mediumText('svg_graph')->nullable();
 
             $table->unsignedMediumInteger('visit_total');
             $table->unsignedSmallInteger('visit_last_1_day');
@@ -91,6 +92,7 @@ return new class extends Migration {
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');
+            $table->mediumText('svg_graph')->nullable();
 
             $table->unsignedMediumInteger('visit_total');
             $table->unsignedSmallInteger('visit_last_1_day');

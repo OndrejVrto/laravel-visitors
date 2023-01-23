@@ -12,13 +12,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OndrejVrto\Visitors\Data\GraphAppearance;
+use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
-use OndrejVrto\Visitors\Models\VisitorsStatistics;
 use OndrejVrto\Visitors\Traits\CalculateStatistics;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Builder\StatisticsQueriesBuilder;
 
-class GenerateStatisticsJob implements ShouldQueue {
+class GenerateTrafficJob implements ShouldQueue {
     use Queueable;
     use Dispatchable;
     use SerializesModels;
@@ -59,6 +59,7 @@ class GenerateStatisticsJob implements ShouldQueue {
 
             $data[] = [
                 'viewable_type'       => $queryData->viewable_type,
+                'viewable_id'         => $queryData->viewable_id,
                 'category'            => $queryData->category,
                 'is_crawler'          => $queryData->is_crawler,
                 'daily_numbers'       => $dailyNumbers,
@@ -69,17 +70,10 @@ class GenerateStatisticsJob implements ShouldQueue {
                 'visit_last_7_days'   => $this->calculateLast7daysCount($dailyNumbers),
                 'visit_last_30_days'  => $this->calculateLast30daysCount($dailyNumbers),
                 'visit_last_365_days' => $this->calculateLast365daysCount($dailyNumbers),
-                'sumar_countries'         => $queryBuilder->sumarQuery('country', $queryData)->get(),
-                'sumar_languages'         => $queryBuilder->sumarQuery('language', $queryData)->get(),
-                'sumar_operating_systems' => $queryBuilder->sumarQuery('operating_system', $queryData)->get(),
-                'from'                    => $this->configuration->from,
-                'to'                      => $this->configuration->to,
-                'last_data_id'            => $this->configuration->lastId,
-                // 'updated_at'              => now(),
             ];
         }
 
-        VisitorsStatistics::query()
+        VisitorsTraffic::query()
             ->insert($data);
     }
 }

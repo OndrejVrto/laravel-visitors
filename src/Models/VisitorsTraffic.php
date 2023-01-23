@@ -19,6 +19,7 @@ class VisitorsTraffic extends VisitorsBase {
 
         'daily_numbers'       => AsCollection::class,
         'day_maximum'         => 'integer',
+        'svg_graph'           => 'string',
 
         'visit_total'         => 'integer',
         'visit_last_1_day'    => 'integer',

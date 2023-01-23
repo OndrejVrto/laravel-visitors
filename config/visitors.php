@@ -128,4 +128,38 @@ return [
      */
 
     'schedule_generate_traffic_data_automaticaly' => true,
+
+
+    /**
+     * --------------------------------------------------------------------------
+     * Line graphs in SVG
+     * --------------------------------------------------------------------------
+     *
+     * Note:  https://github.com/OndrejVrto/php-linechart
+     */
+
+    'generate_graphs' => true,
+
+    'custom_graphs_appearance' => [
+
+        'traffic' => [
+            'maximum_value_lock' => null,
+            'maximum_days'       => null,
+            'order_reverse'      => false,
+            'width_svg'          => 1000,
+            'height_svg'         => 50,
+            'stroke_width'       => 2,
+            'colors'             => ['#4285F4', '#31ACF2', '#2BC9F4'],
+        ],
+
+        'statistics' => [
+            'maximum_value_lock' => null,
+            'maximum_days'       => null,
+            'order_reverse'      => false,
+            'width_svg'          => 1000,
+            'height_svg'         => 50,
+            'stroke_width'       => 2,
+            'colors'             => ['#c82161', '#fe2977', '#b848f5', '#b848f5'],
+        ],
+    ],
 ];
