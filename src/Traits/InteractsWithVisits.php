@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
-use Exception;
 use Illuminate\Support\Facades\DB;
 use OndrejVrto\Visitors\Facades\Visit;
 use Illuminate\Database\Eloquent\Builder;

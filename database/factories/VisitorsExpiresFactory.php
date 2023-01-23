@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Database\Factories;
 
+use DateTime;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -12,7 +13,7 @@ class VisitorsExpiresFactory extends Factory {
     protected $model = VisitorsExpires::class;
 
     /**
-     * @return array{viewable_type:string,viewable_id:int,category:int,ip_address:string,expires_at:\DateTime}
+     * @return array{viewable_type:string,viewable_id:int,category:int,ip_address:string,expires_at:DateTime}
      */
     public function definition() {
         $visitableModels = [

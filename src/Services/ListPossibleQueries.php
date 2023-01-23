@@ -13,7 +13,7 @@ use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 class ListPossibleQueries {
     public function __construct(
         private readonly StatisticsConfigData $configuration,
-        private readonly bool $typeForTraffik = true,
+        private readonly bool $typeForTraffic = true,
     ) {
     }
 
@@ -28,7 +28,7 @@ class ListPossibleQueries {
             ->fromSub($this->unionQuery(), 'variants')
             ->where('data_id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
-            ->when($this->typeForTraffik, fn ($q) => $q->orderBy('viewable_id'))
+            ->when($this->typeForTraffic, fn ($q) => $q->orderBy('viewable_id'))
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
             ->when($this->configuration->generateCategoryStatistics, fn ($q) => $q->orderBy('category'))
             ->get()
@@ -60,7 +60,7 @@ class ListPossibleQueries {
         /** @var array<string[]> $combinationRange */
         $combinationRange = (new CartesianCombinations())
             ->addItemWhen(
-                $this->typeForTraffik,
+                $this->typeForTraffic,
                 [["`data_id`, `viewable_type`, `viewable_id`"]],
                 [["`data_id`, `viewable_type`", "`data_id`, null",]]
             )->addItemWhen(
@@ -86,7 +86,7 @@ class ListPossibleQueries {
      * @return string[]
      */
     private function columnNames(): array {
-        $columns = $this->typeForTraffik
+        $columns = $this->typeForTraffic
             ? ['viewable_type', 'viewable_id']
             : ['viewable_type'];
 
