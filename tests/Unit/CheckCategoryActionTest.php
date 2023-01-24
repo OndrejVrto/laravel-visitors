@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
-test('check category action', function ($category, $expectedList) {
+test('check category action', function ($category, $expectedList): void {
     $resultList = (new CheckCategory())($category);
     expect($resultList)->toBe($expectedList);
 })->with(

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModelWithoutVisitableContract;
 
-test('check visitable action', function ($visitable, $expectedList) {
+test('check visitable action', function ($visitable, $expectedList): void {
     $resultList = (new CheckVisitable())($visitable);
     expect($resultList)->toBe($expectedList);
 })->with(
