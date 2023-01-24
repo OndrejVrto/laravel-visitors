@@ -11,17 +11,10 @@ class VisitableObserver {
      * Handle the deleted event for the visitable model.
      */
     public function deleted(Visitable $visitable): void {
-        if ($this->removeDataOnDelete($visitable)) {
+        if ($visitable->getDefaultRemoveDataOnDelete()) {
             $visitable->visitData()->delete();
             $visitable->visitExpires()->delete();
             $visitable->visitTraffic()->delete();
         }
-    }
-
-    /**
-     * Determine if should remove views on model delete (defaults to true).
-     */
-    private function removeDataOnDelete(Visitable $visitable): bool {
-        return $visitable->removeDataOnDelete ?? true;
     }
 }

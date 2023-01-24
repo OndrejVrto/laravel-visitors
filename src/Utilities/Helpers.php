@@ -6,7 +6,7 @@ use OndrejVrto\Visitors\Visit;
 use OndrejVrto\Visitors\Traffic;
 use OndrejVrto\Visitors\Statistics;
 
-if (! function_exists('visit')) {
+if ( ! function_exists('visit')) {
     /**
      * Construct a new Visitor instance.
      */
@@ -15,29 +15,29 @@ if (! function_exists('visit')) {
     }
 }
 
-if (! function_exists('traffic')) {
+if ( ! function_exists('traffic')) {
     /**
      * Construct a new Visitor Traffic instance.
-      *
-      * @return Traffic
-      */
+     *
+     * @return Traffic
+     */
     function traffic(): Traffic {
         return new Traffic();
     }
 }
 
-if (! function_exists('statistics')) {
+if ( ! function_exists('statistics')) {
     /**
      * Construct a new Visitor Statistisc instance.
-      *
-      * @return Statistics
-      */
+     *
+     * @return Statistics
+     */
     function statistics(): Statistics {
         return new Statistics();
     }
 }
 
-if (! function_exists('intOrZero')) {
+if ( ! function_exists('intOrZero')) {
     /**
      * Return integer or zero value from mixed value
      */

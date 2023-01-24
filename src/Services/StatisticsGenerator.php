@@ -8,8 +8,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Data\GraphAppearance;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Jobs\GenerateTraffikJob;
+use OndrejVrto\Visitors\Jobs\GenerateTrafficJob;
 use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Models\VisitorsStatistics;
@@ -27,18 +28,28 @@ class StatisticsGenerator {
     public function run(): int {
         $this->prepareTables();
 
+        $formatGraph = $this->resolveGraphApperance('statistics');
         $statistic = (new ListPossibleQueries($this->configuration, false))->get();
         $statistic
             ->chunk(20)
-            ->each(function ($list): void {
-                dispatch(new GenerateStatisticsJob($this->configuration, $list));
+            ->each(function ($list) use ($formatGraph): void {
+                dispatch(new GenerateStatisticsJob(
+                    $this->configuration,
+                    $formatGraph,
+                    $list
+                ));
             });
 
+        $formatGraph = $this->resolveGraphApperance('traffic');
         $traffic = (new ListPossibleQueries($this->configuration, true))->get();
         $traffic
             ->chunk(50)
-            ->each(function ($list): void {
-                dispatch(new GenerateTraffikJob($this->configuration, $list));
+            ->each(function ($list) use ($formatGraph): void {
+                dispatch(new GenerateTrafficJob(
+                    $this->configuration,
+                    $formatGraph,
+                    $list
+                ));
             });
 
         return $statistic->count() + $traffic->count();
@@ -62,7 +73,7 @@ class StatisticsGenerator {
 
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,
-            dbConnectionName          : $visitorData->getConnectionName() ?? 'mysql',
+            dbConnectionName          : $visitorData->getConnectionName(),
             dataTableName             : $visitorData->getTable(),
             graphTableName            : (new VisitorsTraffic())->getTable(),
             statisticsTableName       : (new VisitorsStatistics())->getTable(),
@@ -71,6 +82,19 @@ class StatisticsGenerator {
             lastId                    : is_int($lastId) ? $lastId : 1,
             generateCrawlersStatistics: $this->trafficForCrawlersAndPersons(),
             generateCategoryStatistics: $this->trafficForCategories(),
+            generateGraphs            : $this->defaultGenerateGraphs(),
+        );
+    }
+
+    private function resolveGraphApperance(string $type = 'traffic'): GraphAppearance {
+        return new GraphAppearance(
+            colors            : $this->graphColors($type),
+            width_svg         : $this->graphWidthSvg($type),
+            height_svg        : $this->graphHeighthSvg($type),
+            stroke_width      : $this->graphStrokeWidth($type),
+            maximum_days      : $this->graphMaximumDays($type),
+            order_reverse     : $this->graphOrderReversed($type),
+            maximum_value_lock: $this->graphMaximumValue($type),
         );
     }
 

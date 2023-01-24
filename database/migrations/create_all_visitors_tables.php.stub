@@ -5,51 +5,22 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
-return new class extends Migration
-{
-    /** @var \Illuminate\Database\Schema\Builder */
-    protected $schemaBuilder;
+return new class extends Migration {
+    use VisitorsSettings;
 
-    /** @var array<string,string>  */
-    protected $tableNames;
-
-    public function __construct() {
-        $this->schemaBuilder = Schema::connection($this->handleConnection());
-        $this->tableNames = $this->handleTableNames();
-    }
-
-    private function handleConnection(): string {
-        $connection = config('visitors.eloquent_connection');
-        $connection = is_string($connection) ? $connection : 'mysql';
-
-        if (config("database.connections.{$connection}.driver") !== 'mysql') {
-            throw new \Exception('Error: The visit package tables were not migrated. Database driver must by "mysql" type.');
-        }
-
-        return $connection;
-    }
-
-    /**
-     * @return array<string,string>
-     */
-    private function handleTableNames(): array {
-        $tableNames = config('visitors.table_names');
-
-        if (!is_array($tableNames) OR empty($tableNames)) {
-            throw new \Exception('Error: config/visitors.php not loaded. Run [php artisan config:clear] or publish the package configuration and try again.');
-        }
-
-        return [
-            'data'        => (string) config('visitors.table_names.data', 'visitors_data'),
-            'expires'     => (string) config('visitors.table_names.expires', 'visitors_expires'),
-            'traffic'     => (string) config('visitors.table_names.traffic', 'visitors_traffic'),
-            'statistics'  => (string) config('visitors.table_names.statistics', 'visitors_statistics'),
-        ];
+    public function getConnection(): ?string {
+        return $this->defaultVisitorsEloquentConnection() ?? $this->connection;
     }
 
     public function up(): void {
-        $this->schemaBuilder->create($this->tableNames['expires'], function (Blueprint $table) {
+
+        if ('mysql' !== config("database.connections.".$this->getConnection().".driver")) {
+            throw new Exception('Error: The visit package tables were not migrated. Database driver must by "mysql" type.');
+        }
+
+        Schema::create($this->defaultVisitorsNameTable('expires'), function (Blueprint $table) {
             $table->mediumIncrements('expires_id');
 
             $table->string("viewable_type", 60);
@@ -64,7 +35,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->useCurrent();
         });
 
-        $this->schemaBuilder->create($this->tableNames['data'], function (Blueprint $table) {
+        Schema::create($this->defaultVisitorsNameTable('data'), function (Blueprint $table) {
             $table->integerIncrements('data_id');
 
             $table->string("viewable_type", 60);
@@ -83,7 +54,7 @@ return new class extends Migration
             $table->timestamp('visited_at')->useCurrent();
         });
 
-        $this->schemaBuilder->create($this->tableNames['traffic'], function (Blueprint $table) {
+        Schema::create($this->defaultVisitorsNameTable('traffic'), function (Blueprint $table) {
             $table->mediumIncrements('traffic_id');
 
             $table->string("viewable_type", 60);
@@ -98,6 +69,7 @@ return new class extends Migration
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');
+            $table->mediumText('svg_graph')->nullable();
 
             $table->unsignedMediumInteger('visit_total');
             $table->unsignedSmallInteger('visit_last_1_day');
@@ -106,7 +78,7 @@ return new class extends Migration
             $table->unsignedMediumInteger('visit_last_365_days');
         });
 
-        $this->schemaBuilder->create($this->tableNames['statistics'], function (Blueprint $table) {
+        Schema::create($this->defaultVisitorsNameTable('statistics'), function (Blueprint $table) {
             $table->mediumIncrements('statistics_id');
 
             $table->string("viewable_type", 60)->nullable();
@@ -120,6 +92,7 @@ return new class extends Migration
 
             $table->json('daily_numbers');
             $table->unsignedSmallInteger('day_maximum');
+            $table->mediumText('svg_graph')->nullable();
 
             $table->unsignedMediumInteger('visit_total');
             $table->unsignedSmallInteger('visit_last_1_day');
@@ -140,13 +113,9 @@ return new class extends Migration
     }
 
     public function down(): void {
-        if (empty($this->tableNames)) {
-            throw new \Exception('Error: config/visitors.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
-        }
-
-        $this->schemaBuilder->dropIfExists($this->tableNames['data']);
-        $this->schemaBuilder->dropIfExists($this->tableNames['expires']);
-        $this->schemaBuilder->dropIfExists($this->tableNames['traffic']);
-        $this->schemaBuilder->dropIfExists($this->tableNames['statistics']);
+        Schema::dropIfExists($this->defaultVisitorsNameTable('data'));
+        Schema::dropIfExists($this->defaultVisitorsNameTable('expires'));
+        Schema::dropIfExists($this->defaultVisitorsNameTable('traffic'));
+        Schema::dropIfExists($this->defaultVisitorsNameTable('statistics'));
     }
 };

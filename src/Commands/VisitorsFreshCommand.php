@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Commands;
 
+use Throwable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use OndrejVrto\Visitors\Services\StatisticsGenerator;
@@ -19,13 +20,13 @@ class VisitorsFreshCommand extends Command {
 
         try {
             $countRows = (new StatisticsGenerator())->run();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             Log::error($th->getMessage(), $th->getTrace());
             $this->error("Dispatch error");
             return self::FAILURE;
         }
 
-        $this->info("Dispatch queue for $countRows visit data rows done!");
+        $this->info("Dispatch queue for {$countRows} visit data rows done!");
         return self::SUCCESS;
     }
 }

@@ -70,7 +70,7 @@ class Visit {
             return StatusVisit::NOT_INCREMENT_CRAWLERS;
         }
 
-        if ($this->ipAddress !== null && collect($this->ignoredIpAddresses)->contains($this->ipAddress)) {
+        if (null !== $this->ipAddress && collect($this->ignoredIpAddresses)->contains($this->ipAddress)) {
             return StatusVisit::NOT_INCREMENT_IP_ADDRESS;
         }
 
@@ -78,13 +78,13 @@ class Visit {
 
         if ($this->checkExpire) {
             $statusExpire = $this->saveExpire();
-            if ($statusExpire !== StatusVisit::INCREMENT_EXPIRATION_OK) {
+            if (StatusVisit::INCREMENT_EXPIRATION_OK !== $statusExpire) {
                 return $statusExpire;
             }
         }
 
         $statusData = $this->sevaData();
-        if ($statusData !== StatusVisit::INCREMENT_DATA_OK) {
+        if (StatusVisit::INCREMENT_DATA_OK !== $statusData) {
             return $statusData;
         }
 
@@ -94,19 +94,19 @@ class Visit {
     private function handleInitialProperties(): void {
         $this->request = request();
 
-        if (! isset($this->ipAddress)) {
+        if ( ! isset($this->ipAddress)) {
             $this->ipAddress = $this->request->ip();
         }
 
-        if (! isset($this->userAgent)) {
+        if ( ! isset($this->userAgent)) {
             $this->userAgent = $this->request->userAgent();
         }
 
-        if (! isset($this->isCrawler)) {
+        if ( ! isset($this->isCrawler)) {
             $this->isCrawler = (new CrawlerDetect())->isCrawler($this->userAgent);
         }
 
-        if (! isset($this->crawlerStorage)) {
+        if ( ! isset($this->crawlerStorage)) {
             $this->crawlerStorage = $this->defaultStorageCrawlersRequests();
         }
 
@@ -114,44 +114,44 @@ class Visit {
     }
 
     private function handleRestProperties(): void {
-        if (! isset($this->category)) {
+        if ( ! isset($this->category)) {
             $this->category = $this->defaultVisitorsCategory();
         }
 
-        if (! isset($this->country)) {
+        if ( ! isset($this->country)) {
             $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');  /** @phpstan-ignore-line */
-            $this->country = is_null($countryCode)
+            $this->country = null === $countryCode
                 ? null
-                : (is_string($countryCode) ? substr(strtolower($countryCode), 0, 14) : null);
+                : (is_string($countryCode) ? mb_substr(mb_strtolower($countryCode), 0, 14) : null);
         }
 
-        if (! isset($this->language)) {
+        if ( ! isset($this->language)) {
             $language = $this->request->getLanguages();
-            $this->language = $language === [] ? null : substr(strtolower($language[0]), 0, 14);
+            $this->language = [] === $language ? null : mb_substr(mb_strtolower($language[0]), 0, 14);
         }
 
-        if (! isset($this->operatingSystem)) {
+        if ( ! isset($this->operatingSystem)) {
             $this->operatingSystem = $this->getVisitorOperatingSystem($this->userAgent);
         }
 
-        if (! isset($this->visitedAt)) {
+        if ( ! isset($this->visitedAt)) {
             $this->visitedAt = Carbon::now();
         }
 
-        if (! isset($this->expiresAt)) {
+        if ( ! isset($this->expiresAt)) {
             $this->expiresAt($this->defaultVisitorsExpirationTime());
         }
     }
 
     private function getVisitorOperatingSystem(?string $agent): OperatingSystem {
-        if (is_null($agent)) {
+        if (null === $agent) {
             return OperatingSystem::UNKNOWN;
         }
 
         foreach (OperatingSystem::cases() as $os) {
             $regex = $os->regexString();
 
-            if ($regex === null) {
+            if (null === $regex) {
                 continue;
             }
 

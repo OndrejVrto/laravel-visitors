@@ -53,7 +53,7 @@ class Statistics {
             ? $this->category
             : null;
 
-        if (!$this->trafficForCrawlersAndPersons()) {
+        if ( ! $this->trafficForCrawlersAndPersons()) {
             $this->isCrawler = false;
         }
     }
@@ -64,27 +64,27 @@ class Statistics {
         return (new VisitorsStatistics())
             ->query()
             ->when(
-                !is_null($this->modelClass),
+                null !== $this->modelClass,
                 fn (Builder $q) => $q->where('viewable_type', '=', $this->modelClass)
             )
             ->when(
-                is_null($this->isCrawler),
+                null === $this->isCrawler,
                 fn (Builder $q) => $q->whereNull('is_crawler'),
                 fn (Builder $q) => $q->where('is_crawler', '=', $this->isCrawler)
             )
             ->when(
-                is_null($this->category),
+                null === $this->category,
                 fn (Builder $q) => $q->whereNull('category'),
                 fn (Builder $q) => $q->where('category', '=', $this->category)
             );
     }
 
     /**
-    * Execute the query and get the first result or null.
-    *
-    * @param  string[]|string  $columns
-    * @return Model|null
-    */
+     * Execute the query and get the first result or null.
+     *
+     * @param  string[]|string  $columns
+     * @return Model|null
+     */
     public function sumar(array|string $columns = ['*']): ?Model {
         return $this->queryOneModel()->first($columns);
     }

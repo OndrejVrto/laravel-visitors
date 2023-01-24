@@ -13,7 +13,7 @@ use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 class ListPossibleQueries {
     public function __construct(
         private readonly StatisticsConfigData $configuration,
-        private readonly bool $typeForTraffik = true,
+        private readonly bool $typeForTraffic = true,
     ) {
     }
 
@@ -28,23 +28,23 @@ class ListPossibleQueries {
             ->fromSub($this->unionQuery(), 'variants')
             ->where('data_id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
-            ->when($this->typeForTraffik, fn ($q) => $q->orderBy('viewable_id'))
+            ->when($this->typeForTraffic, fn ($q) => $q->orderBy('viewable_id'))
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
             ->when($this->configuration->generateCategoryStatistics, fn ($q) => $q->orderBy('category'))
             ->get()
             ->map(function ($item): ListPossibleQueriesData {
                 $item = (object) $item;
                 $viewable_type = property_exists($item, 'viewable_type')
-                    ? (is_null($item->viewable_type) ? null : (string) $item->viewable_type)
+                    ? (null === $item->viewable_type ? null : (string) $item->viewable_type)
                     : null;
                 $viewable_id = property_exists($item, 'viewable_id')
-                    ? (is_null($item->viewable_id) ? null : (int) $item->viewable_id)
+                    ? (null === $item->viewable_id ? null : (int) $item->viewable_id)
                     : null;
                 $is_crawler = property_exists($item, 'is_crawler')
-                    ? (is_null($item->is_crawler) ? null : (bool) $item->is_crawler)
+                    ? (null === $item->is_crawler ? null : (bool) $item->is_crawler)
                     : false;
                 $category = property_exists($item, 'category')
-                    ? (is_null($item->category) ? null : (int) $item->category)
+                    ? (null === $item->category ? null : (int) $item->category)
                     : null;
 
                 return new ListPossibleQueriesData(
@@ -60,7 +60,7 @@ class ListPossibleQueries {
         /** @var array<string[]> $combinationRange */
         $combinationRange = (new CartesianCombinations())
             ->addItemWhen(
-                $this->typeForTraffik,
+                $this->typeForTraffic,
                 [["`data_id`, `viewable_type`, `viewable_id`"]],
                 [["`data_id`, `viewable_type`", "`data_id`, null",]]
             )->addItemWhen(
@@ -86,7 +86,7 @@ class ListPossibleQueries {
      * @return string[]
      */
     private function columnNames(): array {
-        $columns = $this->typeForTraffik
+        $columns = $this->typeForTraffic
             ? ['viewable_type', 'viewable_id']
             : ['viewable_type'];
 

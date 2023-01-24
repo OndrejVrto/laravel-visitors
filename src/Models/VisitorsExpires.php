@@ -32,7 +32,7 @@ class VisitorsExpires extends VisitorsBase {
 
     public function prunable(): Builder {
         return static::query()
-        ->whereTime("expires_at", "<", now());
+            ->whereTime("expires_at", "<", now());
     }
 
     protected static function newFactory(): Factory {

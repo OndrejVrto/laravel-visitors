@@ -20,7 +20,7 @@ class Traffic {
     public function forSeveralModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
         $visitableClasses = (new CheckVisitable())($visitable);
 
-        if ($visitableClasses === []) {
+        if ([] === $visitableClasses) {
             throw new InvalidClassParameter('Used class must by Model and implement Visitable contract.');
         }
 

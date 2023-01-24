@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'category_labels' => [
         'UNDEFINED'     => 'Undefined',

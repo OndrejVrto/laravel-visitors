@@ -9,16 +9,26 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 trait VisitorsSettings {
     private function defaultVisitorsEloquentConnection(): ?string {
         $nameConnection = config('visitors.eloquent_connection');
+
         return is_string($nameConnection)
             ? $nameConnection
             : null;
     }
 
     private function defaultVisitorsNameTable(string $keyTableName): ?string {
-        $nameTable = config("visitors.table_names.$keyTableName");
-        return is_string($nameTable)
-            ? $nameTable
-            : null;
+        $nameTable = config("visitors.table_names.{$keyTableName}");
+
+        if (is_string($nameTable)) {
+            return $nameTable;
+        }
+
+        return match ($keyTableName) {
+            'data'       => 'visitors_data',
+            'expires'    => 'visitors_expires',
+            'traffic'    => 'visitors_traffic',
+            'statistics' => 'visitors_statistics',
+            default      => null,
+        };
     }
 
     private function trafficForCrawlersAndPersons(): bool {
@@ -77,5 +87,58 @@ trait VisitorsSettings {
         }
 
         return [];
+    }
+
+    private function defaultGenerateGraphs(): bool {
+        $generateGraphs = config('visitors.generate_graphs');
+        return is_bool($generateGraphs) && $generateGraphs;
+    }
+
+    private function graphMaximumValue(string $type): ?int {
+        $graphMaxValue = config("visitors.custom_graphs_appearance.{$type}.maximum_value_lock");
+        return is_int($graphMaxValue)
+            ? $graphMaxValue
+            : null;
+    }
+
+    private function graphMaximumDays(string $type): ?int {
+        $graphMaxDays = config("visitors.custom_graphs_appearance.{$type}.maximum_days");
+        return is_int($graphMaxDays)
+            ? $graphMaxDays
+            : null;
+    }
+
+    private function graphOrderReversed(string $type): bool {
+        $orderReverse = config("visitors.custom_graphs_appearance.{$type}.order_reverse");
+        return is_bool($orderReverse) && $orderReverse;
+    }
+
+    private function graphWidthSvg(string $type): int {
+        $graphWidthSvg = config("visitors.custom_graphs_appearance.{$type}.width_svg");
+        return is_int($graphWidthSvg)
+            ? $graphWidthSvg
+            : null;
+    }
+
+    private function graphHeighthSvg(string $type): int {
+        $graphHeighthSvg = config("visitors.custom_graphs_appearance.{$type}.height_svg");
+        return is_int($graphHeighthSvg)
+            ? $graphHeighthSvg
+            : null;
+    }
+
+    private function graphStrokeWidth(string $type): int {
+        $graphStrokeWidth = config("visitors.custom_graphs_appearance.{$type}.stroke_width");
+        return is_int($graphStrokeWidth)
+            ? $graphStrokeWidth
+            : null;
+    }
+
+    /** @return string[] */
+    private function graphColors(string $type): array {
+        $graphColors = config("visitors.custom_graphs_appearance.{$type}.colors");
+        return is_array($graphColors) && [] !== $graphColors
+            ? $graphColors
+            : null;
     }
 }
