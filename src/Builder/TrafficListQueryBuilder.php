@@ -170,4 +170,14 @@ class TrafficListQueryBuilder {
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginator {
         return $this->queryToplist()->paginate($perPage, $columns, $pageName, $page);
     }
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array|string  $columns
+     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     */
+    public function first($columns = ['*']): ?Model {
+        return $this->queryToplist()->first($columns);
+    }
 }
