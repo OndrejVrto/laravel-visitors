@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 
-test('check cartesian combinations', function ($valuesList, $expectedList) {
+test('check cartesian combinations', function ($valuesList, $expectedList): void {
     $resultList = (new CartesianCombinations())->forItem($valuesList)->get();
     expect($resultList)->toBeArray()->and($resultList)->toBe($expectedList);
 })->with(
@@ -73,7 +75,7 @@ test('check cartesian combinations', function ($valuesList, $expectedList) {
     ]
 );
 
-test('check cartesian combinations with object', function () {
+test('check cartesian combinations with object', function (): void {
     $object = new TestModel();
     $input = [['foo1', 'foo2'], [$object]];
     $output = [['foo1', $object], ['foo2', $object]];

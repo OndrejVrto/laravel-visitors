@@ -9,7 +9,6 @@ use Closure;
 use Mockery;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
-use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as Orchestra;
 use OndrejVrto\Visitors\VisitorsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,11 +45,11 @@ class TestCase extends Orchestra {
     }
 
     /**
-    * Get package aliases.
-    *
-    * @param  \Illuminate\Foundation\Application  $app
-    * @return array<string,class-string>
-    */
+     * Get package aliases.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return array<string,class-string>
+     */
     protected function getPackageAliases($app): array {
         return [
             'Visit' => '\OndrejVrto\Visitors\Facades\Visit',
@@ -117,7 +116,7 @@ class TestCase extends Orchestra {
      */
     protected function defineDatabaseMigrations(): void {
         $this->loadLaravelMigrations();
-        $this->loadMigrationsFrom(__DIR__ . '/Support/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/Support/migrations');
     }
 
     /**
@@ -198,7 +197,7 @@ class TestCase extends Orchestra {
      * Mock an instance of an object in the container.
      *
      * @param  string  $abstract
-     * @param  \Closure|null  $mock
+     * @param  Closure|null  $mock
      * @return object
      */
     // protected function mock($abstract, Closure $mock = null): object {
