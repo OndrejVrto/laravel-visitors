@@ -17,7 +17,7 @@ final class Traffic {
      * @param Visitable|class-string|Visitable[]|array<class-string> $visitable
      * @throws InvalidClassParameter
      */
-    public static function forListOfModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
+    public function forListOfModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
         $visitableClasses = (new CheckVisitable())($visitable);
 
         if ([] === $visitableClasses) {
@@ -27,11 +27,11 @@ final class Traffic {
         return new TrafficListQueryBuilder($visitableClasses);
     }
 
-    public static function forSingleModel(Visitable&Model $visitable): TrafficSingleModelQueryBuilder {
+    public function forSingleModel(Visitable&Model $visitable): TrafficSingleModelQueryBuilder {
         return new TrafficSingleModelQueryBuilder($visitable);
     }
 
-    public static function summary(): TrafficSummaryQueryBuilder {
+    public function summary(): TrafficSummaryQueryBuilder {
         return new TrafficSummaryQueryBuilder();
     }
 }

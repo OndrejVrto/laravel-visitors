@@ -29,6 +29,9 @@ class VisitorsServiceProvider extends PackageServiceProvider {
     public function packageRegistered(): void {
         $this->app->bind('visit', fn (): Visit => new Visit());
         $this->app->alias(Visit::class, 'visit');
+
+        $this->app->bind('traffic', fn (): Traffic => new Traffic());
+        $this->app->alias(Traffic::class, 'traffic');
     }
 
     public function packageBooted(): void {
