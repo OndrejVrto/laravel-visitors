@@ -68,7 +68,8 @@ trait InteractsWithVisits {
     }
 
     public function incrementVisit(): self {
-        Visit::increment($this);
+        Visit::forModel($this)->increment();
+        // visit($this)->increment();
 
         return $this;
     }

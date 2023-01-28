@@ -10,9 +10,9 @@ interface Visitable {
     /**  @return string */
     public function getMorphClass();
 
-    public function visitExpires(): MorphMany;
-
     public function visitData(): MorphMany;
+
+    public function visitExpires(): MorphMany;
 
     public function visitTraffic(): MorphMany;
 

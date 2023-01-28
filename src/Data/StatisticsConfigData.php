@@ -15,9 +15,9 @@ class StatisticsConfigData {
         public readonly bool   $generateGraphs,
         public readonly Carbon $from,
         public readonly Carbon $to,
+        public readonly string $infoTableName,
         public readonly string $dataTableName,
-        public readonly string $graphTableName,
-        public readonly string $statisticsTableName,
+        public readonly string $traficTableName,
         public readonly string $dbConnectionName,
     ) {
     }

@@ -8,54 +8,51 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
-use OndrejVrto\Visitors\Data\GraphAppearance;
+use OndrejVrto\Visitors\Models\VisitorsInfo;
+use OndrejVrto\Visitors\Data\GraphProperties;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Jobs\GenerateTrafficJob;
 use OndrejVrto\Visitors\Traits\VisitorsSettings;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
-use OndrejVrto\Visitors\Models\VisitorsStatistics;
-use OndrejVrto\Visitors\Jobs\GenerateStatisticsJob;
 
-class StatisticsGenerator {
+class TrafficGenerator {
     use VisitorsSettings;
 
     private StatisticsConfigData $configuration;
+    private GraphProperties $formatGraph;
 
     public function __construct() {
-        $this->configuration = $this->handleConfiguration();
+        $this->configuration = $this->resolveConfiguration();
+        $this->formatGraph = $this->resolveGraphProperties();
+        $this->prepareTables();
     }
 
     public function run(): int {
-        $this->prepareTables();
-
-        $formatGraph = $this->resolveGraphApperance('statistics');
-        $statistic = (new ListPossibleQueries($this->configuration, false))->get();
-        $statistic
+        $queriesCount = (new ListPossibleQueries($this->configuration))
+            ->get()
             ->chunk(20)
-            ->each(function ($list) use ($formatGraph): void {
-                dispatch(new GenerateStatisticsJob(
-                    $this->configuration,
-                    $formatGraph,
-                    $list
-                ));
-            });
-
-        $formatGraph = $this->resolveGraphApperance('traffic');
-        $traffic = (new ListPossibleQueries($this->configuration, true))->get();
-        $traffic
-            ->chunk(50)
-            ->each(function ($list) use ($formatGraph): void {
+            ->each(function ($list): void {
                 dispatch(new GenerateTrafficJob(
-                    $this->configuration,
-                    $formatGraph,
-                    $list
+                    listPossibleQueries: $list,
+                    graphProperties: $this->formatGraph,
+                    configuration: $this->configuration,
                 ));
-            });
+            })
+            ->collapse()
+            ->count();
 
-        return $statistic->count() + $traffic->count();
+        VisitorsInfo::create([
+            'count_rows'   => $queriesCount,
+            'from'         => $this->configuration->from,
+            'to'           => $this->configuration->to,
+            'last_data_id' => $this->configuration->lastId,
+            // 'updated_at'   => Carbon::now(),
+        ]);
+
+        return $queriesCount;
     }
 
-    private function handleConfiguration(): StatisticsConfigData {
+    private function resolveConfiguration(): StatisticsConfigData {
         $visitorData = new VisitorsData();
 
         $range = $visitorData
@@ -75,8 +72,8 @@ class StatisticsGenerator {
             numberDaysStatistics      : $days,
             dbConnectionName          : $visitorData->getConnectionName(),
             dataTableName             : $visitorData->getTable(),
-            graphTableName            : (new VisitorsTraffic())->getTable(),
-            statisticsTableName       : (new VisitorsStatistics())->getTable(),
+            traficTableName           : (new VisitorsTraffic())->getTable(),
+            infoTableName             : (new VisitorsInfo())->getTable(),
             to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
             from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
             lastId                    : is_int($lastId) ? $lastId : 1,
@@ -86,15 +83,15 @@ class StatisticsGenerator {
         );
     }
 
-    private function resolveGraphApperance(string $type = 'traffic'): GraphAppearance {
-        return new GraphAppearance(
-            colors            : $this->graphColors($type),
-            width_svg         : $this->graphWidthSvg($type),
-            height_svg        : $this->graphHeighthSvg($type),
-            stroke_width      : $this->graphStrokeWidth($type),
-            maximum_days      : $this->graphMaximumDays($type),
-            order_reverse     : $this->graphOrderReversed($type),
-            maximum_value_lock: $this->graphMaximumValue($type),
+    private function resolveGraphProperties(): GraphProperties {
+        return new GraphProperties(
+            colors            : $this->graphColors(),
+            width_svg         : $this->graphWidthSvg(),
+            height_svg        : $this->graphHeighthSvg(),
+            stroke_width      : $this->graphStrokeWidth(),
+            maximum_days      : $this->graphMaximumDays(),
+            maximum_value_lock: $this->graphMaximumValue(),
+            order_reverse     : $this->graphOrderReversed(),
         );
     }
 
@@ -102,11 +99,7 @@ class StatisticsGenerator {
         Artisan::call('model:prune', ['--model' => VisitorsData::class]);
 
         DB::connection($this->configuration->dbConnectionName)
-            ->table($this->configuration->statisticsTableName)
-            ->truncate();
-
-        DB::connection($this->configuration->dbConnectionName)
-            ->table($this->configuration->graphTableName)
+            ->table($this->configuration->traficTableName)
             ->truncate();
     }
 }

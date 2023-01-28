@@ -4,67 +4,27 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors;
 
+use Exception;
 use Carbon\Carbon;
-use DateTimeInterface;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisit;
-use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Exceptions\BadModel;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Traits\VisitSetters;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
-use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
-class Visit {
+final class Visit {
     use VisitSetters;
     use VisitorsSettings;
 
-    protected Visitable&Model $model;
-
-    private Request $request;
-
-    private bool $isCrawler;
-
-    private bool $crawlerStorage;
-
-    private bool $checkExpire = true;
-
-    private ?string $country = null;
-
-    private ?string $language = null;
-
-    private ?string $userAgent = null;
-
-    private ?string $ipAddress = null;
-
-    /** @var string[] */
-    private array $ignoredIpAddresses = [];
-
-    private VisitorCategory $category;
-
-    private DateTimeInterface $expiresAt;
-
-    private DateTimeInterface $visitedAt;
-
-    private OperatingSystem $operatingSystem;
-
-    public function forceIncrement(Visitable $visitable): StatusVisit {
+    public function forceIncrement(): StatusVisit {
         $this->checkExpire = false;
-        return $this->increment($visitable);
+        return $this->increment();
     }
 
-    public function increment(Visitable $visitable): StatusVisit {
-        if ($visitable instanceof Model) {
-            $this->model = $visitable;
-        } else {
-            throw new BadModel("Class ".$visitable->getMorphClass()." must by ".Model::class." type.");
-        }
-
-        $this->handleInitialProperties();
+    public function increment(): StatusVisit {
+        $this->resolveInitialProperties();
 
         if ($this->isCrawler && ! $this->crawlerStorage) {
             return StatusVisit::NOT_INCREMENT_CRAWLERS;
@@ -74,7 +34,7 @@ class Visit {
             return StatusVisit::NOT_INCREMENT_IP_ADDRESS;
         }
 
-        $this->handleRestProperties();
+        $this->resolveRestProperties();
 
         if ($this->checkExpire) {
             $statusExpire = $this->saveExpire();
@@ -91,7 +51,11 @@ class Visit {
         return StatusVisit::INCREMENT_OK;
     }
 
-    private function handleInitialProperties(): void {
+    private function resolveInitialProperties(): void {
+        if ( ! isset($this->model)) {
+            throw new Exception('Model must be set.');
+        }
+
         $this->request = request();
 
         if ( ! isset($this->ipAddress)) {
@@ -113,16 +77,9 @@ class Visit {
         $this->addIpAddressToIgnoreList($this->defaultVisitorsIgnoreIPList());
     }
 
-    private function handleRestProperties(): void {
+    private function resolveRestProperties(): void {
         if ( ! isset($this->category)) {
             $this->category = $this->defaultVisitorsCategory();
-        }
-
-        if ( ! isset($this->country)) {
-            $countryCode = geoip($this->ipAddress)->getAttribute('iso_code');  /** @phpstan-ignore-line */
-            $this->country = null === $countryCode
-                ? null
-                : (is_string($countryCode) ? mb_substr(mb_strtolower($countryCode), 0, 14) : null);
         }
 
         if ( ! isset($this->language)) {
@@ -202,7 +159,6 @@ class Visit {
             ->create([
                 'category'         => $this->category,
                 'is_crawler'       => $this->isCrawler,
-                'country'          => $this->country,
                 'language'         => $this->language,
                 'operating_system' => $this->operatingSystem,
                 'visited_at'       => $this->visitedAt,

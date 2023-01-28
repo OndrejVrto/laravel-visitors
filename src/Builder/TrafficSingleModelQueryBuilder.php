@@ -12,7 +12,7 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
-class TrafficOneModelQueryBuilder {
+class TrafficSingleModelQueryBuilder {
     use VisitorsSettings;
     use TrafficQueryMethods;
 
@@ -49,10 +49,10 @@ class TrafficOneModelQueryBuilder {
         }
     }
 
-    private function queryOneModel(): Builder {
+    private function query(): Builder {
         $this->handleConfigurations();
 
-        return (new VisitorsTraffic())->query()
+        return VisitorsTraffic::query()
             ->whereMorphedTo('viewable', $this->model)
             ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
             ->when(null === $this->isCrawler, fn (Builder $q) => $q->whereNull('is_crawler'))
@@ -70,7 +70,7 @@ class TrafficOneModelQueryBuilder {
      * @param  string[]|string  $columns
      * @return Model|null
      */
-    public function get(array|string $columns = ['*']): ?Model {
-        return $this->queryOneModel()->first($columns);
+    public function first(array|string $columns = ['*']): ?Model {
+        return $this->query()->first($columns);
     }
 }

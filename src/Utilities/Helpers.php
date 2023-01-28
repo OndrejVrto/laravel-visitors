@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 use OndrejVrto\Visitors\Visit;
 use OndrejVrto\Visitors\Traffic;
-use OndrejVrto\Visitors\Statistics;
+use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Contracts\Visitable;
 
 if ( ! function_exists('visit')) {
     /**
      * Construct a new Visitor instance.
      */
-    function visit(): Visit {
-        return new Visit();
+    function visit(Visitable&Model $model): Visit {
+        return (new Visit())->forModel($model);
     }
 }
 
@@ -23,17 +24,6 @@ if ( ! function_exists('traffic')) {
      */
     function traffic(): Traffic {
         return new Traffic();
-    }
-}
-
-if ( ! function_exists('statistics')) {
-    /**
-     * Construct a new Visitor Statistisc instance.
-     *
-     * @return Statistics
-     */
-    function statistics(): Statistics {
-        return new Statistics();
     }
 }
 

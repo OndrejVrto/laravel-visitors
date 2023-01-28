@@ -23,14 +23,13 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.1|^8.2",
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.0",
         "jaybizzle/crawler-detect": "^1.2",
         "markbaker/enumhelper": "^1.0",
-        "ondrej-vrto/php-linechart": "^1.0",
-        "spatie/laravel-package-tools": "^1.13.0",
-        "torann/geoip": "^1.0|^3.0"
+        "ondrej-vrto/php-linechart": "0.5-dev",
+        "spatie/laravel-package-tools": "^1.13.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^0.14.1",
@@ -49,7 +48,8 @@
         "phpstan/phpstan": "^1.9",
         "phpunit/php-code-coverage": "^9.2",
         "phpunit/phpunit": "^9.5",
-        "rector/rector": "^0.14.7"
+        "rector/rector": "^0.14.7",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
@@ -65,6 +65,18 @@
             "OndrejVrto\\Visitors\\Tests\\": "tests"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "A:/#Packages/ondrej-vrto/php-linechart",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "ondrej-vrto/php-linechart": "0.5-dev"
+                }
+            }
+        }
+    ],
     "scripts": {
         "format": "vendor/bin/pint",
         "rector": "vendor/bin/rector --dry-run --memory-limit=4G",

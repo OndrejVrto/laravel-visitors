@@ -16,7 +16,7 @@ class CartesianCombinations {
      */
     public function forItem(?array $item): self {
         if (null !== $item) {
-            $this->inputItems = $item;
+            $this->inputItems[] = $item;
         }
 
         return $this;
@@ -69,34 +69,25 @@ class CartesianCombinations {
     }
 
     /**
-     * @param array<int,array<int,mixed>> $arrays
-     * @param integer $level
+     * @param array<int,array<int,mixed>> $set
      * @return array<int,mixed>
      */
-    private function combinations(array $arrays, int $level = 0): array {
-        if ( ! isset($arrays[$level])) {
+    private function combinations(array $set): array {
+        if ( ! $set) {
             return [[]];
         }
 
-        if ($level === count($arrays) - 1) {
-            return 0 === $level
-                ? [$arrays[$level]]
-                : $arrays[$level];
-        }
+        $subset = array_shift($set);
+        $cartesianSubset = $this->combinations($set);
 
-        // get combinations from subsequent arrays
-        $tmp = $this->combinations($arrays, $level + 1);
-
-        // concat each array from tmp with each element from $arrays[$level]
         $result = [];
-        foreach ($arrays[$level] as $v) {
-            foreach ($tmp as $t) {
-                $result[] = is_array($t)
-                    ? [...[$v], ...$t]
-                    : [$v, $t];
+        foreach ($subset as $value) {
+            foreach ($cartesianSubset as $p) {
+                array_unshift($p, $value);
+                $result[] = $p;
             }
         }
 
-        return array_values($result);
+        return $result;
     }
 }

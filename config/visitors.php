@@ -15,6 +15,10 @@ return [
     / --------------------------------------------------------------------------
     /
     / Here you can configure connection for store data in database.
+    /
+    / Requirements:
+    /   1. Database driver must by "mysql" type.
+    /   2. Databases for model and visitors models must by in same MySql database server.
     */
 
     'eloquent_connection' => env('VISITORS_DB_CONNECTION', 'mysql'),
@@ -25,10 +29,10 @@ return [
     */
 
     'table_names' => [
-        'data'        => 'visitors_data',
-        'expires'     => 'visitors_expires',
-        'traffic'     => 'visitors_traffic',
-        'statistics'  => 'visitors_statistics',
+        'info'    => 'visitors_info',
+        'data'    => 'visitors_data',
+        'expires' => 'visitors_expires',
+        'traffic' => 'visitors_traffic',
     ],
 
 
@@ -48,7 +52,7 @@ return [
 
     /*
     / --------------------------------------------------------------------------
-    / Default expires time
+    / Default expires time in minutes
     / --------------------------------------------------------------------------
     /
     / If you want set expiration time for ip adress and models in minutes.
@@ -57,7 +61,7 @@ return [
     / Default: 15
     */
 
-    'expires_time_for_visit' => 15,  // in minutes
+    'expires_time_for_visit' => 15,
 
 
     /*
@@ -140,26 +144,15 @@ return [
 
     'generate_graphs' => true,
 
-    'custom_graphs_appearance' => [
+    'graphs_properties' => [
 
-        'traffic' => [
-            'maximum_value_lock' => null,
-            'maximum_days'       => null,
-            'order_reverse'      => false,
-            'width_svg'          => 1000,
-            'height_svg'         => 50,
-            'stroke_width'       => 2,
-            'colors'             => ['#4285F4', '#31ACF2', '#2BC9F4'],
-        ],
+        'maximum_value_lock' => null,
+        'maximum_days'       => null,
+        'order_reverse'      => false,
+        'width_svg'          => 1000,
+        'height_svg'         => 50,
+        'stroke_width'       => 2,
+        'colors'             => ['#4285F4', '#31ACF2', '#2BC9F4'],
 
-        'statistics' => [
-            'maximum_value_lock' => null,
-            'maximum_days'       => null,
-            'order_reverse'      => false,
-            'width_svg'          => 1000,
-            'height_svg'         => 50,
-            'stroke_width'       => 2,
-            'colors'             => ['#c82161', '#fe2977', '#b848f5', '#b848f5'],
-        ],
     ],
 ];

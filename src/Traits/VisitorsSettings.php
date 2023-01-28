@@ -23,10 +23,10 @@ trait VisitorsSettings {
         }
 
         return match ($keyTableName) {
+            'info'       => 'visitors_info',
             'data'       => 'visitors_data',
             'expires'    => 'visitors_expires',
             'traffic'    => 'visitors_traffic',
-            'statistics' => 'visitors_statistics',
             default      => null,
         };
     }
@@ -94,51 +94,51 @@ trait VisitorsSettings {
         return is_bool($generateGraphs) && $generateGraphs;
     }
 
-    private function graphMaximumValue(string $type): ?int {
-        $graphMaxValue = config("visitors.custom_graphs_appearance.{$type}.maximum_value_lock");
+    private function graphMaximumValue(): ?int {
+        $graphMaxValue = config("visitors.custom_graphs_properties.maximum_value_lock");
         return is_int($graphMaxValue)
             ? $graphMaxValue
             : null;
     }
 
-    private function graphMaximumDays(string $type): ?int {
-        $graphMaxDays = config("visitors.custom_graphs_appearance.{$type}.maximum_days");
+    private function graphMaximumDays(): ?int {
+        $graphMaxDays = config("visitors.custom_graphs_properties.maximum_days");
         return is_int($graphMaxDays)
             ? $graphMaxDays
             : null;
     }
 
-    private function graphOrderReversed(string $type): bool {
-        $orderReverse = config("visitors.custom_graphs_appearance.{$type}.order_reverse");
+    private function graphOrderReversed(): bool {
+        $orderReverse = config("visitors.custom_graphs_properties.order_reverse");
         return is_bool($orderReverse) && $orderReverse;
     }
 
-    private function graphWidthSvg(string $type): int {
-        $graphWidthSvg = config("visitors.custom_graphs_appearance.{$type}.width_svg");
+    private function graphWidthSvg(): ?int {
+        $graphWidthSvg = config("visitors.custom_graphs_properties.width_svg");
         return is_int($graphWidthSvg)
             ? $graphWidthSvg
             : null;
     }
 
-    private function graphHeighthSvg(string $type): int {
-        $graphHeighthSvg = config("visitors.custom_graphs_appearance.{$type}.height_svg");
+    private function graphHeighthSvg(): ?int {
+        $graphHeighthSvg = config("visitors.custom_graphs_properties.height_svg");
         return is_int($graphHeighthSvg)
             ? $graphHeighthSvg
             : null;
     }
 
-    private function graphStrokeWidth(string $type): int {
-        $graphStrokeWidth = config("visitors.custom_graphs_appearance.{$type}.stroke_width");
-        return is_int($graphStrokeWidth)
-            ? $graphStrokeWidth
+    private function graphStrokeWidth(): ?float {
+        $graphStrokeWidth = config("visitors.custom_graphs_properties.stroke_width");
+        return is_numeric($graphStrokeWidth)
+            ? (float) $graphStrokeWidth
             : null;
     }
 
     /** @return string[] */
-    private function graphColors(string $type): array {
-        $graphColors = config("visitors.custom_graphs_appearance.{$type}.colors");
+    private function graphColors(): array {
+        $graphColors = config("visitors.custom_graphs_properties.colors");
         return is_array($graphColors) && [] !== $graphColors
             ? $graphColors
-            : null;
+            : [];
     }
 }

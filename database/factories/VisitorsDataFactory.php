@@ -27,7 +27,6 @@ class VisitorsDataFactory extends Factory {
             'viewable_id'      => $this->faker->numberBetween(1, 20),
             'is_crawler'       => $this->faker->boolean(50),
             'category'         => $this->faker->randomElement($category),
-            'country'          => $this->faker->countryCode(),
             'language'         => $this->faker->languageCode(),
             'operating_system' => $this->faker->randomElement($os),
             'visited_at'       => $this->faker->dateTimeBetween('-2 years', 'now'),

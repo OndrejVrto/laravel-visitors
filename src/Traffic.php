@@ -9,15 +9,15 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Builder\TrafficListQueryBuilder;
 use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
-use OndrejVrto\Visitors\Builder\TrafficOneModelQueryBuilder;
+use OndrejVrto\Visitors\Builder\TrafficSummaryQueryBuilder;
+use OndrejVrto\Visitors\Builder\TrafficSingleModelQueryBuilder;
 
-class Traffic {
+final class Traffic {
     /**
      * @param Visitable|class-string|Visitable[]|array<class-string> $visitable
      * @throws InvalidClassParameter
-     * @return TrafficListQueryBuilder
      */
-    public function forSeveralModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
+    public static function forListOfModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
         $visitableClasses = (new CheckVisitable())($visitable);
 
         if ([] === $visitableClasses) {
@@ -27,11 +27,11 @@ class Traffic {
         return new TrafficListQueryBuilder($visitableClasses);
     }
 
-    /**
-     * @param Visitable&Model $visitable
-     * @return TrafficOneModelQueryBuilder
-     */
-    public function forModel(Visitable&Model $visitable): TrafficOneModelQueryBuilder {
-        return new TrafficOneModelQueryBuilder($visitable);
+    public static function forSingleModel(Visitable&Model $visitable): TrafficSingleModelQueryBuilder {
+        return new TrafficSingleModelQueryBuilder($visitable);
+    }
+
+    public static function summary(): TrafficSummaryQueryBuilder {
+        return new TrafficSummaryQueryBuilder();
     }
 }

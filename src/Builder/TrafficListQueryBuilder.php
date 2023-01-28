@@ -132,10 +132,10 @@ class TrafficListQueryBuilder {
         }
     }
 
-    private function queryToplist(): Builder {
+    private function query(): Builder {
         $this->handleConfigurations();
 
-        return (new VisitorsTraffic())->query()
+        return VisitorsTraffic::query()
             ->whereNotNull('viewable_id')
             ->where('is_crawler', '=', $this->isCrawler)
             ->when(1 === $this->countClasses, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
@@ -155,7 +155,7 @@ class TrafficListQueryBuilder {
      * @return Collection|Model[]
      */
     public function get(array|string $columns = ['*']): Collection|Model {
-        return $this->queryToplist()->get($columns);
+        return $this->query()->get($columns);
     }
 
     /**
@@ -168,7 +168,7 @@ class TrafficListQueryBuilder {
      * @return LengthAwarePaginator
      */
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginator {
-        return $this->queryToplist()->paginate($perPage, $columns, $pageName, $page);
+        return $this->query()->paginate($perPage, $columns, $pageName, $page);
     }
 
     /**
@@ -178,6 +178,6 @@ class TrafficListQueryBuilder {
      * @return \Illuminate\Database\Eloquent\Model|object|static|null
      */
     public function first($columns = ['*']): ?Model {
-        return $this->queryToplist()->first($columns);
+        return $this->query()->first($columns);
     }
 }

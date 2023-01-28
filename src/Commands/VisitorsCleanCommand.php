@@ -6,6 +6,7 @@ namespace OndrejVrto\Visitors\Commands;
 
 use Illuminate\Console\Command;
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Models\VisitorsInfo;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 
 class VisitorsCleanCommand extends Command {
@@ -14,7 +15,13 @@ class VisitorsCleanCommand extends Command {
     public $description = 'Prune old records in the visitors tables.';
 
     public function handle(): int {
-        $code = $this->call('model:prune', ['--model' => [VisitorsData::class, VisitorsExpires::class]]);
+        $code = $this->call('model:prune', [
+            '--model' => [
+                VisitorsInfo::class,
+                VisitorsData::class,
+                VisitorsExpires::class,
+            ]
+        ]);
 
         if ($code > 0) {
             $this->error('Prune tables error!');

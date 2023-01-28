@@ -6,10 +6,46 @@ namespace OndrejVrto\Visitors\Traits;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
 trait VisitSetters {
+    protected Visitable&Model $model;
+
+    private Request $request;
+
+    private bool $isCrawler;
+
+    private bool $crawlerStorage;
+
+    private bool $checkExpire = true;
+
+    private ?string $language = null;
+
+    private ?string $userAgent = null;
+
+    private ?string $ipAddress = null;
+
+    /** @var string[] */
+    private array $ignoredIpAddresses = [];
+
+    private VisitorCategory $category;
+
+    private DateTimeInterface $expiresAt;
+
+    private DateTimeInterface $visitedAt;
+
+    private OperatingSystem $operatingSystem;
+
+    public function forModel(Visitable&Model $visitable): self {
+        $this->model = $visitable;
+
+        return $this;
+    }
+
     public function withCrawlers(): self {
         $this->crawlerStorage = true;
 
@@ -68,12 +104,6 @@ trait VisitSetters {
 
     public function isPerson(bool $status = true): self {
         $this->isCrawler = ! $status;
-
-        return $this;
-    }
-
-    public function fromCountry(string $country): self {
-        $this->country = $country;
 
         return $this;
     }

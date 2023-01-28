@@ -7,7 +7,7 @@ namespace OndrejVrto\Visitors\Commands;
 use Throwable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use OndrejVrto\Visitors\Services\StatisticsGenerator;
+use OndrejVrto\Visitors\Services\TrafficGenerator;
 
 class VisitorsFreshCommand extends Command {
     public $signature = 'visitors:fresh';
@@ -19,7 +19,7 @@ class VisitorsFreshCommand extends Command {
         $this->newLine();
 
         try {
-            $countRows = (new StatisticsGenerator())->run();
+            $countRows = (new TrafficGenerator())->run();
         } catch (Throwable $th) {
             Log::error($th->getMessage(), $th->getTrace());
             $this->error("Dispatch error");

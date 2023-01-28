@@ -24,4 +24,18 @@ trait TrafficQueryMethods {
         $this->isCrawler = null;
         return $this;
     }
+
+    public function toSql(): string {
+        return $this->query()->toSql();
+    }
+
+    public function dump(): self {
+        $this->query()->dump();
+
+        return $this;
+    }
+
+    public function dd(): never {
+        $this->query()->dd();
+    }
 }

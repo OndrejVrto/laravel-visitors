@@ -13,7 +13,6 @@ use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 class ListPossibleQueries {
     public function __construct(
         private readonly StatisticsConfigData $configuration,
-        private readonly bool $typeForTraffic = true,
     ) {
     }
 
@@ -28,7 +27,7 @@ class ListPossibleQueries {
             ->fromSub($this->unionQuery(), 'variants')
             ->where('data_id', '<=', $this->configuration->lastId)
             ->orderBy('viewable_type')
-            ->when($this->typeForTraffic, fn ($q) => $q->orderBy('viewable_id'))
+            ->orderBy('viewable_id')
             ->when($this->configuration->generateCrawlersStatistics, fn ($q) => $q->orderBy('is_crawler'))
             ->when($this->configuration->generateCategoryStatistics, fn ($q) => $q->orderBy('category'))
             ->get()
@@ -59,11 +58,12 @@ class ListPossibleQueries {
     private function unionQuery(): string {
         /** @var array<string[]> $combinationRange */
         $combinationRange = (new CartesianCombinations())
+            ->forItem([
+                "`data_id`, `viewable_type`, `viewable_id`",
+                "`data_id`, `viewable_type`, null",
+                "`data_id`, null, null",
+            ])
             ->addItemWhen(
-                $this->typeForTraffic,
-                [["`data_id`, `viewable_type`, `viewable_id`"]],
-                [["`data_id`, `viewable_type`", "`data_id`, null",]]
-            )->addItemWhen(
                 $this->configuration->generateCrawlersStatistics,
                 ["`is_crawler`", "null"]
             )->addItemWhen(
@@ -86,9 +86,7 @@ class ListPossibleQueries {
      * @return string[]
      */
     private function columnNames(): array {
-        $columns = $this->typeForTraffic
-            ? ['viewable_type', 'viewable_id']
-            : ['viewable_type'];
+        $columns = ['viewable_type', 'viewable_id'];
 
         if ($this->configuration->generateCrawlersStatistics) {
             $columns[] = 'is_crawler';
