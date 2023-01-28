@@ -48,7 +48,7 @@ class GenerateTrafficJob implements ShouldQueue {
                 'viewable_id'             => $queryData->viewable_id,
                 'category'                => $queryData->category,
                 'is_crawler'              => $queryData->is_crawler,
-                'daily_numbers'           => $dailyNumbers,
+                'daily_visits'            => $dailyNumbers,
                 'day_maximum'             => $this->calculateDayMaximumCount($dailyNumbers),
                 'svg_graph'               => $this->getSvgChart($dailyNumbers->pluck('visits_count')->all()),
                 'visit_total'             => $this->calculateTotalCount($dailyNumbers),

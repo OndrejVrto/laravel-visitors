@@ -80,7 +80,7 @@ return new class extends Migration {
             $table->unsignedMediumInteger('visit_last_365_days');
 
             $table->unsignedSmallInteger('day_maximum');
-            $table->json('daily_numbers');
+            $table->json('daily_visits');
 
             $table->json('sumar_languages');
             $table->json('sumar_operating_systems');

@@ -17,7 +17,7 @@ class VisitorsTraffic extends VisitorsBase {
         'category'                => VisitorCategory::class,
         'is_crawler'              => 'boolean',
 
-        'daily_numbers'           => AsCollection::class,
+        'daily_visits'           => AsCollection::class,
         'day_maximum'             => 'integer',
         'svg_graph'               => 'string',
 
