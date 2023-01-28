@@ -19,7 +19,7 @@ class VisitorsInfo extends VisitorsBase {
         'from'         => 'datetime',
         'to'           => 'datetime',
         'last_data_id' => 'integer',
-        'updated_at'   => 'datetime',
+        'created_at'   => 'datetime',
     ];
 
     protected function tableConfigKey(): string {

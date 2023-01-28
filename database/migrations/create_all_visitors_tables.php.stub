@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->timestamp('to');
             $table->unsignedMediumInteger("last_data_id");
 
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('created_at')->useCurrent();
         });
 
         Schema::create($this->defaultVisitorsNameTable('expires'), function (Blueprint $table) {
@@ -39,7 +39,7 @@ return new class extends Migration {
                 'visitors_expires_viewable_ip_address_category_unique'
             );
 
-            $table->timestamp('expires_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('expires_at')->useCurrent();
         });
 
         Schema::create($this->defaultVisitorsNameTable('data'), function (Blueprint $table) {
@@ -57,7 +57,7 @@ return new class extends Migration {
             $table->string('language', 15)->nullable();
             $table->unsignedTinyInteger('operating_system');  // ENUM
 
-            $table->timestamp('visited_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('visited_at')->useCurrent();
         });
 
         Schema::create($this->defaultVisitorsNameTable('traffic'), function (Blueprint $table) {
