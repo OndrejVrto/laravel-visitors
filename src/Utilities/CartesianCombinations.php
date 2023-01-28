@@ -43,7 +43,7 @@ class CartesianCombinations {
      *
      * @return array<int,mixed>
      */
-    public function get(): array {
+    public function build(): array {
         $prepareInput = $this->prepareInputItems();
 
         return $this->combinations($prepareInput);
@@ -73,7 +73,7 @@ class CartesianCombinations {
      * @return array<int,mixed>
      */
     private function combinations(array $set): array {
-        if ( ! $set) {
+        if ([] === $set) {
             return [[]];
         }
 

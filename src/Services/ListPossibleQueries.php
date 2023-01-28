@@ -69,7 +69,7 @@ class ListPossibleQueries {
             )->addItemWhen(
                 $this->configuration->generateCategoryStatistics,
                 ["`category`", "null"]
-            )->get();
+            )->build();
 
         return collect($combinationRange)
             ->map(function ($col): string {

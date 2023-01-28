@@ -118,16 +118,20 @@ class GenerateTrafficJob implements ShouldQueue {
     }
 
     private function getSvgChart(array $values): ?string {
-        return $this->configuration->generateGraphs
-                ? LineChart::new($values)
-                    ->withColorGradient(...$this->graphProperties->colors)
-                    ->withDimensions($this->graphProperties->width_svg, $this->graphProperties->height_svg)
-                    ->withLockYAxisRange($this->graphProperties->maximum_value_lock)
-                    ->withMaxItemAmount($this->graphProperties->maximum_days)
-                    ->withOrderReversed($this->graphProperties->order_reverse)
-                    ->withStrokeWidth($this->graphProperties->stroke_width)
-                    ->make()
-                : null;
+        if (! $this->configuration->generateGraphs) {
+            return null;
+        }
+
+        $chart = LineChart::new($values)
+            ->withColorGradient(...$this->graphProperties->colors)
+            ->withDimensions($this->graphProperties->width_svg, $this->graphProperties->height_svg)
+            ->withLockYAxisRange($this->graphProperties->maximum_value_lock)
+            ->withMaxItemAmount($this->graphProperties->maximum_days)
+            ->withStrokeWidth($this->graphProperties->stroke_width);
+
+        return null === $this->graphProperties->order_reverse || false === $this->graphProperties->order_reverse
+            ? $chart->make()
+            : $chart->withOrderReversed()->make();
     }
 
     public function calculateDayMaximumCount(Collection $dailyNumbers): int {

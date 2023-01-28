@@ -175,7 +175,7 @@ class TrafficListQueryBuilder {
      * Execute the query and get the first result.
      *
      * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     * @return Model|object|static|null
      */
     public function first($columns = ['*']): ?Model {
         return $this->query()->first($columns);
