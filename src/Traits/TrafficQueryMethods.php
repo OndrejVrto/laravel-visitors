@@ -2,12 +2,26 @@
 
 declare(strict_types=1);
 
-namespace OndrejVrto\Visitors\Builder;
+namespace OndrejVrto\Visitors\Traits;
+
+use OndrejVrto\Visitors\Traits\VisitorsSettings;
 
 trait TrafficQueryMethods {
-    private ?bool $isCrawler = false;
+    use VisitorsSettings;
+
+    private ?bool $isCrawler = null;
 
     private ?bool $withRelationship = null;
+
+    private function handleConfigurations(): void {
+        $this->category = $this->trafficForCategories()
+            ? $this->category
+            : null;
+
+        $this->isCrawler = $this->trafficForCrawlersAndPersons()
+            ? $this->isCrawler
+            : false;
+    }
 
     public function withRelationship(): self {
         $this->withRelationship = true;

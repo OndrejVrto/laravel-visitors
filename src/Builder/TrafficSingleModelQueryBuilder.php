@@ -10,10 +10,9 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\VisitorsSettings;
+use OndrejVrto\Visitors\Traits\TrafficQueryMethods;
 
 class TrafficSingleModelQueryBuilder {
-    use VisitorsSettings;
     use TrafficQueryMethods;
 
     private ?int $category = null;
@@ -28,29 +27,14 @@ class TrafficSingleModelQueryBuilder {
         return $this;
     }
 
-    private function handleConfigurations(): void {
-        $this->category = $this->trafficForCategories()
-            ? $this->category
-            : null;
-
-        if ( ! $this->trafficForCrawlersAndPersons()) {
-            $this->isCrawler = false;
-        }
-    }
-
     private function query(): Builder {
         $this->handleConfigurations();
 
         return VisitorsTraffic::query()
-            ->whereMorphedTo('viewable', $this->model)
+            ->where('category', $this->category)
+            ->where('is_crawler', $this->isCrawler)
             ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
-            ->when(null === $this->isCrawler, fn (Builder $q) => $q->whereNull('is_crawler'))
-            ->when(is_bool($this->isCrawler), fn (Builder $q) => $q->where('is_crawler', '=', $this->isCrawler))
-            ->when(
-                null === $this->category,
-                fn (Builder $q) => $q->whereNull('category'),
-                fn (Builder $q) => $q->where('category', '=', $this->category)
-            );
+            ->whereMorphedTo('viewable', $this->model);
     }
 
     /**

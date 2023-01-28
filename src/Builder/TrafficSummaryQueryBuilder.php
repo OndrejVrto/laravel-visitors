@@ -10,10 +10,9 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\VisitorsSettings;
+use OndrejVrto\Visitors\Traits\TrafficQueryMethods;
 
 class TrafficSummaryQueryBuilder {
-    use VisitorsSettings;
     use TrafficQueryMethods{
         withRelationship as protected;
     }
@@ -34,24 +33,14 @@ class TrafficSummaryQueryBuilder {
         return $this;
     }
 
-    private function handleConfigurations(): void {
-        $this->category = $this->trafficForCategories()
-            ? $this->category
-            : null;
-
-        if ( ! $this->trafficForCrawlersAndPersons()) {
-            $this->isCrawler = false;
-        }
-    }
-
     private function query(): Builder {
         $this->handleConfigurations();
 
         return VisitorsTraffic::query()
-            ->whereNull('viewable_id')
             ->where("category", $this->category)
             ->where("is_crawler", $this->isCrawler)
-            ->where("viewable_type", $this->modelClass);
+            ->where("viewable_type", $this->modelClass)
+            ->whereNull('viewable_id');
     }
 
     /**

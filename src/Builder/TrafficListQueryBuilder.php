@@ -12,12 +12,11 @@ use OndrejVrto\Visitors\Action\CheckCategory;
 use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
-use OndrejVrto\Visitors\Traits\VisitorsSettings;
+use OndrejVrto\Visitors\Traits\TrafficQueryMethods;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 
 class TrafficListQueryBuilder {
-    use VisitorsSettings;
     use TrafficQueryMethods;
 
     /** @var string[] */
@@ -123,9 +122,9 @@ class TrafficListQueryBuilder {
             : [];
         $this->countCategories = count($this->categories);
 
-        if ( ! $this->trafficForCrawlersAndPersons()) {
-            $this->isCrawler = false;
-        }
+        $this->isCrawler = $this->trafficForCrawlersAndPersons()
+            ? $this->isCrawler
+            : false;
     }
 
     private function query(): Builder {
@@ -167,9 +166,8 @@ class TrafficListQueryBuilder {
      * Execute the query and get the first result.
      *
      * @param  string[]|string  $columns
-     * @return Model|object|static|null
      */
-    public function first(array|string $columns = ['*']): Model|object|static|null {
+    public function first(array|string $columns = ['*']): ?Model {
         return $this->query()->first($columns);
     }
 }
