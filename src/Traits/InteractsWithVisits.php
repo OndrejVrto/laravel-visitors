@@ -40,30 +40,37 @@ trait InteractsWithVisits {
 
     public function incrementVisit(): self {
         Visit::forModel($this)->increment();
-        // visit($this)->increment();
+
+        return $this;
+    }
+
+    public function incrementVisitForce(): self {
+        Visit::forModel($this)->forceIncrement();
 
         return $this;
     }
 
     public function scopeWithTraffic(
-        Builder $query,
+        Builder $builder,
         ?VisitorCategory $category = null,
         ?bool $isCrawler = false
     ): Builder {
         $isCrawler = $this->trafficForCrawlersAndPersons() ? $isCrawler : false;
         $category = $this->trafficForCategories() ? $category : null;
         $modelTraffic = new VisitorsTraffic();
+        $key = $this->getKey();
 
         $joinQuery = $modelTraffic->query()
             ->where('viewable_type', $this::class)
-            ->where('is_crawler', '=', $isCrawler)
-            ->where('category', '=', $category?->value);
+            ->where('is_crawler', $isCrawler)
+            ->where('category', $category?->value);
 
-        return $query
+        return $builder
+            ->unless(null === $key, fn ($q) => $q->whereKey($key))
             ->joinSub(
                 query   : $joinQuery,
                 as      : 'traffic',
-                first   : $this->getTable().'.id',
+                first   : $this->getTable().'.'.$this->getKeyName(),
                 operator: '=',
                 second  : 'traffic.viewable_id',
                 type    : 'left'
