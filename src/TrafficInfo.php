@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsInfo;
 use OndrejVrto\Visitors\Data\VisitorsInfoData;
@@ -15,11 +16,15 @@ class TrafficInfo {
             ->latest()
             ->first();
 
+        if (! $info instanceof Model) {
+            return null;
+        }
+
         $lastData = VisitorsData::query()
             ->orderByDesc('visited_at')
             ->first();
 
-        if (null === $info || null === $lastData ) {
+        if (! $lastData instanceof Model) {
             return null;
         }
 
