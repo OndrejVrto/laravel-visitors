@@ -7,14 +7,6 @@ namespace OndrejVrto\Visitors\Traits;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 
 trait VisitorsSettings {
-    private function defaultVisitorsEloquentConnection(): ?string {
-        $nameConnection = config('visitors.eloquent_connection');
-
-        return is_string($nameConnection)
-            ? $nameConnection
-            : null;
-    }
-
     private function defaultVisitorsNameTable(string $keyTableName): ?string {
         $nameTable = config("visitors.table_names.{$keyTableName}");
 

@@ -20,7 +20,7 @@ class ListPossibleQueries {
      * @return Collection<int,ListPossibleQueriesData>
      */
     public function get(): Collection {
-        return DB::connection($this->configuration->dbConnectionName)
+        return DB::connection()
             ->query()
             ->select($this->columnNames())
             ->distinct()

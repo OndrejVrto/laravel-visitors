@@ -70,7 +70,6 @@ class TrafficGenerator {
 
         return new StatisticsConfigData(
             numberDaysStatistics      : $days,
-            dbConnectionName          : $visitorData->getConnectionName(),
             dataTableName             : $visitorData->getTable(),
             traficTableName           : (new VisitorsTraffic())->getTable(),
             infoTableName             : (new VisitorsInfo())->getTable(),
@@ -98,8 +97,9 @@ class TrafficGenerator {
     private function prepareTables(): void {
         Artisan::call('model:prune', ['--model' => VisitorsData::class]);
 
-        DB::connection($this->configuration->dbConnectionName)
-            ->table($this->configuration->traficTableName)
-            ->truncate();
+        VisitorsTraffic::truncate();
+        // DB::connection()
+        //     ->table($this->configuration->traficTableName)
+        //     ->truncate();
     }
 }

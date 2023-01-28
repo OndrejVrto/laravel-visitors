@@ -18,7 +18,6 @@ class StatisticsConfigData {
         public readonly string $infoTableName,
         public readonly string $dataTableName,
         public readonly string $traficTableName,
-        public readonly string $dbConnectionName,
     ) {
     }
 }

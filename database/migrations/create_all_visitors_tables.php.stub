@@ -10,15 +10,11 @@ use OndrejVrto\Visitors\Traits\VisitorsSettings;
 return new class extends Migration {
     use VisitorsSettings;
 
-    public function getConnection(): ?string {
-        return $this->defaultVisitorsEloquentConnection() ?? $this->connection;
-    }
-
     public function up(): void {
 
-        if ('mysql' !== config("database.connections.".$this->getConnection().".driver")) {
-            throw new Exception('Error: The visit package tables were not migrated. Database driver must by "mysql" type.');
-        }
+        // if ('mysql' !== config("database.connections.".$this->getConnection().".driver")) {
+        //     throw new Exception('Error: The visit package tables were not migrated. Database driver must by "mysql" type.');
+        // }
 
         Schema::create($this->defaultVisitorsNameTable('info'), function (Blueprint $table) {
             $table->tinyIncrements('info_id');

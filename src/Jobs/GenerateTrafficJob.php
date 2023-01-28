@@ -66,7 +66,7 @@ class GenerateTrafficJob implements ShouldQueue {
     }
 
     private function sumarQuery(ListPossibleQueriesData $listOptionData, string $columnName, string $alias): Builder {
-        return DB::connection($this->configuration->dbConnectionName)
+        return DB::connection()
             ->query()
             ->selectRaw("`{$columnName}` as `{$alias}`, count(*) as `count`")
             ->from($this->configuration->dataTableName)
@@ -86,14 +86,14 @@ class GenerateTrafficJob implements ShouldQueue {
             (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3";
         // $dateRangeQuery = trim(preg_replace('/\s\s+/', ' ', $dateRangeQuery));
 
-        return DB::connection($this->configuration->dbConnectionName)
+        return DB::connection()
             ->query()
             ->fromSub($dateRangeQuery, 'x')
             ->whereRaw("`date` between subdate(curdate(), interval ? day) and curdate()", [$this->configuration->numberDaysStatistics]);
     }
 
     private function visitQuery(ListPossibleQueriesData $listOptionData): Builder {
-        return DB::connection($this->configuration->dbConnectionName)
+        return DB::connection()
             ->query()
             ->selectRaw("date(`visited_at`) as `visits_date`")
             ->selectRaw("count(*) as `visits_count`")
@@ -108,7 +108,7 @@ class GenerateTrafficJob implements ShouldQueue {
     }
 
     private function dailyNumbersQuery(Builder $dateQuery, Builder $dailyVisitQuery): Builder {
-        return DB::connection($this->configuration->dbConnectionName)
+        return DB::connection()
             ->query()
             ->selectRaw("`date_list`.`date`")
             ->selectRaw("coalesce(`visit`.`visits_count`, 0) as `visits_count`")

@@ -13,17 +13,6 @@ return [
     / --------------------------------------------------------------------------
     / Eloquent settings
     / --------------------------------------------------------------------------
-    /
-    / Here you can configure connection for store data in database.
-    /
-    / Requirements:
-    /   1. Database driver must by "mysql" type.
-    /   2. Databases for model and visitors models must by in same MySql database server.
-    */
-
-    'eloquent_connection' => env('VISITORS_DB_CONNECTION', 'mysql'),
-
-
     /*
     / Here you can configure the table names in database.
     */
@@ -61,7 +50,7 @@ return [
     / Default: 15
     */
 
-    'expires_time_for_visit' => 15,
+    'expires_time_for_visit' => 1,
 
 
     /*
@@ -121,7 +110,7 @@ return [
     / Default: false
     */
 
-    'generate_traffic_for_crawlers_and_persons' => true,
+    'generate_traffic_for_crawlers_and_persons' => false,
 
 
     /*

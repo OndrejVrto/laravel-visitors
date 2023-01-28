@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
-use Illuminate\Support\Facades\DB;
 use OndrejVrto\Visitors\Facades\Visit;
 use Illuminate\Database\Eloquent\Builder;
 use OndrejVrto\Visitors\Models\VisitorsData;
@@ -13,42 +12,14 @@ use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Observers\VisitableObserver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use OndrejVrto\Visitors\Exceptions\SameDatabaseServer;
 
 trait InteractsWithVisits {
     use VisitorsSettings;
 
     protected bool $removeDataOnDelete = true;
 
-    private static bool $isSameDatabase;
-
     public static function bootInteractsWithVisits(): void {
-        static::$isSameDatabase = static::isSameDatabasesServer();
         static::observe(VisitableObserver::class);
-    }
-
-    private static function isSameDatabasesServer(): bool {
-        $modelTraffic = new VisitorsTraffic();
-        $visitorsConnectionConfig = $modelTraffic->resolveConnection($modelTraffic->getConnectionName())->getConfig();
-        $modelConnectionConfig = static::resolveConnection()->getConfig();
-
-        return ($visitorsConnectionConfig['driver'] === $modelConnectionConfig['driver'])
-            && ($visitorsConnectionConfig['host'] === $modelConnectionConfig['host'])
-            && ($visitorsConnectionConfig['port'] === $modelConnectionConfig['port']);
-    }
-
-    private function enableScopes(string $scopeName): void {
-        throw_unless(
-            static::$isSameDatabase,
-            SameDatabaseServer::class,
-            "Scope '{$scopeName}' is disabled. Databases for this model and visitors models must by in same MySql database server. Use separate Eloquent query."
-        );
-    }
-
-    public function getTable(): string {
-        return static::$isSameDatabase
-            ? $this->getConnection()->getDatabaseName().'.'.parent::getTable()
-            : parent::getTable();
     }
 
     public function getDefaultRemoveDataOnDelete(): bool {
@@ -79,18 +50,11 @@ trait InteractsWithVisits {
         ?VisitorCategory $category = null,
         ?bool $isCrawler = false
     ): Builder {
-        $this->enableScopes('withTraffic');
-
-        $modelTraffic = new VisitorsTraffic();
-        $dbConnectionName = $modelTraffic->getConnectionName();
-        $trafficTableName = $modelTraffic->getTable();
-
         $isCrawler = $this->trafficForCrawlersAndPersons() ? $isCrawler : false;
         $category = $this->trafficForCategories() ? $category : null;
+        $modelTraffic = new VisitorsTraffic();
 
-        $joinQuery = DB::connection($dbConnectionName)
-            ->query()
-            ->from($trafficTableName)
+        $joinQuery = $modelTraffic->query()
             ->where('viewable_type', $this::class)
             ->where('is_crawler', '=', $isCrawler)
             ->where('category', '=', $category?->value);
