@@ -6,6 +6,7 @@ namespace OndrejVrto\Visitors\Traits;
 
 use OndrejVrto\Visitors\Facades\Visit;
 use Illuminate\Database\Eloquent\Builder;
+use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
@@ -38,16 +39,12 @@ trait InteractsWithVisits {
         return $this->morphMany(VisitorsTraffic::class, 'viewable');
     }
 
-    public function incrementVisit(): self {
-        Visit::forModel($this)->increment();
-
-        return $this;
+    public function incrementVisit(): StatusVisit {
+        return Visit::model($this)->increment();
     }
 
-    public function incrementVisitForce(): self {
-        Visit::forModel($this)->forceIncrement();
-
-        return $this;
+    public function incrementVisitForce(): StatusVisit {
+        return Visit::model($this)->forceIncrement();
     }
 
     public function scopeWithTraffic(

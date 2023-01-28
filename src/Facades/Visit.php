@@ -14,7 +14,7 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 /**
  * @method static StatusVisit forceIncrement()
  * @method static StatusVisit increment()
- * @method static self forModel(Visitable&Model $visitable)
+ * @method static self model(Visitable&Model $model)
  * @method static self withCrawlers()
  * @method static self withoutCrawlers()
  * @method static self fromIP(string $ipAddress)

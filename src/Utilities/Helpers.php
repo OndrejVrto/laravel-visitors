@@ -12,7 +12,7 @@ if ( ! function_exists('visit')) {
      * Construct a new Visitor instance.
      */
     function visit(Visitable&Model $model): Visit {
-        return (new Visit())->forModel($model);
+        return (new Visit())->model($model);
     }
 }
 

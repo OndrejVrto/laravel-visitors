@@ -40,8 +40,8 @@ trait VisitSetters {
 
     private OperatingSystem $operatingSystem;
 
-    public function forModel(Visitable&Model $visitable): self {
-        $this->model = $visitable;
+    public function model(Visitable&Model $model): self {
+        $this->model = $model;
 
         return $this;
     }

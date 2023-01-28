@@ -6,7 +6,6 @@ namespace OndrejVrto\Visitors;
 
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisit;
