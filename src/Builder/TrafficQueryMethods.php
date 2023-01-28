@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Builder;
 
 trait TrafficQueryMethods {
+    private ?bool $isCrawler = false;
+
+    private ?bool $withRelationship = null;
+
     public function withRelationship(): self {
         $this->withRelationship = true;
         return $this;

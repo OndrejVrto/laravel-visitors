@@ -117,12 +117,15 @@ class GenerateTrafficJob implements ShouldQueue {
             ->orderByDesc("date");
     }
 
+    /**
+     * @param array<int,mixed> $values
+     */
     private function getSvgChart(array $values): ?string {
         if (! $this->configuration->generateGraphs) {
             return null;
         }
 
-        $chart = LineChart::new($values)
+        $chart = LineChart::new(...$values)
             ->withColorGradient(...$this->graphProperties->colors)
             ->withDimensions($this->graphProperties->width_svg, $this->graphProperties->height_svg)
             ->withLockYAxisRange($this->graphProperties->maximum_value_lock)

@@ -16,24 +16,14 @@ class TrafficSingleModelQueryBuilder {
     use VisitorsSettings;
     use TrafficQueryMethods;
 
-    private Visitable&Model $model;
-
     private ?int $category = null;
 
-    private ?bool $isCrawler = false;
+    private Visitable&Model $model;
 
-    private ?bool $withRelationship = null;
-
-    /**
-     * @param Visitable&Model $visitable
-     */
     public function __construct(Visitable&Model $visitable) {
         $this->model = $visitable;
     }
 
-    /**
-     * @param VisitorCategory|string|int $category
-     */
     public function inCategory(VisitorCategory|string|int $category): self {
         $this->category = (new CheckCategory())($category)[0];
         return $this;

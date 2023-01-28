@@ -29,10 +29,6 @@ class TrafficListQueryBuilder {
     /** @var int[] */
     private array $categories = [];
 
-    private ?bool $isCrawler = false;
-
-    private ?bool $withRelationship = null;
-
     private ?int $limit = null;
 
     private int $countClasses = 0;
@@ -174,10 +170,10 @@ class TrafficListQueryBuilder {
     /**
      * Execute the query and get the first result.
      *
-     * @param  array|string  $columns
+     * @param  string[]|string  $columns
      * @return Model|object|static|null
      */
-    public function first($columns = ['*']): ?Model {
+    public function first(array|string $columns = ['*']): Model|object|static|null {
         return $this->query()->first($columns);
     }
 }

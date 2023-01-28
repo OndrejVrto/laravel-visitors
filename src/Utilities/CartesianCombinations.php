@@ -70,7 +70,7 @@ class CartesianCombinations {
 
     /**
      * @param array<int,array<int,mixed>> $set
-     * @return array<int,mixed>
+     * @return array<int,array<int,mixed>>
      */
     private function combinations(array $set): array {
         if ([] === $set) {
@@ -78,13 +78,14 @@ class CartesianCombinations {
         }
 
         $subset = array_shift($set);
+
         $cartesianSubset = $this->combinations($set);
 
         $result = [];
         foreach ($subset as $value) {
             foreach ($cartesianSubset as $p) {
                 array_unshift($p, $value);
-                $result[] = $p;
+                // $result[] = [$value, ...$p];
             }
         }
 

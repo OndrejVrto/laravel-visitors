@@ -15,12 +15,10 @@ use OndrejVrto\Visitors\Traits\VisitorsSettings;
 class TrafficSummaryQueryBuilder {
     use VisitorsSettings;
     use TrafficQueryMethods{
-        withRelationship as private;
+        withRelationship as protected;
     }
 
     private ?int $category = null;
-
-    private ?bool $isCrawler = false;
 
     private ?string $modelClass = null;
 
@@ -51,9 +49,9 @@ class TrafficSummaryQueryBuilder {
 
         return VisitorsTraffic::query()
             ->whereNull('viewable_id')
-            ->where('category', '=', $this->category)
-            ->where('is_crawler', '=', $this->isCrawler)
-            ->where('viewable_type', '=', $this->modelClass);
+            ->where("category", $this->category)
+            ->where("is_crawler", $this->isCrawler)
+            ->where("viewable_type", $this->modelClass);
     }
 
     /**
