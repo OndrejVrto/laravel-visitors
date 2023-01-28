@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Services;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsInfo;
@@ -98,8 +97,5 @@ class TrafficGenerator {
         Artisan::call('model:prune', ['--model' => VisitorsData::class]);
 
         VisitorsTraffic::truncate();
-        // DB::connection()
-        //     ->table($this->configuration->traficTableName)
-        //     ->truncate();
     }
 }

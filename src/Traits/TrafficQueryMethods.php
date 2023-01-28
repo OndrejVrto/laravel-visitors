@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
-use OndrejVrto\Visitors\Traits\VisitorsSettings;
-
 trait TrafficQueryMethods {
     use VisitorsSettings;
 
