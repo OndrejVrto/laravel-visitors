@@ -20,7 +20,6 @@ if ( ! function_exists('traffic')) {
     /**
      * Construct a new Visitor Traffic instance.
      *
-     * @return Traffic
      */
     function traffic(): Traffic {
         return new Traffic();

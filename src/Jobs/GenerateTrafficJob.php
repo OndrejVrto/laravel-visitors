@@ -121,7 +121,7 @@ class GenerateTrafficJob implements ShouldQueue {
      * @param array<int,mixed> $values
      */
     private function getSvgChart(array $values): ?string {
-        if (! $this->configuration->generateGraphs) {
+        if ( ! $this->configuration->generateGraphs) {
             return null;
         }
 

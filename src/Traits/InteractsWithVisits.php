@@ -91,7 +91,7 @@ trait InteractsWithVisits {
         $joinQuery = DB::connection($dbConnectionName)
             ->query()
             ->from($trafficTableName)
-            ->where('viewable_type', get_class($this))
+            ->where('viewable_type', $this::class)
             ->where('is_crawler', '=', $isCrawler)
             ->where('category', '=', $category?->value);
 

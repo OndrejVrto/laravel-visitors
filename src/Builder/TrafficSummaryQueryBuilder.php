@@ -22,8 +22,8 @@ class TrafficSummaryQueryBuilder {
 
     private ?string $modelClass = null;
 
-    public function forModel(Visitable&Model $visitable): self {
-        $this->modelClass = $visitable->getMorphClass();
+    public function forModel(Visitable&Model $model): self {
+        $this->modelClass = $model->getMorphClass();
 
         return $this;
     }
@@ -58,7 +58,6 @@ class TrafficSummaryQueryBuilder {
      * Execute the query and get the first result or null.
      *
      * @param  string[]|string  $columns
-     * @return Model|null
      */
     public function first(array|string $columns = ['*']): ?Model {
         return $this->query()->first($columns);

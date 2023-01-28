@@ -18,10 +18,9 @@ class TrafficSingleModelQueryBuilder {
 
     private ?int $category = null;
 
-    private Visitable&Model $model;
-
-    public function __construct(Visitable&Model $visitable) {
-        $this->model = $visitable;
+    public function __construct(
+        private readonly Visitable&Model $model
+    ) {
     }
 
     public function inCategory(VisitorCategory|string|int $category): self {
@@ -58,7 +57,6 @@ class TrafficSingleModelQueryBuilder {
      * Execute the query and get the first result or null.
      *
      * @param  string[]|string  $columns
-     * @return Model|null
      */
     public function first(array|string $columns = ['*']): ?Model {
         return $this->query()->first($columns);

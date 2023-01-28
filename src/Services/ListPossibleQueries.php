@@ -72,14 +72,12 @@ class ListPossibleQueries {
             )
             ->build();
 
-        return collect($combinationRange)
-            ->map(function ($col): string {
-                return sprintf(
-                    'select %s from `%s`',
-                    implode(', ', $col),
-                    $this->configuration->dataTableName
-                );
-            })
+        return (new Collection($combinationRange))
+            ->map(fn ($col): string => sprintf(
+                'select %s from `%s`',
+                implode(', ', $col),
+                $this->configuration->dataTableName
+            ))
             ->implode(' union ');
     }
 

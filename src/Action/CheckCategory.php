@@ -29,7 +29,7 @@ class CheckCategory {
         if (is_string($category)) {
             try {
                 return [VisitorCategory::fromName(Str::upper($category))->value];
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
 

@@ -6,6 +6,8 @@ namespace OndrejVrto\Visitors;
 
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use OndrejVrto\Visitors\Enums\StatusVisit;
 use OndrejVrto\Visitors\Models\VisitorsData;
@@ -30,7 +32,7 @@ final class Visit {
             return StatusVisit::NOT_INCREMENT_CRAWLERS;
         }
 
-        if (null !== $this->ipAddress && collect($this->ignoredIpAddresses)->contains($this->ipAddress)) {
+        if (null !== $this->ipAddress && (new Collection($this->ignoredIpAddresses))->contains($this->ipAddress)) {
             return StatusVisit::NOT_INCREMENT_IP_ADDRESS;
         }
 
@@ -56,7 +58,7 @@ final class Visit {
             throw new Exception('Model must be set.');
         }
 
-        $this->request = request();
+        $this->request = app('request');
 
         if ( ! isset($this->ipAddress)) {
             $this->ipAddress = $this->request->ip();

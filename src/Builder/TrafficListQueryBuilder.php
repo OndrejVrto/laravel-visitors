@@ -157,11 +157,7 @@ class TrafficListQueryBuilder {
     /**
      * Paginate the given query.
      *
-     * @param  int|null  $perPage
      * @param  string[] $columns
-     * @param  string  $pageName
-     * @param  int|null  $page
-     * @return LengthAwarePaginator
      */
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginator {
         return $this->query()->paginate($perPage, $columns, $pageName, $page);
