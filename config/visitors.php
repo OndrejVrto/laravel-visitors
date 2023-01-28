@@ -50,7 +50,7 @@ return [
     / Default: 15
     */
 
-    'expires_time_for_visit' => 1,
+    'expires_time_for_visit' => 15,
 
 
     /*
@@ -99,7 +99,7 @@ return [
     / Default: false
     */
 
-    'generate_traffic_for_categories' => true,
+    'generate_traffic_for_categories' => false,
 
 
     /*

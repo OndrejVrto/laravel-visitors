@@ -68,16 +68,14 @@ class TrafficGenerator {
         $days = $this->numberDaysStatistics();
 
         return new StatisticsConfigData(
-            numberDaysStatistics      : $days,
-            dataTableName             : $visitorData->getTable(),
-            traficTableName           : (new VisitorsTraffic())->getTable(),
-            infoTableName             : (new VisitorsInfo())->getTable(),
-            to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
-            from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
             lastId                    : is_int($lastId) ? $lastId : 1,
-            generateCrawlersStatistics: $this->trafficForCrawlersAndPersons(),
+            numberDaysStatistics      : $days,
             generateCategoryStatistics: $this->trafficForCategories(),
+            generateCrawlersStatistics: $this->trafficForCrawlersAndPersons(),
             generateGraphs            : $this->defaultGenerateGraphs(),
+            from                      : ($from instanceof Carbon) ? $from : Carbon::now()->subDays($days),
+            to                        : ($to instanceof Carbon) ? $to : Carbon::now(),
+            dataTableName             : $visitorData->getTable(),
         );
     }
 

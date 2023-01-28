@@ -59,8 +59,7 @@ class GenerateTrafficJob implements ShouldQueue {
             ];
         }
 
-        VisitorsTraffic::query()
-            ->insert($data);
+        VisitorsTraffic::insert($data);
     }
 
     /** @param  Collection<string,array<string,int|string>> $visitCount */
@@ -99,9 +98,7 @@ class GenerateTrafficJob implements ShouldQueue {
             ->keyBy('visits_date');
     }
 
-    /**
-     * @param array<int,mixed> $values
-     */
+    /** @param array<int,mixed> $values */
     private function getSvgChart(array $values): ?string {
         if ( ! $this->configuration->generateGraphs) {
             return null;
@@ -119,27 +116,27 @@ class GenerateTrafficJob implements ShouldQueue {
             : $chart->withOrderReversed()->make();
     }
 
-    public function calculateDayMaximumCount(Collection $dailyNumbers): int {
+    private function calculateDayMaximumCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->max());
     }
 
-    public function calculateTotalCount(Collection $dailyNumbers): int {
+    private function calculateTotalCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->sum());
     }
 
-    public function calculateLast1dayCount(Collection $dailyNumbers): int {
+    private function calculateLast1dayCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->slice(1, 1)->first());
     }
 
-    public function calculateLast7daysCount(Collection $dailyNumbers): int {
+    private function calculateLast7daysCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->take(7)->sum());
     }
 
-    public function calculateLast30daysCount(Collection $dailyNumbers): int {
+    private function calculateLast30daysCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->take(30)->sum());
     }
 
-    public function calculateLast365daysCount(Collection $dailyNumbers): int {
+    private function calculateLast365daysCount(Collection $dailyNumbers): int {
         return intOrZero($dailyNumbers->take(365)->sum());
     }
 }
