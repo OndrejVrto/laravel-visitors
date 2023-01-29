@@ -12,7 +12,7 @@ class GraphProperties {
         public readonly ?int   $height_svg = null,
         public readonly ?float $stroke_width = null,
         public readonly ?int   $maximum_days = null,
-        public readonly ?bool  $order_reverse = null,
+        public readonly bool   $order_reverse = false,
         public readonly ?int   $maximum_value_lock = null,
     ) {
     }
