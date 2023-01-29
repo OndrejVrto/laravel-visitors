@@ -13,8 +13,8 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 trait TrafficQueryMethods {
     use VisitorsSettings;
 
-    /** @var string[] */
-    private array $models = [];
+    /** @var string[]|null */
+    private ?array $models = [];
 
     private Model|null $model = null;
 
@@ -32,9 +32,11 @@ trait TrafficQueryMethods {
     private ?bool $withRelationship = null;
 
     private function handleConfigurations(): void {
-        $this->models = array_values(array_unique($this->models));
-
         $this->countClasses = [] === $this->models ? 0 : count($this->models);
+
+        $this->models = 0 === $this->countClasses
+            ? [null]
+            : array_values(array_unique($this->models));
 
         $this->categories = $this->trafficForCategories()
             ? array_values(array_unique($this->categories))
@@ -56,8 +58,10 @@ trait TrafficQueryMethods {
         return $this;
     }
 
-    public function forModel(Visitable&Model $model): self {
-        $this->model = $model;
+    public function forModel((Visitable&Model)|string $model): self {
+        if ($model instanceof Model) {
+            $this->model = $model;
+        }
         $this->models = (new CheckVisitable())($model);
 
         return $this;

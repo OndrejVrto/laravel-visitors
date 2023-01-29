@@ -20,7 +20,7 @@ class TrafficSummaryQueryBuilder {
         return VisitorsTraffic::query()
             ->where("category", $this->category)
             ->where("is_crawler", $this->isCrawler)
-            ->where("viewable_type", $this->model?->getMorphClass())
+            ->where("viewable_type", $this->models[0])
             ->whereNull('viewable_id');
     }
 
