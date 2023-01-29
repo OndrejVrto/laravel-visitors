@@ -1,3 +1,15 @@
 # Changelog
 
 All notable changes to `laravel-visitors` will be documented in this file.
+
+## 0.2.0 - 2023-01-24
+
+### What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.5 to 1.3.6 by @dependabot in https://github.com/OndrejVrto/laravel-visitors/pull/1
+
+### New Contributors
+
+- @dependabot made their first contribution in https://github.com/OndrejVrto/laravel-visitors/pull/1
+
+**Full Changelog**: https://github.com/OndrejVrto/laravel-visitors/compare/v0.1.0-alpha...0.2.0
