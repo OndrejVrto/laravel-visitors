@@ -20,21 +20,16 @@ class TrafficListQueryBuilder {
     use TrafficQueryMethods;
 
     /** @var array<string,string> */
-    private array $orderBy = ['visit_total' => 'desc'];
+    private array $orderBy = [];
 
     private ?int $limit = null;
 
     /**
-     * @param Visitable|string|class-string|array<class-string> $models
+     * @param Visitable|string|class-string|array<class-string>|null $models
      * @throws InvalidClassParameter
      */
-    public function addModels(Visitable|string|array $models): self {
+    public function addModels(Visitable|string|array|null $models): self {
         $this->models = [...$this->models, ...(new CheckVisitable())($models)];
-
-        if ([] === $this->models) {
-            throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
-        }
-
         return $this;
     }
 
@@ -82,6 +77,9 @@ class TrafficListQueryBuilder {
     }
 
     private function getOrdersSql(): string {
+        if ([] === $this->orderBy) {
+            $this->orderBy = ['visit_total' => 'desc'];
+        }
         $orders = [];
         foreach ($this->orderBy as $type => $direction) {
             $orders[] = sprintf("`%s` %s", $type, $direction);
@@ -95,11 +93,15 @@ class TrafficListQueryBuilder {
         return VisitorsTraffic::query()
             ->whereNotNull('viewable_id')
             ->where('is_crawler', '=', $this->isCrawler)
+
+            ->when(0 === $this->countClasses, fn (Builder $q) => $q->whereNotNull('viewable_type'))
             ->when(1 === $this->countClasses, fn (Builder $q) => $q->where('viewable_type', '=', $this->models[0]))
             ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->models))
+
             ->when(0 === $this->countCategories, fn (Builder $q) => $q->whereNull('category'))
             ->when(1 === $this->countCategories, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
             ->when($this->countCategories > 1, fn (Builder $q) => $q->whereIn('category', $this->categories))
+
             ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
             ->unless(null === $this->limit, fn (Builder $q) => $q->limit($this->limit ?? 20))
             ->orderByRaw($this->getOrdersSql());

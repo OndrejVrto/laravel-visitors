@@ -11,8 +11,8 @@ use OndrejVrto\Visitors\Builder\TrafficSummaryQueryBuilder;
 use OndrejVrto\Visitors\Builder\TrafficSingleModelQueryBuilder;
 
 final class Traffic {
-    /** @param Visitable|class-string|Visitable[]|array<class-string> $models */
-    public function list(Visitable|string|array $models): TrafficListQueryBuilder {
+    /** @param Visitable|class-string|Visitable[]|array<class-string>|null $models */
+    public function list(Visitable|string|array|null $models = null): TrafficListQueryBuilder {
         return (new TrafficListQueryBuilder())
             ->addModels($models);
     }

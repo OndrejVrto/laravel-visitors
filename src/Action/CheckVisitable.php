@@ -10,11 +10,15 @@ use OndrejVrto\Visitors\Contracts\Visitable;
 
 class CheckVisitable {
     /**
-     * @param Visitable|string|class-string|array<class-string>|Visitable[]|string[] $visitable
+     * @param Visitable|string|class-string|array<class-string>|Visitable[]|string[]|null $visitable
      * @return string[]
      */
-    public function __invoke(Visitable|string|array $visitable): array {
+    public function __invoke(Visitable|string|array|null $visitable): array {
         $listClasses = [];
+
+        if (null === $visitable) {
+            return $listClasses;
+        }
 
         if (is_array($visitable)) {
             foreach ($visitable as $item) {
