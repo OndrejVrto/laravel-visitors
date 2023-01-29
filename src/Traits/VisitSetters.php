@@ -42,25 +42,21 @@ trait VisitSetters {
 
     public function model(Visitable&Model $model): self {
         $this->model = $model;
-
         return $this;
     }
 
     public function withCrawlers(): self {
         $this->crawlerStorage = true;
-
         return $this;
     }
 
     public function withoutCrawlers(): self {
         $this->crawlerStorage = false;
-
         return $this;
     }
 
     public function fromIP(string $ipAddress): self {
         $this->ipAddress = $ipAddress;
-
         return $this;
     }
 
@@ -72,19 +68,16 @@ trait VisitSetters {
             $this->ignoredIpAddresses[] = $ipAddress;
         }
         $this->ignoredIpAddresses = array_unique($this->ignoredIpAddresses);
-
         return $this;
     }
 
     public function fromBrowserAgent(string $userAgent): self {
         $this->userAgent = $userAgent;
-
         return $this;
     }
 
     public function inCategory(VisitorCategory $category): self {
         $this->category = $category;
-
         return $this;
     }
 
@@ -92,37 +85,31 @@ trait VisitSetters {
         $this->expiresAt = $expiresAt instanceof DateTimeInterface
             ? $expiresAt
             : Carbon::now()->addMinutes($expiresAt);
-
         return $this;
     }
 
     public function isCrawler(bool $status = true): self {
         $this->isCrawler = $status;
-
         return $this;
     }
 
     public function isPerson(bool $status = true): self {
         $this->isCrawler = ! $status;
-
         return $this;
     }
 
     public function inLanguage(string $language): self {
         $this->language = $language;
-
         return $this;
     }
 
     public function fromOperatingSystem(OperatingSystem $operatingSystem): self {
         $this->operatingSystem = $operatingSystem;
-
         return $this;
     }
 
     public function visitedAt(DateTimeInterface $visitedAt = null): self {
         $this->visitedAt = $visitedAt ?? Carbon::now();
-
         return $this;
     }
 }
