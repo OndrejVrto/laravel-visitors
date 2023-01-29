@@ -85,8 +85,7 @@
             ],
             "aliases": {
                 "Visit": "OndrejVrto\\Visitors\\Facades\\Visit",
-                "Traffic": "OndrejVrto\\Visitors\\Facades\\Traffic",
-                "Statistics": "OndrejVrto\\Visitors\\Facades\\Statistics"
+                "Traffic": "OndrejVrto\\Visitors\\Facades\\Traffic"
             }
         }
     },
