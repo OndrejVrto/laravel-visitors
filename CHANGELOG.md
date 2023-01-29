@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-visitors` will be documented in this file.
 
+## 0.3.1 - 2023-01-29
+
+**Full Changelog**: https://github.com/OndrejVrto/laravel-visitors/compare/0.3.0...0.3.1
+
 ## 0.3.0 - 2023-01-29
 
 ### What's Changed
