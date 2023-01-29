@@ -12,6 +12,10 @@ test('check visitable action', function ($visitable, $expectedList): void {
     expect($resultList)->toBe($expectedList);
 })->with(
     [
+        'null' => [
+            null,
+            []
+        ],
         'one good model' => [
             TestModel::class,
             [TestModel::class]

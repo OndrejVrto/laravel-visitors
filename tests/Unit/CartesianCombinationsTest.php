@@ -15,7 +15,15 @@ test('check cartesian combinations', function ($valuesList, $expectedList): void
             null,
             [[]]
         ],
-        'null value' => [
+        'null in array' => [
+            [null],
+            [[]]
+        ],
+        'string in array' => [
+            ['::foo::'],
+            [['::foo::']]
+        ],
+        'null one value' => [
             [[1 => null]],
             [[null]]
         ],

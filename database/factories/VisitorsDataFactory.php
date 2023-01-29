@@ -8,15 +8,16 @@ use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
+use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 
 class VisitorsDataFactory extends Factory {
     protected $model = VisitorsData::class;
 
     public function definition() {
         $visitableModels = [
-            "App\\Models\\Post",
-            "App\\Models\\Album",
-            "App\\Models\\Article",
+            TestModel::class,
+            AnotherTestModel::class
         ];
 
         $os = collect(OperatingSystem::cases())->pluck('value')->toArray();

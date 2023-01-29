@@ -35,10 +35,10 @@ class ListPossibleQueries {
                 $item = (object) $item;
                 $viewable_type = property_exists($item, 'viewable_type')
                     ? (null === $item->viewable_type ? null : (string) $item->viewable_type)
-                    : null;
+                    : null; // @codeCoverageIgnore
                 $viewable_id = property_exists($item, 'viewable_id')
                     ? (null === $item->viewable_id ? null : (int) $item->viewable_id)
-                    : null;
+                    : null; // @codeCoverageIgnore
                 $is_crawler = property_exists($item, 'is_crawler')
                     ? (null === $item->is_crawler ? null : (bool) $item->is_crawler)
                     : false;
