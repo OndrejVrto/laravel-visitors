@@ -6,7 +6,7 @@ use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 use OndrejVrto\Visitors\Utilities\CartesianCombinations;
 
 test('check cartesian combinations', function ($valuesList, $expectedList): void {
-    $resultList = (new CartesianCombinations())->forItem($valuesList)->build();
+    $resultList = (new CartesianCombinations())->forItems($valuesList)->build();
 
     expect($resultList)->toBeArray()->and($resultList)->toBe($expectedList);
 })->with(
@@ -16,28 +16,20 @@ test('check cartesian combinations', function ($valuesList, $expectedList): void
             [[]]
         ],
         'null value' => [
-            [1 => null],
-            [[]]
+            [[1 => null]],
+            [[null]]
         ],
         'empty' => [
-            [],
+            [[]],
             [[]]
         ],
         'one value' => [
-            ['foo'],
+            [['foo']],
             [['foo']]
         ],
         'only values' => [
-            ['foo', 'bar', 1, TestModel::class],
-            [['foo', 'bar', 1, TestModel::class]]
-        ],
-        'one array' => [
             [['foo', 'bar', 1, TestModel::class]],
-            [['foo', 'bar', 1, TestModel::class]]
-        ],
-        'array and value' => [
-            [['foo'], 'bar', 1, TestModel::class],
-            [['foo', 'bar', 1, TestModel::class]]
+            [['foo'], ['bar'], [1], [TestModel::class]]
         ],
         'two array with one element' => [
             [['foo'], ['bar']],
@@ -72,37 +64,25 @@ test('check cartesian combinations', function ($valuesList, $expectedList): void
                 4 => [0 => 'foo2', 1 => 'bar1', 2 => TestModel::class], 5 => [0 => 'foo2', 1 => 'bar1', 2 => 1000],
                 6 => [0 => 'foo2', 1 => 'bar2', 2 => TestModel::class], 7 => [0 => 'foo2', 1 => 'bar2', 2 => 1000],
             ]
-        ],
-        'xxxx' => [
-            [
-                ["`data_id`, `viewable_type`, `viewable_id`"],
-                ["`data_id`, `viewable_type`, null"],
-                ["`data_id`, null, null"],
-            ],
-            [
-                ["`data_id`, `viewable_type`, `viewable_id`"],
-                ["`data_id`, `viewable_type`, null"],
-                ["`data_id`, null, null"],
-            ]
         ]
     ]
-)->skip();
+);
 
 test('check cartesian combinations with object', function (): void {
     $object = new TestModel();
     $input = [['foo1', 'foo2'], [$object]];
     $output = [['foo1', $object], ['foo2', $object]];
 
-    $result = (new CartesianCombinations())->forItem($input)->build();
+    $result = (new CartesianCombinations())->forItems($input)->build();
 
     expect($result)->toBeArray()->and($result)->toBe($output);
 
     $result = (new CartesianCombinations())
-        ->forItem([$object])
+        ->addItem([$object])
         ->addItemWhen(true, ['foo'], ['xxx'])
         ->addItemWhen(false, ['xxx'], ['bar'])
         ->build();
     $output = [[$object, 'foo', 'bar']];
 
     expect($result)->toBeArray()->and($result)->toBe($output);
-})->skip();
+});

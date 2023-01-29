@@ -58,7 +58,7 @@ class ListPossibleQueries {
     private function unionQuery(): string {
         /** @var array<string[]> $combinationRange */
         $combinationRange = (new CartesianCombinations())
-            ->forItem([
+            ->addItem([
                 "`data_id`, `viewable_type`, `viewable_id`",
                 "`data_id`, `viewable_type`, null",
                 "`data_id`, null, null",

@@ -11,9 +11,20 @@ class CartesianCombinations {
     private array $inputItems = [];
 
     /**
+     * @param array<array<mixed>> $item
+     */
+    public function forItems(?array $item): self {
+        if (null !== $item) {
+            $this->inputItems = $item;
+        }
+
+        return $this;
+    }
+
+    /**
      * @param array<mixed> $item
      */
-    public function forItem(?array $item): self {
+    public function addItem(?array $item): self {
         if (null !== $item) {
             $this->inputItems[] = $item;
         }
@@ -27,9 +38,9 @@ class CartesianCombinations {
      */
     public function addItemWhen(bool $when, array $trueItem, ?array $falseItem = null): self {
         if ($when) {
-            $this->inputItems[] = $trueItem;
+            $this->addItem($trueItem);
         } elseif (null !== $falseItem) {
-            $this->inputItems[] = $falseItem;
+            $this->addItem($falseItem);
         }
 
         return $this;
@@ -75,6 +86,9 @@ class CartesianCombinations {
         }
 
         $subset = array_shift($set);
+        if ([] === $subset) {
+            return [[]];
+        }
 
         $result = [];
         $cartesianSubset = $this->combinations($set);
