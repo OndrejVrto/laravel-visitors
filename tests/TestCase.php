@@ -8,16 +8,18 @@ use PDO;
 use Closure;
 use Mockery;
 use Carbon\Carbon;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\File;
+use function Orchestra\Testbench\artisan;
 use Orchestra\Testbench\TestCase as Orchestra;
 use OndrejVrto\Visitors\VisitorsServiceProvider;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
-use function Orchestra\Testbench\artisan;
+use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 
 class TestCase extends Orchestra {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     /**
      * Setup the test environment.
@@ -26,6 +28,7 @@ class TestCase extends Orchestra {
         // Code before Laravel application created.
         parent::setUp();
         // Code after Laravel application created.
+        $this->setUpDatabase();
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'OndrejVrto\\Visitors\\Database\\Factories\\'.class_basename($modelName).'Factory'
@@ -53,8 +56,7 @@ class TestCase extends Orchestra {
     protected function getPackageAliases($app): array {
         return [
             'Visit' => '\OndrejVrto\Visitors\Facades\Visit',
-            'Traffic' => '\OndrejVrto\Visitors\Facades\Traffic',
-            'Statistics' => '\OndrejVrto\Visitors\Facades\Statistics',
+            'Traffic' => '\OndrejVrto\Visitors\Facades\Traffic'
         ];
     }
 
@@ -64,12 +66,23 @@ class TestCase extends Orchestra {
      * @param  \Illuminate\Foundation\Application  $app
      */
     public function getEnvironmentSetUp($app): void {
+        // $app['config']->set('activitylog.database_connection', 'sqlite');
+        // $app['config']->set('database.default', 'sqlite');
+        // $app['config']->set('database.connections.sqlite', [
+        //     'driver' => 'sqlite',
+        //     'database' => ':memory:',
+        // ]);
+
+        $app['config']->set('app.key', 'base64:'.base64_encode(
+            Encrypter::generateKey(config()['app.cipher'])
+        ));
+
         $app['config']->set('database.connections.mysql', [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => 'test_visitors_laravel',
+            'database' => 'laravel_visitors_test',
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
@@ -85,122 +98,35 @@ class TestCase extends Orchestra {
             ]) : [],
         ]);
 
-        $app['config']->set('database.connections.mysql_visitors', [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => 'test_visitors_package',
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            // 'collation' => 'utf8mb4_unicode_ci',
-            'collation' => 'utf8mb4_slovak_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
         $app['config']->set('database.default', 'mysql');
-        $app['config']->set('visitors.eloquent_connection', 'mysql_visitors');
 
         // dd($app['config']);
     }
 
-    /**
-     * Define database migrations.
-     */
-    protected function defineDatabaseMigrations(): void {
-        $this->loadLaravelMigrations();
-        $this->loadMigrationsFrom(__DIR__.'/Support/migrations');
-    }
-
-    /**
-     * Perform any work that should take place before the database has started refreshing.
-     */
-    protected function beforeRefreshingDatabase(): void {
-        $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
-        $migration->down();
-        // $this->publishPackageMigrations();
-    }
-
-    /**
-     * Perform any work that should take place once the database has finished refreshing.
-     */
-    protected function afterRefreshingDatabase(): void {
-        // $this->destroyPackageMigrations();
+    protected function setUpDatabase() {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->up();
+
+        $migrationTest = include __DIR__.'/Support/migrations/2023_01_12_000000_create_test_models_table.php';
+        $migrationTest->up();
+
+        TestModel::insert([
+            ['name' => '::test name 1::'],
+            ['name' => '::test name 2::'],
+            ['name' => '::test name 3::'],
+            ['name' => '::test name 4::'],
+            ['name' => '::test name 5::'],
+        ]);
     }
 
-    /**
+        /**
      * Clean up the testing environment before the next test.
      */
     protected function tearDown(): void {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->down();
 
-        // Mockery::close();
-        // Carbon::setTestNow();
+        $migrationTest = include __DIR__.'/Support/migrations/2023_01_12_000000_create_test_models_table.php';
+        $migrationTest->down();
     }
-
-    /**
-     * Publish package migrations.
-     */
-    // protected function publishPackageMigrations(): void {
-    //     $this->artisan('vendor:publish', [
-    //         '--force' => '',
-    //         '--tag' => 'visitors-migrations',
-    //     ]);
-    // }
-
-    /**
-     * Delete all published migrations.
-     */
-    // protected function destroyPackageMigrations(): void {
-    //     File::cleanDirectory('./vendor/orchestra/testbench-core/laravel/database/migrations');
-    // }
-
-    /**
-     * Perform package database migrations.
-     */
-    // protected function migratePackageTables(): void {
-    //     $this->loadMigrationsFrom([
-    //         '--realpath' => true,
-    //     ]);
-    // }
-
-    /**
-     * Perform unit test database migrations.
-     */
-    // protected function migrateUnitTestTables(): void {
-    //     $this->loadMigrationsFrom(
-    //         __DIR__.'/database/migrations'
-    //         // __DIR__.'/tests/Support/database/migrations'
-    //     );
-    // }
-
-    /**
-     * Register package related model factories.
-     */
-    // protected function registerPackageFactories(): void {
-    //     $this
-    //         ->withFactories(realpath(__DIR__.'/Support/database/factories'));
-    //         // ->withFactories(realpath(__DIR__.'/database/factories'));
-    // }
-
-    /**
-     * Mock an instance of an object in the container.
-     *
-     * @param  string  $abstract
-     * @param  Closure|null  $mock
-     * @return object
-     */
-    // protected function mock($abstract, Closure $mock = null): object {
-    //     return $this->instance($abstract, Mockery::mock(...array_filter(func_get_args())));
-    // }
 }

@@ -7,10 +7,13 @@ declare(strict_types=1);
 | Test Case
 |--------------------------------------------------------------------------
 */
+uses(\OndrejVrto\Visitors\Tests\TestCase::class)->in('Feature');
 
-// uses(\OndrejVrto\Visitors\Tests\FeatureTestCase::class)->in('Feature');
-// uses(\OndrejVrto\Visitors\Tests\TestCase::class)->in('Feature');
-
+/*
+|--------------------------------------------------------------------------
+| Expectations
+|--------------------------------------------------------------------------
+*/
 
 /*
 |--------------------------------------------------------------------------
