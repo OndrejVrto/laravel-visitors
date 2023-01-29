@@ -17,9 +17,8 @@ class VisitorsExpiresFactory extends Factory {
      */
     public function definition() {
         $visitableModels = [
-            "App\\Models\\News",
-            "App\\Models\\Faq",
-            "App\\Models\\StaticPage",
+            TestModel::class,
+            AnotherTestModel::class
         ];
 
         $category = collect(VisitorCategory::cases())->pluck('value')->toArray();
