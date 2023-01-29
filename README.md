@@ -240,7 +240,7 @@ $traffic = Traffic::list($models)
     ->orderByLast365Days()
     ->orderBy('column_name', 'asc')
     ->visitedByPersons()
-    ->visitedByCrawlers();
+    ->visitedByCrawlers()
     ->visitedByCrawlersAndPersons()
     ->withRelationship()
     ->limit(10)

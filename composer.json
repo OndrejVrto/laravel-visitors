@@ -27,7 +27,7 @@
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.0",
         "jaybizzle/crawler-detect": "^1.2",
-        "markbaker/enumhelper": "^1.0",
+        "markbaker/enumhelper": "1.0.2",
         "ondrej-vrto/php-linechart": "^1.0",
         "spatie/laravel-package-tools": "^1.13.0"
     },
