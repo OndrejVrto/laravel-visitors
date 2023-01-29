@@ -43,7 +43,7 @@ trait InteractsWithVisits {
         return Visit::model($this)->increment();
     }
 
-    public function incrementVisitForce(): StatusVisit {
+    public function forceIncrementVisit(): StatusVisit {
         return Visit::model($this)->forceIncrement();
     }
 

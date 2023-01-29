@@ -19,7 +19,6 @@ if ( ! function_exists('visit')) {
 if ( ! function_exists('traffic')) {
     /**
      * Construct a new Visitor Traffic instance.
-     *
      */
     function traffic(): Traffic {
         return new Traffic();

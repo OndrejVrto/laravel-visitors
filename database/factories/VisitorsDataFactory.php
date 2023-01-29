@@ -24,7 +24,7 @@ class VisitorsDataFactory extends Factory {
 
         return [
             'viewable_type'    => $this->faker->randomElement($visitableModels),
-            'viewable_id'      => $this->faker->numberBetween(1, 20),
+            'viewable_id'      => $this->faker->numberBetween(1, 5),
             'is_crawler'       => $this->faker->boolean(50),
             'category'         => $this->faker->randomElement($category),
             'language'         => $this->faker->languageCode(),

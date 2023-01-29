@@ -16,7 +16,7 @@ class TrafficInfo {
             ->latest()
             ->first();
 
-        if (! $info instanceof Model) {
+        if ( ! $info instanceof Model) {
             return null;
         }
 
@@ -24,7 +24,7 @@ class TrafficInfo {
             ->orderByDesc('visited_at')
             ->first();
 
-        if (! $lastData instanceof Model) {
+        if ( ! $lastData instanceof Model) {
             return null;
         }
 
@@ -43,7 +43,6 @@ class TrafficInfo {
         /** @var Carbon */
         $recent_visit_date = $lastData->getAttribute('visited_at');
 
-        //TODO: rename properties in DTO
         return new VisitorsInfoData(
             to:                 $to,
             from:               $from,
