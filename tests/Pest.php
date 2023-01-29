@@ -1,5 +1,19 @@
 <?php
 
-use OndrejVrto\Visitors\Tests\TestCase;
+declare(strict_types=1);
 
-// uses(TestCase::class)->in(__DIR__);
+/*
+|--------------------------------------------------------------------------
+| Test Case
+|--------------------------------------------------------------------------
+*/
+
+// uses(\OndrejVrto\Visitors\Tests\FeatureTestCase::class)->in('Feature');
+// uses(\OndrejVrto\Visitors\Tests\TestCase::class)->in('Feature');
+
+
+/*
+|--------------------------------------------------------------------------
+| Functions
+|--------------------------------------------------------------------------
+*/

@@ -38,7 +38,7 @@ return static function (RectorConfig $rectorConfig): void {
         LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
     ]);
 
-    // $rectorConfig->phpVersion(PhpVersion::PHP_81);
+    $rectorConfig->phpVersion(PhpVersion::PHP_81);
 
     // register a single rule
     $rectorConfig->rule(

@@ -1,6 +1,8 @@
 <?php
 
-test('return integer or zero', function ($valuesList, $expectedList) {
+declare(strict_types=1);
+
+test('return integer or zero', function ($valuesList, $expectedList): void {
     $resultList = intOrZero($valuesList);
     expect($resultList)->toBe($expectedList);
 })->with(
