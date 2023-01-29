@@ -111,7 +111,7 @@ class TestCase extends Orchestra {
         ]);
     }
 
-    /**
+        /**
      * Clean up the testing environment before the next test.
      */
     protected function tearDown(): void {
