@@ -114,9 +114,11 @@ return [
 
 
     /*
-    / Schedule the generation of traffic data and statistics within the internal scheduler of this package. It will run every three hours.
+    / Schedule the generation of traffic data and statistics within
+    / the internal scheduler of this package. It will run every three hours.
     /
-    / Note   : Equivalent to setting in the scheduler (in App\Console\Kernel)  $schedule->command(VisitorsFreshCommand::class)->everyThreeHours();
+    / Note   : Equivalent to setting in the scheduler (in App\Console\Kernel)
+    /          $schedule->command(VisitorsFreshCommand::class)->everyThreeHours();
     / Default: true
     */
 
