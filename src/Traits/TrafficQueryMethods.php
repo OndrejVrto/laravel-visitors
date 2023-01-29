@@ -58,7 +58,7 @@ trait TrafficQueryMethods {
         return $this;
     }
 
-    public function forModel((Visitable&Model)|string $model): self {
+    public function forModel(Visitable|string $model): self {
         if ($model instanceof Model) {
             $this->model = $model;
         }
