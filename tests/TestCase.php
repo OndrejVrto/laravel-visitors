@@ -5,21 +5,14 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Tests;
 
 use PDO;
-use Closure;
-use Mockery;
-use Carbon\Carbon;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\File;
-use function Orchestra\Testbench\artisan;
 use Orchestra\Testbench\TestCase as Orchestra;
 use OndrejVrto\Visitors\VisitorsServiceProvider;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 
 class TestCase extends Orchestra {
-    // use RefreshDatabase;
+    private const TEST_DATABASE = 'sqlite';
 
     /**
      * Setup the test environment.
@@ -28,6 +21,7 @@ class TestCase extends Orchestra {
         // Code before Laravel application created.
         parent::setUp();
         // Code after Laravel application created.
+
         $this->setUpDatabase();
 
         Factory::guessFactoryNamesUsing(
@@ -66,44 +60,42 @@ class TestCase extends Orchestra {
      * @param  \Illuminate\Foundation\Application  $app
      */
     public function getEnvironmentSetUp($app): void {
-        // $app['config']->set('activitylog.database_connection', 'sqlite');
-        // $app['config']->set('database.default', 'sqlite');
-        // $app['config']->set('database.connections.sqlite', [
-        //     'driver' => 'sqlite',
-        //     'database' => ':memory:',
-        // ]);
-
         $app['config']->set('app.key', 'base64:'.base64_encode(
             Encrypter::generateKey(config()['app.cipher'])
         ));
 
-        $app['config']->set('database.connections.mysql', [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => 'laravel_visitors_test',
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            // 'collation' => 'utf8mb4_unicode_ci',
-            'collation' => 'utf8mb4_slovak_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
-
-        $app['config']->set('database.default', 'mysql');
-
-        // dd($app['config']);
+        if (self::TEST_DATABASE === 'sqlite') {
+            $app['config']->set('database.default', 'sqlite');
+            $app['config']->set('database.connections.sqlite', [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+            ]);
+        } else {
+            $app['config']->set('database.default', 'mysql');
+            $app['config']->set('database.connections.mysql', [
+                'driver' => 'mysql',
+                'url' => env('DATABASE_URL'),
+                'host' => env('DB_HOST', '127.0.0.1'),
+                'port' => env('DB_PORT', '3306'),
+                'database' => 'laravel_visitors_test',
+                'username' => env('DB_USERNAME', 'forge'),
+                'password' => env('DB_PASSWORD', ''),
+                'unix_socket' => env('DB_SOCKET', ''),
+                'charset' => 'utf8mb4',
+                // 'collation' => 'utf8mb4_unicode_ci',
+                'collation' => 'utf8mb4_slovak_ci',
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'strict' => true,
+                'engine' => null,
+                'options' => extension_loaded('pdo_mysql') ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                ]) : [],
+            ]);
+        }
     }
 
-    protected function setUpDatabase() {
+    protected function setUpDatabase(): void {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->up();
 
@@ -119,7 +111,7 @@ class TestCase extends Orchestra {
         ]);
     }
 
-        /**
+    /**
      * Clean up the testing environment before the next test.
      */
     protected function tearDown(): void {
