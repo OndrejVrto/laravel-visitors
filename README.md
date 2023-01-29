@@ -39,33 +39,96 @@ class Post extends Model implements Visitable
     // ...
 }
 ```
-And add visit counter to controler.
+
+Some in frontend controler add visit counter.
+
+```php
+public function show()
+{
+    $post = Post::find(5);
+    $post->incrementVisit();
+
+    $commercial = Commercial::find(100);
+    $commercial->incrementVisit();
+
+    return view('post.show', compact('post', 'commercial'));
+}
+```
+
+## Basic usage display statistics
+
+In dashboard 
+
+```php
+public function dashboard()
+{
+    $topTenYearVisitsByPerson = Traffic::list()
+        ->visitedByPersons()
+        ->orderByLast365Days()
+        ->withRelationship()
+        ->limit(10)
+        ->get();
+    
+    $sumarAllVisitFromWeb = Traffic::summary()
+        ->visitedByPersons()
+        ->inCategory(VisitorCategory::WEB)
+        ->first();
+
+    $sumarAllVisitFromApi = Traffic::summary()
+        ->visitedByCrawlersAndPersons()
+        ->inCategory(VisitorCategory::API)
+        ->first();
+
+    return view(
+        'dashboard',
+        compact('topTenYearVisitsByPerson', 'sumarAllVisit', '$sumarAllVisitFromApi')
+    );
+}
+```
+
+Or list of posts in admin controller.
+
+```php
+public function index()
+{
+    $posts = Post::withTraffic()->paginate(10);
+
+    return view('post.index', compact('posts'));
+}
+```
+
+Or in detail post in admin controller.
+
 ```php
 public function show(Post $post)
 {
-    $post->incrementVisit();
-    // or
-    $post->incrementVisitForce();
+    $visits = Traffic::single($post)
+        ->inCategory(VisitorCategory::WEB)
+        ->visitedByPersons()
+        ->first();
 
-    // or with Facade
-    Visit::model($post)->increment();
-
-    // or with helper function
-    visit($post)->increment();
-
-    return view('post.show', compact('post'));
+    return view('post.show', compact('post', 'visits'));
 }
 ```
 
 ## Customization visit counter
 
+Increment methods
+
 ```php
-$post = Post::find(1);
+// methods from model
+$post->incrementVisit();
+$post->incrementVisitForce();
+// or with Facade
+Visit::model($post)->increment();
+// or with helper function
+visit($post)->increment();
+```
 
-$status = Visit::model($post)->increment();    // with Facade
-$status = visit($post)->increment();  // with helper function
+Options
 
-// Check expiration time for request for all ip address and model
+```php
+// Check expiration time for ip address, model and category is is set
 visit($post)->increment();
 // Expiration time off
 visit($post)->forceIncrement();
@@ -79,20 +142,20 @@ visit($post)->withoutCrawlers()->increment();
 
 // Rewrite default expires time
 $expiresAt = now()->addHours(3); // `DateTimeInterface` instance
+$expiresAt = 60; // minutes in Integer
 visit($post)->expiresAt($expiresAt)->increment();
-// OR
-$minutes = 60; // Integer
-visit($post)->expiresAt($minutes)->increment();
 
 // dynamicaly create ip ignore list
 visit($post)->addIpAddressToIgnoreList(['127.0.0.1', '147.7.54.789'])->increment();
+```
 
-// Manually added data. Rewrite default values
+Manually added data.
+
+```php
 visit($post)
     ->fromIP('127.0.0.1')
     ->isCrawler()
     ->isPerson()
-    ->fromCountry('sk')
     ->inLanguage('Esperanto')
     ->fromBrowserAgent('custom browser agent string ....')
     ->fromOperatingSystem(OperatingSystem::WINDOWS)
@@ -133,22 +196,23 @@ Artisan::call("visitors:fresh");
 // OR
 (new TrafficGenerator())->run();
 // Automatic in Scheduler (in App\Console\Kernel)
-$schedule->command(VisitorsFreshCommand::class)->dailyAt('01:00');
+$schedule->command(VisitorsFreshCommand::class)->everyThreeHours();
 ```
 
-Scheduler is implement in package. If is set `schedule_generate_traffic_data_automaticaly` to `true` nothing else needs to be set up.
+Scheduler is implement in package.
+If is set `schedule_generate_traffic_data_automaticaly` to `true` nothing else needs to be set up.
 
-## Statistics summary
 
+## Traffic generate
 With preety graph in SVG, count of language, operating system and country statistics.
+### Aggregated data from several models
 
-### Usage
 ***Note:*** Return only one record
 
 ```php
 // summary global
-$sumary = Traffic::summary();    // with Facade
-$sumary = traffic()->summary();  // with helper function
+$sumary = Traffic::summary()->first();    // with Facade
+$sumary = traffic()->summary()->first();  // with helper function
 
 // summary for all type models and all categories
 $sumary = Traffic::summary()->visitedByPersons()->first();
@@ -170,9 +234,7 @@ $sumary = Traffic::summary()
     ->first();
 ```
 
-## Trafic for a one specific type model
-
-### Usage
+### Trafic for a one specific model
 
 ***Note:*** Return only one record
 
@@ -203,26 +265,26 @@ $single = Traffic::single($post)
     ->first();
 ```
 
-## Lists of top visit models
-
-### Usage
+### Lists of top visit models
 
 ***Note:*** Return Collection of model instances Traffic
 
 ```php
-$models = [VisitableModel::class, AnotherVisitableModel::class, "App\Models\Post"];
-
 // Return Eloquent Builder
-$traffic = Traffic::list($models);    // with Facade
-$traffic = traffic()->list($models);  // with helper function
+$traffic = Traffic::list();    // with Facade
+$traffic = traffic()->list();  // with helper function
 
 // Return collection, first model from collection or paginator
-$traffic = Traffic::list($models)->get();
-$traffic = Traffic::list($models)->first();
-$traffic = Traffic::list($models)->paginate();
+$traffic = Traffic::list()->get();
+$traffic = Traffic::list()->first();
+$traffic = Traffic::list()->paginate();
 
 // adds relationships to the Visitable Model
-$traffic = traffic()->list($models)->withRelationship()->get();
+$traffic = traffic()->list()->withRelationship()->get();
+
+// only specific models type
+$models = [VisitableModel::class, AnotherVisitableModel::class, "App\Models\Post"];
+$traffic = Traffic::list($models)->get();
 ```
 
 Other options
@@ -266,9 +328,14 @@ $posts = Post::query()
 
 ## Get the status and additional data about the latest traffic generation process
 
+Displays the parameters of the last run of the generator and the difference from the current data
+
 ```php
 $info = TrafficInfo::get();
 ```
+
+## Language
+Enum classes 'OperatingSystem' and 'VisitorCategory' are translatable.
 
 ## Configuration package
 ```php
