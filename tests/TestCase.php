@@ -112,8 +112,8 @@ class TestCase extends Orchestra {
     }
 
         /**
-     * Clean up the testing environment before the next test.
-     */
+         * Clean up the testing environment before the next test.
+         */
     protected function tearDown(): void {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->down();
