@@ -28,7 +28,7 @@
         "illuminate/support": "^9.0",
         "jaybizzle/crawler-detect": "^1.2",
         "markbaker/enumhelper": "^1.0",
-        "ondrej-vrto/php-linechart": "0.5-dev",
+        "ondrej-vrto/php-linechart": "^1.0",
         "spatie/laravel-package-tools": "^1.13.0"
     },
     "require-dev": {
@@ -65,18 +65,6 @@
             "OndrejVrto\\Visitors\\Tests\\": "tests"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "A:/#Packages/ondrej-vrto/php-linechart",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "ondrej-vrto/php-linechart": "0.5-dev"
-                }
-            }
-        }
-    ],
     "scripts": {
         "format": "vendor/bin/pint",
         "rector": "vendor/bin/rector --dry-run --memory-limit=4G",
