@@ -12,8 +12,8 @@ use OndrejVrto\Visitors\Builder\TrafficSummaryQueryBuilder;
 use OndrejVrto\Visitors\Builder\TrafficSingleModelQueryBuilder;
 
 /**
- * @method static TrafficListQueryBuilder forListOfModels(Visitable|array|string $visitable)
- * @method static TrafficSingleModelQueryBuilder forSingleModel(Visitable&Model $visitable)
+ * @method static TrafficListQueryBuilder list(Visitable|array|string $models)
+ * @method static TrafficSingleModelQueryBuilder single(Visitable&Model $model)
  * @method static TrafficSummaryQueryBuilder summary()
  *
  * @see \OndrejVrto\Visitors\Traffic

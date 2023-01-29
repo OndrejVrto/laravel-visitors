@@ -6,32 +6,23 @@ namespace OndrejVrto\Visitors;
 
 use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Action\CheckVisitable;
 use OndrejVrto\Visitors\Builder\TrafficListQueryBuilder;
-use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 use OndrejVrto\Visitors\Builder\TrafficSummaryQueryBuilder;
 use OndrejVrto\Visitors\Builder\TrafficSingleModelQueryBuilder;
 
 final class Traffic {
-    /**
-     * @param Visitable|class-string|Visitable[]|array<class-string> $visitable
-     * @throws InvalidClassParameter
-     */
-    public function forListOfModels(Visitable|string|array $visitable): TrafficListQueryBuilder {
-        $visitableClasses = (new CheckVisitable())($visitable);
-
-        if ([] === $visitableClasses) {
-            throw new InvalidClassParameter('Used class must by Model and implement Visitable contract.');
-        }
-
-        return new TrafficListQueryBuilder($visitableClasses);
+    /** @param Visitable|class-string|Visitable[]|array<class-string> $models */
+    public function list(Visitable|string|array $models): TrafficListQueryBuilder {
+        return (new TrafficListQueryBuilder())
+            ->addModels($models);
     }
 
-    public function forSingleModel(Visitable&Model $visitable): TrafficSingleModelQueryBuilder {
-        return new TrafficSingleModelQueryBuilder($visitable);
+    public function single(Visitable&Model $model): TrafficSingleModelQueryBuilder {
+        return (new TrafficSingleModelQueryBuilder())
+            ->forModel($model);
     }
 
     public function summary(): TrafficSummaryQueryBuilder {
-        return new TrafficSummaryQueryBuilder();
+        return (new TrafficSummaryQueryBuilder());
     }
 }

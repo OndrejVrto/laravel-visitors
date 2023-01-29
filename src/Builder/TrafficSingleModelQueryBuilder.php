@@ -6,26 +6,11 @@ namespace OndrejVrto\Visitors\Builder;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Action\CheckCategory;
-use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Traits\TrafficQueryMethods;
 
 class TrafficSingleModelQueryBuilder {
     use TrafficQueryMethods;
-
-    private ?int $category = null;
-
-    public function __construct(
-        private readonly Visitable&Model $model
-    ) {
-    }
-
-    public function inCategory(VisitorCategory|string|int $category): self {
-        $this->category = (new CheckCategory())($category)[0];
-        return $this;
-    }
 
     private function query(): Builder {
         $this->handleConfigurations();

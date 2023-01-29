@@ -4,21 +4,63 @@ declare(strict_types=1);
 
 namespace OndrejVrto\Visitors\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use OndrejVrto\Visitors\Contracts\Visitable;
+use OndrejVrto\Visitors\Action\CheckCategory;
+use OndrejVrto\Visitors\Action\CheckVisitable;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
+
 trait TrafficQueryMethods {
     use VisitorsSettings;
 
+    /** @var string[] */
+    private array $models = [];
+
+    private Model|null $model = null;
+
+    /** @var int[] */
+    private array $categories = [];
+
+    private ?int $category = null;
+
     private ?bool $isCrawler = null;
+
+    private int $countClasses = 0;
+
+    private int $countCategories = 0;
 
     private ?bool $withRelationship = null;
 
     private function handleConfigurations(): void {
-        $this->category = $this->trafficForCategories()
-            ? $this->category
-            : null;
+        $this->models = array_values(array_unique($this->models));
+
+        $this->countClasses = [] === $this->models ? 0 : count($this->models);
+
+        $this->categories = $this->trafficForCategories()
+            ? array_values(array_unique($this->categories))
+            : [];
+
+        $this->category = [] === $this->categories
+            ? null
+            : $this->categories[0];
+
+        $this->countCategories = count($this->categories);
 
         $this->isCrawler = $this->trafficForCrawlersAndPersons()
             ? $this->isCrawler
             : false;
+    }
+
+    public function inCategory(VisitorCategory|string|int $category): self {
+        $this->categories = (new CheckCategory())($category);
+        return $this;
+    }
+
+    public function forModel(Visitable&Model $model): self {
+        $this->model = $model;
+        $this->models = (new CheckVisitable())($model);
+
+        return $this;
     }
 
     public function withRelationship(): self {

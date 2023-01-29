@@ -19,40 +19,21 @@ use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 class TrafficListQueryBuilder {
     use TrafficQueryMethods;
 
-    /** @var string[] */
-    private array $classes = [];
-
     /** @var array<string,string> */
-    private array $orderBy = [];
-
-    /** @var int[] */
-    private array $categories = [];
+    private array $orderBy = ['visit_total' => 'desc'];
 
     private ?int $limit = null;
 
-    private int $countClasses = 0;
-
-    private int $countCategories = 0;
-
     /**
-     * @param Visitable|string|class-string|array<class-string>|array<string> $visitable
+     * @param Visitable|string|class-string|array<class-string> $models
      * @throws InvalidClassParameter
      */
-    public function __construct(Visitable|string|array $visitable) {
-        $this->classes = (new CheckVisitable())($visitable);
+    public function addModels(Visitable|string|array $models): self {
+        $this->models = [...$this->models, ...(new CheckVisitable())($models)];
 
-        if ([] === $this->classes) {
+        if ([] === $this->models) {
             throw new InvalidClassParameter('Empty or bad parameter $visitable. Used class must implement Visitable contract.');
         }
-
-        $this->orderBy = ['visit_total' => 'desc'];
-    }
-
-    /**
-     * @param Visitable|string|class-string|array<class-string> $visitable
-     */
-    public function addModels(Visitable|string|array $visitable): self {
-        $this->classes = [...$this->classes, ...(new CheckVisitable())($visitable)];
 
         return $this;
     }
@@ -60,7 +41,7 @@ class TrafficListQueryBuilder {
     /**
      * @param VisitorCategory|string|int|VisitorCategory[]|string[]|int[] $category
      */
-    public function inCategories(VisitorCategory|string|int|array $category): self {
+    public function addCategories(VisitorCategory|string|int|array $category): self {
         $this->categories = [...$this->categories, ...(new CheckCategory())($category)];
         return $this;
     }
@@ -108,39 +89,25 @@ class TrafficListQueryBuilder {
         return implode(", ", $orders);
     }
 
-    public function limit(int $value): self {
-        $this->limit = (int) abs($value);
-        return $this;
-    }
-
-    private function handleConfigurations(): void {
-        $this->classes = array_values(array_unique($this->classes));
-        $this->countClasses = [] === $this->classes ? 0 : count($this->classes);
-
-        $this->categories = $this->trafficForCategories()
-            ? array_values(array_unique($this->categories))
-            : [];
-        $this->countCategories = count($this->categories);
-
-        $this->isCrawler = $this->trafficForCrawlersAndPersons()
-            ? $this->isCrawler
-            : false;
-    }
-
     private function query(): Builder {
         $this->handleConfigurations();
 
         return VisitorsTraffic::query()
             ->whereNotNull('viewable_id')
             ->where('is_crawler', '=', $this->isCrawler)
-            ->when(1 === $this->countClasses, fn (Builder $q) => $q->where('viewable_type', '=', $this->classes[0]))
-            ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->classes))
+            ->when(1 === $this->countClasses, fn (Builder $q) => $q->where('viewable_type', '=', $this->models[0]))
+            ->when($this->countClasses > 1, fn (Builder $q) => $q->whereIn('viewable_type', $this->models))
             ->when(0 === $this->countCategories, fn (Builder $q) => $q->whereNull('category'))
             ->when(1 === $this->countCategories, fn (Builder $q) => $q->where('category', '=', $this->categories[0]))
             ->when($this->countCategories > 1, fn (Builder $q) => $q->whereIn('category', $this->categories))
             ->when(true === $this->withRelationship, fn (Builder $q) => $q->with('viewable'))
             ->unless(null === $this->limit, fn (Builder $q) => $q->limit($this->limit ?? 20))
             ->orderByRaw($this->getOrdersSql());
+    }
+
+    public function limit(int $value): self {
+        $this->limit = (int) abs($value);
+        return $this;
     }
 
     /**
