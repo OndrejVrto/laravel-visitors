@@ -14,7 +14,6 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Traits\TrafficQueryMethods;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use OndrejVrto\Visitors\Exceptions\InvalidClassParameter;
 
 class TrafficListQueryBuilder {
     use TrafficQueryMethods;
@@ -26,7 +25,6 @@ class TrafficListQueryBuilder {
 
     /**
      * @param Visitable|string|class-string|array<class-string>|null $models
-     * @throws InvalidClassParameter
      */
     public function addModels(Visitable|string|array|null $models): self {
         $this->models = [...$this->models, ...(new CheckVisitable())($models)];
