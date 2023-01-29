@@ -24,6 +24,8 @@ class GenerateTrafficJob implements ShouldQueue {
     use SerializesModels;
     use InteractsWithQueue;
 
+    private const MISSING_VALUE = 0;
+
     /**
      * @param Collection<int,ListPossibleQueriesData> $listPossibleQueries
      */
@@ -62,26 +64,6 @@ class GenerateTrafficJob implements ShouldQueue {
         VisitorsTraffic::insert($data);
     }
 
-    /** @param  Collection<string,array<string,int|string>> $visitCount */
-    private function dailyNumbers(Collection $visitCount): Collection {
-        return (new Collection())
-            ->range(0, $this->configuration->numberDaysStatistics)
-            ->map(fn (int $days) => (new DateTimeImmutable("-{$days} days"))->format('Y-m-d'))
-            ->mapWithKeys(fn (string $key) => [$key => $visitCount->get($key)['visits_count'] ?? 0]);
-    }
-
-    private function sumarQuery(ListPossibleQueriesData $listOptionData, string $columnName, string $alias): Collection {
-        return VisitorsData::query()
-            ->selectRaw("`{$columnName}` as `{$alias}`, count(*) as `count`")
-            ->where('data_id', "<=", $this->configuration->lastId)
-            ->unless(null === $listOptionData->viewable_type, fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
-            ->unless(null === $listOptionData->is_crawler, fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
-            ->unless(null === $listOptionData->category, fn ($q) => $q->where("category", $listOptionData->category))
-            ->groupBy($alias)
-            ->orderByDesc("count")
-            ->get();
-    }
-
     /** @return Collection<string,array<string,int|string>> $visitCount */
     private function visitCount(ListPossibleQueriesData $listOptionData): Collection {
         return VisitorsData::query()
@@ -96,6 +78,26 @@ class GenerateTrafficJob implements ShouldQueue {
             ->orderByDesc('visits_date')
             ->get()
             ->keyBy('visits_date');
+    }
+
+    /** @param  Collection<string,array<string,int|string>> $visitCount */
+    private function dailyNumbers(Collection $visitCount): Collection {
+        return (new Collection())
+            ->range(0, $this->configuration->numberDaysStatistics)
+            ->map(fn (int $days) => (new DateTimeImmutable("-{$days} days"))->format('Y-m-d'))
+            ->mapWithKeys(fn (string $key) => [$key => $visitCount->get($key)['visits_count'] ?? self::MISSING_VALUE]);
+    }
+
+    private function sumarQuery(ListPossibleQueriesData $listOptionData, string $columnName, string $alias): Collection {
+        return VisitorsData::query()
+            ->selectRaw("`{$columnName}` as `{$alias}`, count(*) as `count`")
+            ->where('data_id', "<=", $this->configuration->lastId)
+            ->unless(null === $listOptionData->viewable_type, fn ($q) => $q->where("viewable_type", $listOptionData->viewable_type))
+            ->unless(null === $listOptionData->is_crawler, fn ($q) => $q->where("is_crawler", $listOptionData->is_crawler))
+            ->unless(null === $listOptionData->category, fn ($q) => $q->where("category", $listOptionData->category))
+            ->groupBy($alias)
+            ->orderByDesc("count")
+            ->get();
     }
 
     /** @param array<int,mixed> $values */
