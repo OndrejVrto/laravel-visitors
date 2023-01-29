@@ -8,10 +8,10 @@ use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\ListPossibleQueries;
-use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
+use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 
-beforeEach(function() {
+beforeEach(function (): void {
     $this->data = [
         [
             'viewable_type'    => TestModel::class,

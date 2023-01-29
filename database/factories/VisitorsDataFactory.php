@@ -8,8 +8,8 @@ use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Enums\OperatingSystem;
 use OndrejVrto\Visitors\Enums\VisitorCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
+use OndrejVrto\Visitors\Tests\Support\Models\AnotherTestModel;
 
 class VisitorsDataFactory extends Factory {
     protected $model = VisitorsData::class;
