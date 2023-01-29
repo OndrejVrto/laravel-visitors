@@ -5,12 +5,7 @@ declare(strict_types=1);
 namespace OndrejVrto\Visitors\Tests;
 
 use PDO;
-use Closure;
-use Mockery;
-use Carbon\Carbon;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\File;
-use function Orchestra\Testbench\artisan;
 use Orchestra\Testbench\TestCase as Orchestra;
 use OndrejVrto\Visitors\VisitorsServiceProvider;
 
@@ -103,7 +98,7 @@ class TestCase extends Orchestra {
         // dd($app['config']);
     }
 
-    protected function setUpDatabase() {
+    protected function setUpDatabase(): void {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->up();
 
@@ -120,8 +115,8 @@ class TestCase extends Orchestra {
     }
 
         /**
-     * Clean up the testing environment before the next test.
-     */
+         * Clean up the testing environment before the next test.
+         */
     protected function tearDown(): void {
         $migration = include __DIR__.'/../database/migrations/create_all_visitors_tables.php.stub';
         $migration->down();
