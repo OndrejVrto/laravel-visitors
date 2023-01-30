@@ -6,8 +6,8 @@ namespace OndrejVrto\Visitors\Tests\Support\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OndrejVrto\Visitors\Contracts\Visitable;
-use OndrejVrto\Visitors\Traits\InteractsWithVisits;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use OndrejVrto\Visitors\Traits\InteractsWithVisits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OndrejVrto\Visitors\Tests\Support\Factories\TestModelFactory;
 

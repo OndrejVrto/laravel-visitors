@@ -6,7 +6,7 @@ use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Models\VisitorsExpires;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 
-test('observer visitable model deleted', function () {
+test('observer visitable model deleted', function (): void {
     $visitDataTableName = (new VisitorsData())->getTable();
     $visitExpireTableName = (new VisitorsExpires())->getTable();
     $testModel = TestModel::create(['name' => '::test_name::']);

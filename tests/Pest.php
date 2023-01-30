@@ -26,7 +26,7 @@ uses(\OndrejVrto\Visitors\Tests\TestCase::class)->in('Feature');
 |--------------------------------------------------------------------------
 */
 
-function insertTestData() {
+function insertTestData(): void {
     $data = [
         [
             'viewable_type'    => TestModel::class,
