@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use OndrejVrto\Visitors\Models\VisitorsData;
 use OndrejVrto\Visitors\Data\GraphProperties;
-use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Models\VisitorsTraffic;
 use OndrejVrto\Visitors\Jobs\GenerateTrafficJob;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
@@ -14,7 +13,7 @@ use OndrejVrto\Visitors\Services\TrafficGenerator;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Tests\Support\Models\TestModel;
 
-beforeEach(function () {
+beforeEach(function (): void {
     insertTestData();
 
     $this->dataTableName = (new VisitorsData())->getTable();
@@ -44,7 +43,7 @@ beforeEach(function () {
     $this->graphProperties = new GraphProperties();
 });
 
-test('traffic job is dispached', function () {
+test('traffic job is dispached', function (): void {
     $testModel = TestModel::first();
     visit($testModel)->forceIncrement();
 
@@ -56,7 +55,7 @@ test('traffic job is dispached', function () {
 });
 
 
-test('todo', function () {
+test('todo', function (): void {
     $configuration = new StatisticsConfigData(
         generateCategoryStatistics: true,
         generateCrawlersStatistics: true,
