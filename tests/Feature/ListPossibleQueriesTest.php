@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use OndrejVrto\Visitors\Models\VisitorsData;
-use OndrejVrto\Visitors\Enums\OperatingSystem;
-use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\ListPossibleQueries;
@@ -65,7 +63,7 @@ test('category and crawlers queries', function (
     $configuration = new StatisticsConfigData(
         generateCategoryStatistics: $generateCategory,
         generateCrawlersStatistics: $generateCrawler,
-        lastId                    : count($this->data),
+        lastId                    : VisitorsData::count(),
         dataTableName             : (new VisitorsData())->getTable(),
         // irrelevant
         numberDaysStatistics      : 0,
