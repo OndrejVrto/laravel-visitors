@@ -26,9 +26,7 @@ class GenerateTrafficJob implements ShouldQueue {
 
     private const MISSING_VALUE = 0;
 
-    /**
-     * @param Collection<int,ListPossibleQueriesData> $listPossibleQueries
-     */
+    /** @param Collection<int,ListPossibleQueriesData> $listPossibleQueries */
     public function __construct(
         private readonly Collection $listPossibleQueries,
         private readonly GraphProperties $graphProperties,
