@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use OndrejVrto\Visitors\Models\VisitorsData;
+use OndrejVrto\Visitors\Enums\OperatingSystem;
+use OndrejVrto\Visitors\Enums\VisitorCategory;
 use OndrejVrto\Visitors\Data\StatisticsConfigData;
 use OndrejVrto\Visitors\Data\ListPossibleQueriesData;
 use OndrejVrto\Visitors\Services\ListPossibleQueries;
