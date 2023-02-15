@@ -6,6 +6,11 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/OndrejVrto/laravel-visitors/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/OndrejVrto/laravel-visitors/blob/main/.github/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/ondrej-vrto/laravel-visitors.svg?style=flat-square)](https://packagist.org/packages/ondrej-vrto/laravel-visitors)
 
+
+## Prologue
+This tool enables basic monitoring of user activity without the use of cookies or consent according to the European GDPR guidelines.
+It creates overall statistics, which take a long time to generate, in the background, and therefore displaying results even in large volumes of data is fast.
+
 ## Installation
 
 You can install the package via composer:
