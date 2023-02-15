@@ -182,7 +182,7 @@ $schedule->command('model:prune', [
 Artisan::call("visitors:clean");
 ```
 
-## Generate statistics and traffic records from visitor data
+## Generate traffic data
 
 ***Note:*** Queue service is required
 
@@ -203,8 +203,8 @@ Scheduler is implement in package.
 If is set `schedule_generate_traffic_data_automaticaly` to `true` nothing else needs to be set up.
 
 
-## Traffic generate
-With preety graph in SVG, count of language, operating system and country statistics.
+## View traffic data
+With preety graph in SVG, count of language and operating system statistics.
 ### Aggregated data from several models
 
 ***Note:*** Return only one record
@@ -331,7 +331,7 @@ $posts = Post::query()
 Displays the parameters of the last run of the generator and the difference from the current data
 
 ```php
-$info = TrafficInfo::get();
+$info = Traffic::info();
 ```
 
 ## Language
