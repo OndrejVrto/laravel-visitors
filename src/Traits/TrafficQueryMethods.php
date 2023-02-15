@@ -58,6 +58,7 @@ trait TrafficQueryMethods {
         return $this;
     }
 
+    /** @param  Visitable|string|class-string $model */
     public function forModel(Visitable|string $model): self {
         if ($model instanceof Model) {
             $this->model = $model;
